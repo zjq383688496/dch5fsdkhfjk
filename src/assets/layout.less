@@ -1,0 +1,84 @@
+@import 'var.less';
+
+
+// layout
+.flex() {
+	display: flex;
+}
+.tc {
+	text-align: center;
+}
+.tr {
+	text-align: right;
+}
+// 水平栅格循环函数
+.col(@index){
+	.col-@{index} {
+		@percentage: floor(@index / 24 * 10000) / 100;
+		display: block;
+		-webkit-box-flex: 0;
+		flex: ~"0 0 @{percentage}%";
+		max-width: ~"@{percentage}%";
+	}
+}
+// 垂直栅格循环函数
+.row(@index){
+	.row-@{index} {
+		@percentage: floor(@index / 24 * 10000) / 100;
+		display: block;
+		-webkit-box-flex: 0;
+		flex: ~"0 0 @{percentage}%";
+		max-height: ~"@{percentage}%";
+	}
+}
+// 栅格循环函数
+.loop(@i) when (@i < 25){
+    .col(@i);
+    .row(@i);
+    .loop(@i+1);
+}
+.loop(1);
+
+.fx {
+	display: flex;
+}
+.fx-col {
+	.flex();
+	flex-direction: column;
+}
+.padding(@index){
+	@px: @index * 4;
+	.pt@{px} { padding-top:    @px/@vw; }
+	.pr@{px} { padding-right:  @px/@vw; }
+	.pb@{px} { padding-bottom: @px/@vw; }
+	.pl@{px} { padding-left:   @px/@vw; }
+	.p@{px}  { padding:        @px/@vw; }
+}
+.margin(@index){
+	@px: @index * 4;
+	.mt@{px} { margin-top:    @px/@vw; }
+	.mr@{px} { margin-right:  @px/@vw; }
+	.mb@{px} { margin-bottom: @px/@vw; }
+	.ml@{px} { margin-left:   @px/@vw; }
+	.m@{px}  { margin:        @px/@vw; }
+}
+.height(@index){
+	@px: @index * 4;
+	@px2: @px + 80;
+	.h@{px}  { height: @px/@vw; }
+	.h@{px2} { height: @px2/@vw; }
+}
+.loopPad(@i) when (@i < 21){
+	.padding(@i);
+	.margin(@i);
+	.height(@i);
+    .loopPad(@i+1);
+}
+.loopPad(1);
+
+.jc-fe {
+	justify-content: flex-end;
+}
+.jc-c {
+	justify-content: center;
+}

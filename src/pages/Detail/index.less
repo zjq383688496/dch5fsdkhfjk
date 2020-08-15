@@ -1,0 +1,35 @@
+.detail {
+	display: flex;
+	width: 100vw;
+	height: 100vh;
+	border: 1px solid #fff;
+	&-l,
+	&-c,
+	&-r {
+		display: flex;
+	}
+	&-l,
+	&-c {
+		border-right: 1px solid #fff;
+	}
+	&-l {
+		width: 23vw;
+	}
+	&-c {
+		width: 45vw;
+	}
+	&-r {
+		width: 32vw;
+	}
+	.d-info {
+		display: flex;
+		// height: 160px;
+		.di-title {
+		}
+	}
+	.d-content {
+		flex: 1;
+		overflow: hidden;
+		border-top: 1px solid #fff;
+	}
+}

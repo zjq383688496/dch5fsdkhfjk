@@ -1,0 +1,15 @@
+/* 常用函数 */
+.box-size(@w: 100%, @h: @w) {
+	width:  @w;
+	height: @h;
+}
+.box-full() {
+	.box-size(100vw, 100vh)
+}
+.box-max() {
+	.box-size()
+}
+.box(@type: block, @w: 100%, @h: @w) {
+	display: @type;
+	.box-size(@w, @h)
+}

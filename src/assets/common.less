@@ -1,0 +1,51 @@
+@import 'var.less';
+@import 'global.less';
+@import 'layout.less';
+@import 'icons.less';
+@import 'method.less';
+
+
+// 文本
+.fs_lh(@index){
+	@px: 8 + @index * 4;
+	@px2: @px + 2;
+	.fs@{px}  { font-size: @px/@vw; }
+	.lh@{px}  { line-height: @px/@vw; }
+	.fs@{px2} { font-size: @px2/@vw; }
+	.lh@{px2} { line-height: @px2/@vw; }
+}
+.loopFs(@i) when (@i < 61){
+	.fs_lh(@i);
+    .loopFs(@i+1);
+}
+.loopFs(1);
+
+// 文本颜色
+.color(@name, @color){
+	.c-@{name} { color: @color; }
+	.bc-@{name}  { background-color: @color; }
+}
+.color(white,  @white);
+.color(black,  @black);
+.color(blue,   @blue);
+.color(blue-h, @blue-h);
+.color(blue-d, @blue-d);
+.color(tan,    @tan);
+.color(red,    @red);
+.color(yellow, @yellow);
+.color(cyan,   @cyan);
+.color(gray,   @gray);
+
+.btn-back {
+	position: fixed;
+	top: 0;
+	right: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width:  62 / @vw;
+	height: 62 / @vw;
+	font-size: 48 / @vw;
+	color: @white;
+	background-color: @red;
+}
