@@ -61,7 +61,7 @@ yarn.lock
 # next.js build output
 .next
 
-
+dist
 public/
 publicServer/
 .tmp
