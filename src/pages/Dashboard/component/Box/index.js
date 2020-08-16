@@ -58,7 +58,7 @@ class Box extends React.Component {
 		e.stopPropagation()
 		let { indexs, measureIndex } = this.state
 		if (indexs[measureIndex] === key) return 
-		if (!measure[key]) return this.measureShow(e, -1, false)
+		if (__Map__.not[key]) return this.measureShow(e, -1, false)
 		indexs[measureIndex] = key
 		this.setState({ indexs })
 		this.measureShow(e, -1, false)
