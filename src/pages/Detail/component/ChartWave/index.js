@@ -90,6 +90,10 @@ export default class ChartWave extends React.Component {
 			},
 			series: [{ data }]
 		})
+		// if (field === 'PAW') {
+		// 	console.clear()
+		// 	console.log(data)
+		// }
 		this.setState({ data, index })
 	}
 	render() {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { HeatMapOutlined } from '@ant-design/icons'
+// import { HeatMapOutlined } from '@ant-design/icons'
 import './index.less'
 
 const iconMap = {
@@ -14,11 +14,11 @@ export default class Index extends React.Component {
 	componentDidMount() {
 	}
 	render() {
-		let { color = 'blue-d', title, data } = this.props
+		let { color = 'blue-d', title, data, handleClick } = this.props
 		let { u: unit, n: name } = __Map__.m[title] || {}
 		let value = data[title]
 		return (
-			<div className="db-index-item fx-col p4">
+			<div className="db-index-item fx-col p4" onClick={handleClick}>
 				<div className="fx row-10">
 					<div className={`col-12 c-${color} fs12`}>
 						<b>{name}</b>
@@ -40,10 +40,10 @@ export default class Index extends React.Component {
 					<div className={`col-15 c-${color} fs40 lh56 tr`}>{value}</div>
 					<div className={`fx-col col-4 jc-fe c-${color} tr`}>
 						{
-							iconMap[title]
+							/*iconMap[title]
 							?
 							<HeatMapOutlined style={{ paddingBottom: '.2vw' }} />
-							: null
+							: null*/
 						}
 					</div>
 				</div>

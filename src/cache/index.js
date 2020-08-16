@@ -2,6 +2,39 @@ let _interval = null
 
 let isInit = true
 
+const limitVal = {
+	o: {
+		CO2:    {minValue: 0.0, maxValue: 0.0},
+		VOLUME: {minValue: 0.0, maxValue: 16.818181818181817},
+		FLOW:   {minValue: 16.704545454545453, maxValue: 289.4318181818182},
+		PAW:    {minValue: 18.181818181818183, maxValue: 219.3181818181818},
+	},
+	n: {
+		CO2:    {minValue: 0.0, maxValue: 0.0},
+		VOLUME: {minValue: -3.3636363636363633, maxValue: 20.18181818181818},
+		FLOW:   {minValue: -37.8409090909091, maxValue: 343.97727272727275},
+		PAW:    {minValue: -22.045454545454543, maxValue: 259.54545454545456},
+	}
+}
+Object.keys(limitVal.o).forEach(key => {
+	let val = limitVal.o[key]
+	val.minValue = Math.ceil(val.minValue)
+	val.maxValue = Math.ceil(val.maxValue)
+})
+Object.keys(limitVal.n).forEach(key => {
+	let val = limitVal.n[key]
+	val.minValue = Math.ceil(val.minValue)
+	val.maxValue = Math.ceil(val.maxValue)
+})
+
+// 缓存等待时间
+let cacheWait = {
+	CO2:    false,
+	FLOW:   false,
+	PAW:    false,
+	VOLUME: false,
+}
+
 // 数据 存入 缓存
 export function data2cache(data) {
 	let { Cache } = window.__Redux__
@@ -43,14 +76,27 @@ export function cache2device(time = 100) {
 				// 遍历波形数据队列
 				Object.keys(queues).forEach(key => {
 					let queue = queues[key],
-						len   = queue.length
+						len   = queue.length,
+						wait  = cacheWait[key]
 
 					if (len >= 60) {
 						queue.splice(0, len - 30)
 					}
 
-					realTime[key] = queue.shift() || null
+					realTime[key] = !wait? { value: queue.shift() }: __Null__ 
+					// realTime[key] = queue.shift() || null
+
+					// 触发等待
+					if (!len) {
+						cacheWait[key] = true
+					}
+					if (len >= 30) {
+						cacheWait[key] = false
+					}
 				})
+
+				// console.clear()
+				// console.log(queues)
 
 				Object.assign(Device, {
 					config,
@@ -107,6 +153,10 @@ const d2c = {
 		realTimeConfigurationList.forEach(realTimeConfiguration => {
 			let { code } = realTimeConfiguration,
 				key = code.replace(`${packageCode}_`, '')
+
+			limitVal.n[key]
+			Object.assign(realTimeConfiguration, limitVal.n[key])
+
 			config[key] = realTimeConfiguration
 		})
 	},
@@ -115,11 +165,17 @@ const d2c = {
 		let { packageCode, realTimeDataList } = data
 
 		realTimeDataList.forEach(realTime => {
+			// let multiple = 1
 			let { code, value } = realTime,
 				key = code.replace(`${packageCode}_`, '')
+			
+			// if (key === 'PAW') multiple = .4
+			// value *= multiple
+
 			if (!queues[key]) queues[key] = []
+
 			let queue = queues[key]
-			queue.push(value)
+			queue.push(Math.ceil(value))
 		})
 	},
 	// 观测值

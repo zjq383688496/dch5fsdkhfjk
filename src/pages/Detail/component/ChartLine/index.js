@@ -13,14 +13,14 @@ export default class ChartLine extends React.Component {
 		super(props)
 		
 		let { fieldX, fieldY, config = {}, realTime = {} } = props,
-			rtX = realTime[fieldX] || null,
-			rtY = realTime[fieldY] || null,
+			rtX = realTime[fieldX] || {},
+			rtY = realTime[fieldY] || {},
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
 			infoX = __Map__.r[fieldX] || {},
 			infoY = __Map__.r[fieldY] || {}
 
-		let data = this.data = [ [ rtX, rtY ], ...new Array(99).fill().map(_ => [ null, null ]) ]
+		let data = this.data = [ [ rtX.value, rtY.value ], ...new Array(99).fill().map(_ => [ null, null ]) ]
 
 		let options = {
 			grid: {
@@ -78,13 +78,15 @@ export default class ChartLine extends React.Component {
 			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
-			rtX = realTime[fieldX] || null,
-			rtY = realTime[fieldY] || null,
+			rtX = realTime[fieldX] || {},
+			rtY = realTime[fieldY] || {},
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {}
 
 		data.shift()
-		data.push([ rtX, rtY ])
+		data.push([ rtX.value, rtY.value ])
+
+		// console.log(data)
 
 		myChart.setOption({
 			xAxis: {

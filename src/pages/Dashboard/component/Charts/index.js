@@ -16,7 +16,7 @@ export default class Charts extends React.Component {
 			{ u: unit, n: name }   = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field] || null, ...new Array(99).fill().map(_ => null) ]
+		let data = this.data = [ realTime[field], ...new Array(99).fill().map(_ => __Null__) ]
 		let options = {
 			grid: {
 				top:    '14px',
@@ -34,7 +34,7 @@ export default class Charts extends React.Component {
 				min: minValue || 0,
 				max: maxValue || 100,
 			},
-			series: {
+			series: [{
 				name: '模拟数据',
 				type: 'line',
 				showSymbol: false,
@@ -43,7 +43,7 @@ export default class Charts extends React.Component {
 				lineStyle: {
 					color: '#020c7e'
 				},
-			},
+			}],
 			animation: false
 		}
 		this.state = {
@@ -51,6 +51,7 @@ export default class Charts extends React.Component {
 			options,
 			name,
 			unit,
+			field,
 		}
 	}
 	componentWillReceiveProps(props) {
@@ -58,16 +59,16 @@ export default class Charts extends React.Component {
 	}
 	updateData = ({ config, realTime, field }) => {
 		let { data, echart, state }  = this,
-			{ index, curId, options } = state,
+			{ index, options } = state,
 			{ minValue, maxValue } = config[field] || {},
-			{ series }  = options
-
+			{ series }  = options,
+			value = realTime[field]
 
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance()
 
-		data[++index] = realTime[field]
-		data[index == 99? 0: index + 1] = null
+		data[++index] = value
+		data[index == 99? 0: index + 1] = __Null__
 		if (index >= 99) index = 0
 
 		myChart.setOption({
@@ -82,20 +83,20 @@ export default class Charts extends React.Component {
 	}
 
 	render() {
-		let { data } = this.props
+		let { data, handleClick }   = this.props
 		let { options, name, unit } = this.state
 
 		return (
-			<div className="charts-draw">
+			<div className="charts-draw" onClick={handleClick}>
 				<div className="cd-title fs14">
-					<b>{name}</b>
+					<b style={{ marginRight: 5 }}>{name}</b>
 					<span className="c-gray">{unit}</span>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
 					echarts={echarts}
-					notMerge={true}
-					lazyUpdate={true}
+					notMerge={false}
+					lazyUpdate={false}
 					option={options}
 					style={{height: '100%'}}
 				/>

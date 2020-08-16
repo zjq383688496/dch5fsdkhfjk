@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { CloseOutlined } from '@ant-design/icons'
+import { HomeFilled } from '@ant-design/icons'
 
 import ChartLine from './component/ChartLine'
 import ChartWave from './component/ChartWave'
@@ -99,7 +99,7 @@ class Detail extends React.Component {
 						<Index data={measure} field1={'FIO2'}  field2={'R'}     field3={'C'} />
 					</div>
 				</div>
-				<div className="btn-back" onClick={this.goBack}><CloseOutlined /></div>
+				<div className="btn-back" onClick={this.goBack}><HomeFilled /></div>
 			</div>
 		)
 	}

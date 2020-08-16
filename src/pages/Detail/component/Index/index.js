@@ -1,9 +1,9 @@
 import React from 'react'
-import { HeatMapOutlined } from '@ant-design/icons'
+// import { HeatMapOutlined } from '@ant-design/icons'
 import './index.less'
 
 const colorMap = {
-	ETCO2: 'tan'
+	// ETCO2: 'tan'
 }
 const iconMap = {
 	ETCO2: 1,
@@ -76,9 +76,9 @@ export default class Index extends React.Component {
 							<div className="col-18 tr">{data3}</div>
 							<div className="col-6 tr">
 								{
-									iconMap[field3]
+									/*iconMap[field3]
 									? <HeatMapOutlined style={{ fontSize: '2vw', paddingBottom: '.2vw' }} />
-									: null
+									: null*/
 								}
 							</div>
 						</div>

@@ -1,4 +1,5 @@
 module.exports = Object.assign(window, {
+	__Null__: { value: null },
 	__Redux__: {
 		CurDevice: null,	// 当前设备
 		// 设备数据

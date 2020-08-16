@@ -46,6 +46,11 @@
 	.flex();
 	flex-direction: column;
 }
+.position(@index){
+	@px: @index * 4;
+	.t@{px} { top:   @px/@vw; }
+	.l@{px} { left:  @px/@vw; }
+}
 .padding(@index){
 	@px: @index * 4;
 	.pt@{px} { padding-top:    @px/@vw; }
@@ -73,6 +78,7 @@
 	.margin(@i);
 	.height(@i);
     .loopPad(@i+1);
+    .position(@i);
 }
 .loopPad(1);
 
