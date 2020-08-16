@@ -19,7 +19,7 @@ export default class Dashboard extends React.Component {
 		this.timeout = setInterval(() => {
 			let init = Math.random()
 			this.setState({ init })
-		}, 100)
+		}, __Interval__)
 	}
 	render() {
 		let { Devices } = window.__Redux__

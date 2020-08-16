@@ -40,8 +40,17 @@ export function data2cache(data) {
 	let { Cache } = window.__Redux__
 	let { group } = Cache
 
-	let { device, packageCode } = data,
-		{ id, name, no, revision } = device,
+	let { device, packageCode } = data
+	if (!device) {
+		device = {
+			id: 1,
+			name: "V300",
+			no: "5002",
+			revision: "02.51:04.0",
+		}
+		// return console.log(packageCode)
+	}
+	let { id, name, no, revision } = device,
 		analysisFun = d2c[packageCode]
 
 	if (!analysisFun) return// console.log(packageCode)

@@ -11,7 +11,7 @@ function WS() {
 		fetch(urlStart)
 		// socket.send('')
 		// sendMessage(socket)
-		cache2device()
+		cache2device(__Interval__)
 		// setTimeout(_ => {
 		// 	fetch(urlStop)
 		// }, 2e4)

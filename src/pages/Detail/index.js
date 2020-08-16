@@ -30,7 +30,7 @@ class Detail extends React.Component {
 			let init = Math.random(),
 				data = this.getDevice(deviceId)
 			this.setState({ init, data })
-		}, 100)
+		}, __Interval__)
 	}
 	goBack = () => {
 		this.props.history.push('/dashboard')
