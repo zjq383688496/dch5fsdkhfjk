@@ -14,11 +14,11 @@ export default class Index extends React.Component {
 	componentDidMount() {
 	}
 	render() {
-		let { color = 'blue-d', title, data, handleClick } = this.props
+		let { active, color = 'blue-d', title, data, handleClick } = this.props
 		let { u: unit, n: name } = __Map__.m[title] || {}
 		let value = data[title]
 		return (
-			<div className="db-index-item fx-col p4" onClick={handleClick}>
+			<div className={`db-index-item fx-col p4 ${active? 's-active': ''}`} onClick={handleClick}>
 				<div className="fx row-10">
 					<div className={`col-12 c-${color} fs12`}>
 						<b>{name}</b>

@@ -28,24 +28,12 @@
 			background-color: #d9ecf1;
 			z-index: 10;
 			p {
+				display: flex;
+				align-items: center;
 				padding-left: 6/@vw;
-				height: 36/@vw;
-				line-height: 36/@vw;
-			}
-			&-menu {
-				position: absolute;
-				top: 36/@vw;
-				left: 44/@vw;
-				right: 0;
-				p {
-					height: 24/@vw;
-					line-height: 24/@vw;
-					font-size: 14/@vw;
-					margin-bottom: 2/@vw;
-					background-color: #fff;
-					&.s-active {
-						background-color: #b7d0dc;
-					}
+				height: 33.33%;
+				&.s-active {
+					background-color: #b7d0dc;
 				}
 			}
 		}
@@ -76,13 +64,17 @@
 	}
 	.db-index {
 		display: flex;
-		border-top: 1px solid #fff;
+		/*border-top: 1px solid #fff;*/
 		&-item {
 			flex: 1;
-			border-left: 1px solid #fff;
+			border: 1px solid #fff;
+			/*border-left: 1px solid #fff;
 			&:first-child {
 				border-left: 0;
-			}
+			}*/
+			/*&.s-active {
+				border-color: @tan;
+			}*/
 		}
 	}
 	.db-mask {

@@ -42,7 +42,7 @@ class Detail extends React.Component {
 	render() {
 		let { data } = this.state
 		if (!data) return null
-		let { config, device, measure, realTime } = data,
+		let { alarm, config, device, measure, realTime } = data,
 			{ no } = device
 		return (
 			<div className="detail">
@@ -69,9 +69,9 @@ class Detail extends React.Component {
 							<div className="row-14 fs48">VC-AC</div>
 							<div className="row-10 fs36 lh36">AutoFlow</div>
 						</div>
-						<div className="di-title col-16 fx-col fs36 lh36">
-							<div className="row-12 bc-red c-white p12">VT High</div>
-							<div className="row-12 bc-yellow c-black p12">etCO2 High</div>
+						<div className="di-title col-16 fx-col fs36 lh40">
+							<div className="row-12 bc-red c-white p12">{alarm[0]}</div>
+							<div className="row-12 bc-yellow c-black p12">{alarm[1]}</div>
 						</div>
 					</div>
 					<div className="d-content fx-col">
@@ -88,8 +88,9 @@ class Detail extends React.Component {
 				</div>
 				<div className="detail-r fx-col">
 					<div className="d-info h124 fx bc-blue">
-						<div className="di-title col-24 fx-col fs36 lh36">
-							<div className="row-12 bc-cyan c-black p8">Soundsystem error</div>
+						<div className="di-title col-24 fx-col fs36 lh40">
+							<div className="row-12 bc-cyan c-black p8">{alarm[2]}</div>
+							<div className="row-12 c-white p8">{alarm[3]}</div>
 						</div>
 					</div>
 					<div className="d-content fx-col">

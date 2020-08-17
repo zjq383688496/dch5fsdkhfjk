@@ -42,20 +42,20 @@ export function data2cache(data) {
 
 	let { device, packageCode } = data
 	if (!device) {
-		device = {
-			id: 1,
-			name: "V300",
-			no: "5002",
-			revision: "02.51:04.0",
-		}
-		// return console.log(packageCode)
+		// device = {
+		// 	id: 1,
+		// 	name: "V300",
+		// 	no: "5002",
+		// 	revision: "02.51:04.0",
+		// }
+		return// console.log(packageCode)
 	}
 	let { id, name, no, revision } = device,
 		analysisFun = d2c[packageCode]
 
 	if (!analysisFun) return// console.log(packageCode)
 
-	if (!Cache[id]) Cache[id] = { queues: {}, measure: {}, config: {}, device, deviceId: id }
+	if (!Cache[id]) Cache[id] = { alarm: [], queues: {}, measure: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
 	analysisFun(data, cache)
@@ -79,7 +79,7 @@ export function cache2device(time = 100) {
 				if (!Devices[i]) Devices[i] = {}
 				let Device = Devices[i]
 				let cache  = Cache[id],
-					{ config, device, deviceId, measure, queues } = cache,
+					{ alarm, config, device, deviceId, measure, queues } = cache,
 					realTime   = {}
 
 				// 遍历波形数据队列
@@ -108,6 +108,7 @@ export function cache2device(time = 100) {
 				// console.log(queues)
 
 				Object.assign(Device, {
+					alarm: alarm.map(_ => _.message),
 					config,
 					device,
 					deviceId,
@@ -193,8 +194,44 @@ const d2c = {
 	},
 	MEASURED_DATA_P2(data, cache) {
 		measureFun(data, cache)
+	},
+	// 告警
+	DEVICE_ALARM_P1(data, cache) {
+		alarmFun(data, cache)
+	},
+	DEVICE_ALARM_P2(data, cache) {
+		alarmFun(data, cache)
 	}
 }
+// 告警通用方法
+function alarmFun(data, cache) {
+	let { packageCode, deviceAlarmList } = data
+	let { alarm } = cache
+	deviceAlarmList.forEach(deviceAlarm => {
+		let { priority, alarmmPhrase } = deviceAlarm
+		alarm.push({ priority, message: alarmmPhrase })
+	})
+	alarm = alarmUnique(alarm)
+	alarm = alarmSort(alarm)
+	alarm = cache.alarm = alarm.slice(0, 4)
+
+}
+
+// 告警去重
+function alarmUnique(arr = []) {
+	let strArr = arr.map(_ => JSON.stringify(_)),
+		newArr = Array.from(new Set(strArr))
+	return newArr.map(_ => JSON.parse(_))
+}
+// 告警排序
+function alarmSort(arr = []) {
+	return arr.sort((a, b) => {
+		let priority = a.priority - b.priority
+		if (priority) return priority
+		return a.message.localeCompare(b.message)
+	})
+}
+
 // 观测值通用方法
 function measureFun(data, { measure }) {
 	let { packageCode, measureDataList } = data

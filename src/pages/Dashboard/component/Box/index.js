@@ -79,17 +79,16 @@ class Box extends React.Component {
 		return [ ...mDom, ...nDom ]
 	}
 	renderIndex = measure => {
-		let { indexs } = this.state
+		let { indexs, measureIndex } = this.state
 		return indexs.map((key, i) => {
-			return <Index key={i} title={key} data={measure} handleClick={e => this.measureShow(e, i, true)} />
+			return <Index key={i} title={key} data={measure} active={i === measureIndex} handleClick={e => this.measureShow(e, i, true)} />
 		})
 	}
 	render() {
 		let { waveState, waveValue, measureState, measureValue, wait } = this.state
 		let { data } = this.props
-		let { config, device, measure, realTime } = data
+		let { alarm, config, device, measure, realTime } = data
 		let wave = __Map__.r[waveValue]
-
 		return (
 			<div className="dashboard-box">
 				<div className="db-info fx h40 bc-blue c-white">
@@ -102,20 +101,16 @@ class Box extends React.Component {
 						<p className="fs12 lh12">AutoFlow</p>
 					</div>
 					<div className="db-info-item col-12 bc-red p8 pl20 fs24 lh24">
-						<p className="fs-20 lh-20">VT High</p>
+						<p className="fs-20 lh-20">{alarm[0]}</p>
 					</div>
 				</div>
 				{
 					waveState
 					?
 					<div className="db-info-wave fs16">
-						<p className="bc-white">波形</p>
-						<p>参数</p>
-						<div className="db-info-wave-menu">
-							<p onClick={e => this.waveChange(e, 'PAW')} className={waveValue === 'PAW'? 's-active': ''}>压力</p>
-							<p onClick={e => this.waveChange(e, 'FLOW')} className={waveValue === 'FLOW'? 's-active': ''}>流量</p>
-							<p onClick={e => this.waveChange(e, 'VOLUME')} className={waveValue === 'VOLUME'? 's-active': ''}>容量</p>
-						</div>
+						<p onClick={e => this.waveChange(e, 'PAW')} className={waveValue === 'PAW'? 's-active': ''}>压力</p>
+						<p onClick={e => this.waveChange(e, 'FLOW')} className={waveValue === 'FLOW'? 's-active': ''}>流量</p>
+						<p onClick={e => this.waveChange(e, 'VOLUME')} className={waveValue === 'VOLUME'? 's-active': ''}>容量</p>
 					</div>
 					: null
 				}
@@ -152,8 +147,5 @@ class Box extends React.Component {
 		)
 	}
 }
-					// <Index title={'ETCO2'} color={'tan'} data={measure} onClick={measureShow} />
-					// <Index title={'PEAK'}  data={measure} />
-					// <Index title={'VTE'}   color={'red'} data={measure} />
-					// <Index title={'MVE'}   data={measure} />
+
 export default withRouter(Box)
