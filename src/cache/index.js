@@ -55,7 +55,7 @@ export function data2cache(data) {
 
 	if (!analysisFun) return// console.log(packageCode)
 
-	if (!Cache[id]) Cache[id] = { alarm: [], queues: {}, measure: {}, config: {}, device, deviceId: id }
+	if (!Cache[id]) Cache[id] = { alarm: {}, queues: {}, measure: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
 	analysisFun(data, cache)
@@ -106,9 +106,10 @@ export function cache2device(time = 100) {
 
 				// console.clear()
 				// console.log(queues)
-
+				// console.log(Object.values(alarm))
 				Object.assign(Device, {
-					alarm: alarm.map(_ => _.message),
+					// alarm: alarm.map(_ => _.message),
+					alarm: Object.values(alarm).map(_ => _.message),
 					config,
 					device,
 					deviceId,
@@ -119,31 +120,6 @@ export function cache2device(time = 100) {
 		}, time)
 	}, 3000)
 }
-
-/* 数据缓存 */
-// function _data2cache(data, Cache) {
-	
-// 	data.forEach(device => {
-// 		let { deviceId, deviceNo, userName, bedNo, attribute, area, series = [] } = device
-// 		if (!Cache[deviceId]) Cache[deviceId] = { queues: [], index: {} }
-// 		let cache = Cache[deviceId],
-// 			{ index, lastId, queues } = cache,
-// 			len = queues.length
-// 		Object.assign(cache, {
-// 			deviceId,
-// 			deviceNo,
-// 			userName,
-// 			bedNo,
-// 			attribute,
-// 			area,
-// 		})
-// 		let last = series[series.length - 1]
-// 		queues.push(...series)
-// 		cache.lastId = last.id
-// 		series.forEach(_ => index[_.id] = true)
-// 		if (!new Set(group).has(deviceId)) group.push(deviceId)
-// 	})
-// }
 
 const d2c = {
 	// TEXT_MESSAGE({ device }) {
@@ -161,11 +137,17 @@ const d2c = {
 		if (!realTimeConfigurationList || !realTimeConfigurationList.length) return
 
 		realTimeConfigurationList.forEach(realTimeConfiguration => {
-			let { code } = realTimeConfiguration,
+			let { code, minValue, maxValue } = realTimeConfiguration,
 				key = code.replace(`${packageCode}_`, '')
+				// key = code.replace(`REAL_TIME_DATA_`, '')
 
-			limitVal.n[key]
-			Object.assign(realTimeConfiguration, limitVal.n[key])
+			// 数据极限值替换
+			// debugger
+			Object.assign(realTimeConfiguration, {
+				minValue: Math.ceil(minValue),
+				maxValue: Math.ceil(maxValue)
+			})
+			// Object.assign(realTimeConfiguration, limitVal.n[key])
 
 			config[key] = realTimeConfiguration
 		})
@@ -209,27 +191,46 @@ function alarmFun(data, cache) {
 	let { alarm } = cache
 	deviceAlarmList.forEach(deviceAlarm => {
 		let { priority, alarmmPhrase } = deviceAlarm
-		alarm.push({ priority, message: alarmmPhrase })
+		let message = alarmmPhrase.replace(/(^\s+|\s+$)/g, '')
+		let key = `${priority}_${message}`
+		alarm[key] = { priority, message, timestamp: Date.now() }
+		// alarm.push({ priority, message: alarmmPhrase, timestamp: Date.now() })
 	})
-	alarm = alarmUnique(alarm)
-	alarm = alarmSort(alarm)
-	alarm = cache.alarm = alarm.slice(0, 4)
+	alarmExpire(alarm)
+	cache.alarm = alarmSort(alarm)
+	// alarm = cache.alarm = alarm.slice(0, 4)
 
 }
-
-// 告警去重
-function alarmUnique(arr = []) {
-	let strArr = arr.map(_ => JSON.stringify(_)),
-		newArr = Array.from(new Set(strArr))
-	return newArr.map(_ => JSON.parse(_))
+// 告警过期
+function alarmExpire(alarm) {
+	Object.keys(alarm).forEach(key => {
+		let { timestamp } = alarm[key],
+			timeDiff = Date.now() - timestamp
+		if (timeDiff > 3e3) {
+			console.log('时间差', timeDiff, key)
+			delete alarm[key]
+		}
+	})
 }
 // 告警排序
-function alarmSort(arr = []) {
-	return arr.sort((a, b) => {
-		let priority = a.priority - b.priority
-		if (priority) return priority
-		return a.message.localeCompare(b.message)
+function alarmSort(alarm) {
+	let newAlarm = {}
+	let sortArr = Object.keys(alarm).sort((key1, key2) => {
+		let alarm1 = alarm[key1],
+			alarm2 = alarm[key2],
+			p1     = alarm1.priority,
+			p2     = alarm2.priority,
+			pDiff  = p1 - p2
+
+		if (pDiff) return pDiff
+		alarm1.timestamp - alarm2.timestamp
 	})
+	sortArr.forEach((key, i) => {
+		if (i > 3) return
+		alarm[key].idx = i
+		newAlarm[key] = alarm[key]
+	})
+	return newAlarm
 }
 
 // 观测值通用方法

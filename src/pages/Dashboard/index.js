@@ -27,9 +27,20 @@ export default class Dashboard extends React.Component {
 		return (
 			<div className="dashboard">
 				{
-					Devices.map((data, i) => {
-						return <Box data={data} key={i} />
+					new Array(16).fill().map((_, i) => {
+						if (i === 0 && Devices[0]) {
+							return <Box data={Devices[0]} key={i} />
+						}
+						if (i === 6 && Devices[1]) {
+							return <Box data={Devices[1]} key={i} />
+						}
+						return (<div key={i}></div>)
 					})
+				}
+				{
+					/*Devices.map((data, i) => {
+						return <Box data={data} key={i} />
+					})*/
 				}
 			</div>
 		)

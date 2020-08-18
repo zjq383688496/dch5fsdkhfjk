@@ -20,7 +20,7 @@ export default class ChartLine extends React.Component {
 			infoX = __Map__.r[fieldX] || {},
 			infoY = __Map__.r[fieldY] || {}
 
-		let data = this.data = [ [ rtX.value, rtY.value ], ...new Array(99).fill().map(_ => [ null, null ]) ]
+		let data = this.data = [ [ rtX.value, rtY.value ], ...new Array(10).fill().map(_ => [ null, null ]) ]
 
 		let options = {
 			grid: {
@@ -55,6 +55,7 @@ export default class ChartLine extends React.Component {
 				showSymbol: false,
 				hoverAnimation: false,
 				data,
+				smooth: true,
 				lineStyle: {
 					color: '#020c7e'
 				},
