@@ -35,6 +35,17 @@ let cacheWait = {
 	VOLUME: false,
 }
 
+let realTimeBase = {
+	PAW:    {},
+	FLOW:   {},
+	VOLUME: {},
+}
+let realTimeMax = {
+	PAW:    '',
+	FLOW:   '',
+	VOLUME: '',
+}
+
 // 数据 存入 缓存
 export function data2cache(data) {
 	let { Cache } = window.__Redux__
@@ -52,6 +63,14 @@ export function data2cache(data) {
 	}
 	let { id, name, no, revision } = device,
 		analysisFun = d2c[packageCode]
+
+	if (id === 5001) {
+		device.username = 'Trump'
+	}
+	if (id === 5002) {
+		device.username = 'Donald'
+	}
+
 
 	if (!analysisFun) return// console.log(packageCode)
 
@@ -76,7 +95,11 @@ export function cache2device(time = 100) {
 		_interval = setInterval(() => {
 			let { group = [] } = Cache
 			group.forEach((id, i) => {
-				if (!Devices[i]) Devices[i] = {}
+				if (!Devices[i]) Devices[i]   = {}
+				if (!__Base__[id]) __Base__[id] = {}
+				if (!__MAX__[id])  __MAX__[id]  = {}
+				let Base   = __Base__[id]
+				let MAX    = __MAX__[id]
 				let Device = Devices[i]
 				let cache  = Cache[id],
 					{ alarm, config, device, deviceId, measure, queues } = cache,
@@ -92,7 +115,8 @@ export function cache2device(time = 100) {
 						queue.splice(0, len - 30)
 					}
 
-					realTime[key] = !wait? { value: queue.shift() }: __Null__ 
+					let value = queue[0]
+					realTime[key] = !wait? { value }: __Null__ 
 					// realTime[key] = queue.shift() || null
 
 					// 触发等待
@@ -103,6 +127,48 @@ export function cache2device(time = 100) {
 						cacheWait[key] = false
 					}
 				})
+
+				let nowLen = Object.values(realTime).length,
+					newLen = Object.values(realTime).filter(({ value }) => value != null).length
+				
+				if (nowLen === 4 && newLen === 4) {
+					Object.keys(queues).forEach(key => {
+						let val = queues[key].shift()
+
+						// 获取波形基数
+						if (MAX[key]) return
+						if (!Base[key]) Base[key] = {}
+						let max = Base[key]
+						if (!max) return
+						// if (key != 'FLOW') return
+						if (!max[val]) max[val] = 0
+						++max[val]
+						let mv = 0, mk = ''
+						// console.log(val)
+						Object.keys(max).forEach(k => {
+							let v = max[k]
+							if (v > mv) {
+								mv = v
+								mk = k
+							}
+						})
+						if (mv > 16) {
+							let MX = MAX[key] = {}
+							MX[mk] = true
+							MX[0]  = true
+							Base[key] = {}
+						}
+						// console.log(`${key} maxValue: `, mk, mv)
+					})
+				} else {
+					console.log('数据异常: ', JSON.stringify(realTime))
+					realTime = {
+						PAW:    __Null__,
+						FLOW:   __Null__,
+						VOLUME: __Null__,
+						CO2:    __Null__,
+					}
+				}
 
 				// console.clear()
 				// console.log(queues)
@@ -167,7 +233,8 @@ const d2c = {
 			if (!queues[key]) queues[key] = []
 
 			let queue = queues[key]
-			queue.push(Math.ceil(value))
+			// queue.push(Math.ceil(value))
+			queue.push(+(value).toFixed(4))
 		})
 	},
 	// 观测值
@@ -207,7 +274,7 @@ function alarmExpire(alarm) {
 		let { timestamp } = alarm[key],
 			timeDiff = Date.now() - timestamp
 		if (timeDiff > 3e3) {
-			console.log('时间差', timeDiff, key)
+			// console.log('时间差', timeDiff, key)
 			delete alarm[key]
 		}
 	})

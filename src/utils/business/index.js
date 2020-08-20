@@ -1,6 +1,10 @@
 module.exports = Object.assign(window, {
 	__Interval__: 160,
 	__Null__: { value: null },
+
+	__Base__: {},	// 启示数据测试
+	__MAX__:  {},	// 最大数据保存
+
 	__Redux__: {
 		CurDevice: null,	// 当前设备
 		// 设备数据

@@ -40,26 +40,26 @@ class Detail extends React.Component {
 		return data
 	}
 	render() {
-		let { data } = this.state
+		let { data, deviceId } = this.state
 		if (!data) return null
 		let { alarm, config, device, measure, realTime } = data,
-			{ no } = device
+			{ no, name, username } = device
 		return (
 			<div className="detail">
 				<div className="detail-l fx-col">
 					<div className="d-info h124 bc-blue c-white">
 						<div className="di-title fx-col col-24 p8 pl20">
-							<div className="row-8 fs24">姓 名:{no}</div>
+							<div className="row-8 fs24">姓 名:{username}</div>
 							<div className="row-8 fs24">床 号:{no}</div>
-							<div className="row-8 fs24">住院号:{no}</div>
+							<div className="row-8 fs24">住院号:{name}</div>
 						</div>
 					</div>
 					<div className="d-content fx-col">
 						<div className="row-12">
-							<ChartLine config={config} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
+							{<ChartLine config={config} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />}
 						</div>
 						<div className="row-12">
-							<ChartLine config={config} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
+							<ChartLine config={config} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
 						</div>
 					</div>
 				</div>
@@ -76,7 +76,7 @@ class Detail extends React.Component {
 					</div>
 					<div className="d-content fx-col">
 						<div className="row-8">
-							<ChartWave field={'CO2'}  config={config} realTime={realTime} color={'tan'} />
+							<ChartWave field={'VOLUME'}  config={config} realTime={realTime} color={'tan'} />
 						</div>
 						<div className="row-8">
 							<ChartWave field={'PAW'}  config={config} realTime={realTime} />
