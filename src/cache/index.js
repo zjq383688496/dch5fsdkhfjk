@@ -65,10 +65,13 @@ export function data2cache(data) {
 		analysisFun = d2c[packageCode]
 
 	if (id === 5001) {
-		device.username = 'Trump'
+		device.username = '张三'
+		device.name = '300101'
 	}
 	if (id === 5002) {
-		device.username = 'Donald'
+		device.username = '李四'
+		device.no = '5007'
+		device.name = '300128'
 	}
 
 
