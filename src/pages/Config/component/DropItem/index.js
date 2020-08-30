@@ -11,13 +11,7 @@ export default class DropItem extends React.Component {
 	}
 	componentDidMount() {
 	}
-	onDragEnter = e => {
-		e.preventDefault()
-	}
-	onDragLeave = e => {
-		e.preventDefault()
-	}
-	onDragOver = e => {
+	onStop = e => {
 		e.preventDefault()
 	}
 	render() {
@@ -25,9 +19,10 @@ export default class DropItem extends React.Component {
 		return (
 			<div
 				className="drop-item"
-				onDragEnter={this.onDragEnter}
-				onDragLeave={this.onDragLeave}
-				onDragOver={this.onDragEnter}
+				onDragStart={this.onStop}
+				onDragEnter={this.onStop}
+				onDragLeave={this.onStop}
+				onDragOver={this.onStop}
 				onDrop={e => onDrop(e, idx)}
 				draggable="true"
 			>

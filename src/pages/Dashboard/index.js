@@ -23,18 +23,18 @@ export default class Dashboard extends React.Component {
 	}
 	render() {
 		let { Devices } = window.__Redux__
-		if (!Devices.length) return null
+		if (!__Grid__.length) return null
+		// if (!Devices.length) return null
+		if (isEmptyObject(Devices)) return null
 		return (
 			<div className="dashboard">
 				{
-					new Array(16).fill().map((_, i) => {
-						if (i === 0 && Devices[0]) {
-							return <Box data={Devices[0]} key={i} />
-						}
-						if (i === 6 && Devices[1]) {
-							return <Box data={Devices[1]} key={i} />
-						}
-						return (<div key={i}></div>)
+					__Grid__.map((grid, i) => {
+						if (!grid) return <div key={i}></div>
+						if (!grid) return <div key={i}></div>
+						let device = Devices[grid.id]
+						if (!device) return <div key={i}></div>
+						return <Box data={device} key={i} />
 					})
 				}
 				{

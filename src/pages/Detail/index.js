@@ -36,8 +36,7 @@ class Detail extends React.Component {
 		this.props.history.push('/dashboard')
 	}
 	getDevice(deviceId) {
-		let [ data = null ] = __Redux__.Devices.filter(_ => _.deviceId == deviceId)
-		return data
+		return __Redux__.Devices[deviceId]
 	}
 	render() {
 		let { data, deviceId } = this.state

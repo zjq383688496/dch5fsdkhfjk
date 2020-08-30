@@ -98,12 +98,13 @@ export function cache2device(time = 100) {
 		_interval = setInterval(() => {
 			let { group = [] } = Cache
 			group.forEach((id, i) => {
-				if (!Devices[i]) Devices[i]   = {}
+				// if (!Devices[i]) Devices[i]   = {}
+				if (!Devices[id]) Devices[id]   = {}
 				if (!__Base__[id]) __Base__[id] = {}
 				if (!__MAX__[id])  __MAX__[id]  = {}
 				let Base   = __Base__[id]
 				let MAX    = __MAX__[id]
-				let Device = Devices[i]
+				let Device = Devices[id]
 				let cache  = Cache[id],
 					{ alarm, config, device, deviceId, measure, queues } = cache,
 					realTime   = {}

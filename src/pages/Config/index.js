@@ -85,7 +85,7 @@ export default class Config extends React.Component {
 		let devices = deepCopy(devicesFull)
 		devices = devices.filter(({ id, status }) => !gridIndex[id] && !!status)
 		if (_terminal) devices = devices.filter(({ positionName }) => new RegExp(_terminal).test(positionName))
-		if (_room)     devices = devices.filter(({ room }) => _room == room)
+		if (_room)     devices = devices.filter(({ departmentName }) => _room == departmentName)
 		this.setState({ devices })
 	}
 	// 渲染设备列表
@@ -135,6 +135,7 @@ export default class Config extends React.Component {
 			return grid? grid.id: 0
 		}).join(',')
 		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {
+			__Grid__ = grids
 			this.websocket()
 			this.props.history.push('/dashboard')
 		})
