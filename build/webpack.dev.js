@@ -15,6 +15,8 @@ baseCfg.plugins && baseCfg.plugins.unshift(
 	// new webpack.NoErrorsPlugin()
 )
 
+var target = 'http://94.191.50.139:8089'
+
 Object.assign(baseCfg, {
 	// entry: {
 	// 	app: ['./src/index']
@@ -37,7 +39,9 @@ Object.assign(baseCfg, {
 		hot: true,
 		noInfo: false,
 		proxy: {
-			'/experiment': 'http://94.191.50.139:8089'
+			'/account':    target,
+			'/experiment': target,
+			'/Machines':   target,
 		}
 	}
 })

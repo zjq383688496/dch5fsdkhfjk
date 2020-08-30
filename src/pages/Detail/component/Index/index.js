@@ -1,13 +1,5 @@
 import React from 'react'
-// import { HeatMapOutlined } from '@ant-design/icons'
 import './index.less'
-
-const colorMap = {
-	// ETCO2: 'tan'
-}
-const iconMap = {
-	ETCO2: 1,
-}
 
 export default class Index extends React.Component {
 	constructor(props) {
@@ -21,9 +13,9 @@ export default class Index extends React.Component {
 			info2  = __Map__.m[field2] || {},
 			data3  = data[field3],
 			info3  = __Map__.m[field3] || {},
-			color1 = colorMap[field1] || 'blue-d',
-			color2 = colorMap[field2] || 'blue-d',
-			color3 = colorMap[field3] || 'blue-d'
+			color1 = 'blue-d',
+			color2 = 'blue-d',
+			color3 = 'blue-d'
 		return [ data1, data2, data3, field1, field2, field3, color1, color2, color3, info1, info2, info3 ]
 	}
 	render() {
@@ -41,14 +33,7 @@ export default class Index extends React.Component {
 						<div className="col-6 fx c-gray">{info1.u}</div>
 					</div>
 					<div className="row-17 fx">
-						<div className="col-6 fx-col fs28 lh28 jc-fe c-gray">
-							{
-							/*
-								<p>{data1.max}</p>
-								<p>{data1.min}</p>
-							*/
-							}
-						</div>
+						<div className="col-6 fx-col fs28 lh28 jc-fe c-gray"></div>
 						<div className="col-18 fx-col fs120 lh160">{data1}</div>
 					</div>
 				</div>
@@ -74,13 +59,6 @@ export default class Index extends React.Component {
 						</div>
 						<div className="row-18 fs60 lh70 fx">
 							<div className="col-18 tr">{data3}</div>
-							<div className="col-6 tr">
-								{
-									/*iconMap[field3]
-									? <HeatMapOutlined style={{ fontSize: '2vw', paddingBottom: '.2vw' }} />
-									: null*/
-								}
-							</div>
 						</div>
 					</div>
 				</div>

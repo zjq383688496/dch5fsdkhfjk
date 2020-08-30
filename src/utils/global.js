@@ -37,7 +37,7 @@ module.exports = Object.assign(window, {
 		}
 	},
 	randomRange(num1 = 0, num2 = 100, digit = 0) {
-		return ((num2 - num1) * random() + num1).toFixed(digit)
+		return +((num2 - num1) * random() + num1).toFixed(digit)
 	},
 	pad(num, digit = 3, space = '0') {
 		var str    = new Array(digit).join(space) + space
@@ -75,6 +75,14 @@ module.exports = Object.assign(window, {
 		document.body.appendChild(mask)
 		return mask
 	},
+	_wait(time = 1000) {
+		return new Promise(res => {
+			let t = setTimeout(() => {
+				clearTimeout(t)
+				res()
+			}, time)
+		})
+	},
 	// 删除遮罩层
 	removeMask() {
 		let mk = document.querySelectorAll('.help-mask')
@@ -83,5 +91,6 @@ module.exports = Object.assign(window, {
 	},
 	px2vw(px) {
 		return `${parseFloat(px) / 19.2}vw`
-	}
+	},
+	Ajax: require('./ajax'),
 })

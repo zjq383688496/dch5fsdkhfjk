@@ -6,7 +6,7 @@ export default class Home extends React.Component {
 	}
 	componentDidMount() {
 		let { history } = this.props
-		history.push('/dashboard')
+		history.push('/login')
 	}
 	render() {
 		return null

@@ -1,0 +1,43 @@
+.device-item {
+	position: relative;
+	flex: 1;
+	min-width: 226px;
+	height: 120px;
+	background-color: #fff;
+	padding: 16px;
+	margin-bottom: 15px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+	pointer-events: none;
+	user-select: none;
+	p {
+		font-size: 14px;
+	}
+	span {
+		font-size: 16px;
+		line-height: 40px;
+		font-weight: bold;
+	}
+	.di-status {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		display: flex;
+		align-items: center;
+		div {
+			width: 6px;
+			height: 6px;
+			border-radius: 6px;
+			margin-right: 4px;
+		}
+		&-0 {
+			background-color: red;
+		}
+		&-1 {
+			background-color: #52C41A;
+		}
+	}
+	&-none {
+		background-color: #f0f2f5;
+	}
+}

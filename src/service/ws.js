@@ -1,5 +1,5 @@
 var { data2cache, cache2device } = require('@cache')
-var mock = require('./mock')
+// var mock = require('./mock')
 
 // var timeout = null
 function WS() {
