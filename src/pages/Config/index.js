@@ -27,16 +27,16 @@ export default class Config extends React.Component {
 			devicesFull: [],
 			grids: [],
 			gridIndex: {},
-			options,
+			// options,
+			options: {},
 			search: {
 				terminal: '',
-				room:     0,
+				room:     '',
 			}
 		}
 	}
 	componentDidMount() {
-		this.getDevices()
-		this.getGrid()
+		this.getDevices(this.getGrid)
 	}
 	max = randomRange(90, 130)
 	// 参数变更
@@ -46,63 +46,46 @@ export default class Config extends React.Component {
 		this.setState({ search }, this.deviceFilter)
 	}
 	// 获取设备
-	getDevices = () => {
+	getDevices = cb => {
+		if (!__User__) return
 		let deviceIndex = {}
 		let options = {}
-		let devices = new Array(this.max).fill().map((_, i) => {
-			let id   = i + 1,
-				rId  = randomRange(1, 10),
-				room = `科室${rId}`
-			let device = {
-				id,
-				name: `患者${id}`,
-				status: randomRange(0, 1),
-				no: '1234567890',
-				rId,
-				room,
-				terminal: `点位${id}`,
-			}
-			deviceIndex[id] = device
-			options[rId]    = { value: rId, name: room }
-			return device
+		serviceApi.devices().then(devices => {
+			devices.forEach(device => {
+				let { id, departmentName } = device
+				deviceIndex[id] = device
+				options[departmentName] = departmentName
+			})
+			this.setState({ devices, devicesFull: devices, deviceIndex, options }, cb)
 		})
-
-		return { devices, deviceIndex, options }
 	}
 	// 获取配置
-	getGrid = async () => {
+	getGrid = () => {
+		if (!__User__) return
 		let { deviceIndex } = this.state
-		let gridIndex = {}
-		let grids = []
-		let init = 0
-		while (init < 16) {
-			let has1 = randomRange(0, 1),
-				has2 = randomRange(0, 1)
-
-			if (!has1 || !has2) {
-				grids.push(undefined)
-				init++
-				continue
-			}
-
-			let id = randomRange(1, this.max + 1)
-			if (gridIndex[id]) continue
-			let device = deviceIndex[id]
-			gridIndex[id] = device
-			grids.push(device)
-			init++
-		}
-		this.setState({ grids, gridIndex }, this.deviceFilter)
+		let { dashboardId } = __User__
+		serviceApi.dashboards(dashboardId).then(({ config }) => {
+			let gridIndex = {}
+			let grids = config.split(',').map(_ => {
+				let id = +_
+				if (!id) id = undefined
+				if (id && !gridIndex[id]) {
+					let device = deviceIndex[id]
+					gridIndex[id] = device
+					return device
+				}
+			})
+			this.setState({ grids, gridIndex }, this.deviceFilter)
+		})
 	}
 	// 过滤设备列表
 	deviceFilter = () => {
 		let { devicesFull, gridIndex, search } = this.state,
-			{ terminal: _terminal, room } = search
+			{ terminal: _terminal, room: _room } = search
 		let devices = deepCopy(devicesFull)
 		devices = devices.filter(({ id, status }) => !gridIndex[id] && !!status)
-		if (_terminal) devices = devices.filter(({ terminal }) => new RegExp(_terminal).test(terminal))
-		if (room)      devices = devices.filter(({ rId }) => rId == room)
-
+		if (_terminal) devices = devices.filter(({ positionName }) => new RegExp(_terminal).test(positionName))
+		if (_room)     devices = devices.filter(({ room }) => _room == room)
 		this.setState({ devices })
 	}
 	// 渲染设备列表
@@ -120,8 +103,8 @@ export default class Config extends React.Component {
 	// 渲染科室搜索
 	renderOptions = () => {
 		let { options } = this.state
-		return Object.values(options).map(({ value, name }, i) => {
-			return <Option key={i} value={value}>{name}</Option>
+		return Object.values(options).map((room, i) => {
+			return <Option key={i} value={room}>{room}</Option>
 		})
 	}
 	// 拖拽
@@ -145,8 +128,16 @@ export default class Config extends React.Component {
 		this.setState({ grids, gridIndex }, this.deviceFilter)
 	}
 	submit = () => {
-		this.websocket()
-		this.props.history.push('/dashboard')
+		if (!__User__) return
+		let { grids } = this.state
+		let { dashboardId } = __User__
+		let config = grids.map(grid => {
+			return grid? grid.id: 0
+		}).join(',')
+		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {
+			this.websocket()
+			this.props.history.push('/dashboard')
+		})
 	}
 	websocket = () => {
 		if (window.__SOCKET__) return
@@ -166,14 +157,14 @@ export default class Config extends React.Component {
 								value={terminal}
 								className="cb-item"
 								placeholder="请输入点位"
-								onChange={e => this.updateSearch({ terminal: e.target.value, room: 0 })}
+								onChange={e => this.updateSearch({ terminal: e.target.value })}
 							/>
 							<Select
 								value={room}
 								className="cb-item"
 								onChange={room => this.updateSearch({ room })}
 							>
-								<Option value={0}>{'请选择'}</Option>
+								<Option value={''}>{'请选择'}</Option>
 								{ this.renderOptions() }
 							</Select>
 						</div>

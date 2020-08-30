@@ -42,6 +42,7 @@ Object.assign(baseCfg, {
 			'/account':    target,
 			'/experiment': target,
 			'/Machines':   target,
+			'/Dashboards': target,
 		}
 	}
 })
