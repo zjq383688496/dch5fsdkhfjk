@@ -42,14 +42,14 @@ class Detail extends React.Component {
 		let { data, deviceId } = this.state
 		if (!data) return null
 		let { alarm, config, device, measure, realTime } = data,
-			{ no, name, username } = device
+			{ positionName = '', name = '', patientName = '' } = device
 		return (
 			<div className="detail">
 				<div className="detail-l fx-col">
 					<div className="d-info h124 bc-blue c-white">
 						<div className="di-title fx-col col-24 p8 pl20">
-							<div className="row-8 fs24">姓 名:{username}</div>
-							<div className="row-8 fs24">床 号:{no}</div>
+							<div className="row-8 fs24">姓 名:{patientName}</div>
+							<div className="row-8 fs24">床 号:{positionName}</div>
 							<div className="row-8 fs24">住院号:{name}</div>
 						</div>
 					</div>

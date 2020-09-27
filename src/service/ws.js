@@ -5,11 +5,11 @@ var { data2cache, cache2device } = require('@cache')
 function WS() {
 	let { id }   = __User__
 	let urlWs    = __URL__.getWSUrl(id),
-		urlStart = __URL__.getWSStart(id),
+		// urlStart = __URL__.getWSStart(id),
 		urlStop  = __URL__.getWSStop(id)
 	let socket = window._ws = new WebSocket(urlWs)
 	socket.onopen = function() {
-		fetch(urlStart)
+		// fetch(urlStart)
 		// socket.send('')
 		// sendMessage(socket)
 		cache2device(__Interval__)

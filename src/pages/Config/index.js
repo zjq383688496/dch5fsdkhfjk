@@ -132,7 +132,10 @@ export default class Config extends React.Component {
 		let { grids } = this.state
 		let { dashboardId } = __User__
 		let config = grids.map(grid => {
-			return grid? grid.id: 0
+			if (!grid) return 0
+			let { id } = grid
+			window.__GridIndex__[id] = grid
+			return grid.id
 		}).join(',')
 		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {
 			__Grid__ = grids

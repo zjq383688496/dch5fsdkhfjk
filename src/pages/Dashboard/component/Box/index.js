@@ -94,7 +94,7 @@ class Box extends React.Component {
 				<div className="db-info fx h40 bc-blue c-white">
 					<div className="db-info-item col-6 p4 pl8" onClick={e => this.toPage(device)}>
 						<p className="fs12 lh12">床号:</p>
-						<p className="fs20 lh20">{device.no}</p>
+						<p className="fs20 lh20">{device.positionName}</p>
 					</div>
 					<div className="db-info-item col-6 p4 pl8">
 						<p className="fs20 lh20">VC-AC</p>

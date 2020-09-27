@@ -52,30 +52,15 @@ export function data2cache(data) {
 	let { group } = Cache
 
 	let { device, packageCode } = data
-	if (!device) {
-		// device = {
-		// 	id: 1,
-		// 	name: "V300",
-		// 	no: "5002",
-		// 	revision: "02.51:04.0",
-		// }
-		return// console.log(packageCode)
-	}
-	let { id, name, no, revision } = device,
+	if (!device) return// console.log(packageCode)
+
+	let { id } = device,
 		analysisFun = d2c[packageCode]
 
-	if (id === 5001) {
-		device.username = '张三'
-		device.name = '300101'
-	}
-	if (id === 5002) {
-		device.username = '李四'
-		device.no = '5007'
-		device.name = '300128'
-	}
-
-
 	if (!analysisFun) return// console.log(packageCode)
+
+	if (!__GridIndex__[id]) return
+	device = __GridIndex__[id]
 
 	if (!Cache[id]) Cache[id] = { alarm: {}, queues: {}, measure: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
