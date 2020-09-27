@@ -1,5 +1,5 @@
 module.exports = Object.assign(window, {
-	__Interval__: 160,
+	__Interval__: 100,	// 160
 	__Null__: { value: null },
 	__User__: null,
 	__Grid__: [],
