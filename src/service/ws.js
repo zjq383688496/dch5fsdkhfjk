@@ -3,9 +3,10 @@ var { data2cache, cache2device } = require('@cache')
 
 // var timeout = null
 function WS() {
-	let urlWs    = __URL__.getWSUrl(10),
-		urlStart = __URL__.getWSStart(10),
-		urlStop  = __URL__.getWSStop(10)
+	let { id }   = __User__
+	let urlWs    = __URL__.getWSUrl(id),
+		urlStart = __URL__.getWSStart(id),
+		urlStop  = __URL__.getWSStop(id)
 	let socket = window._ws = new WebSocket(urlWs)
 	socket.onopen = function() {
 		fetch(urlStart)
