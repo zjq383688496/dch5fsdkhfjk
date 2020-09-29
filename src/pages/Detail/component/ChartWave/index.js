@@ -11,6 +11,8 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
+const limit = 150 - 1
+
 export default class ChartWave extends React.Component {
 	constructor(props) {
 		super(props)
@@ -19,7 +21,7 @@ export default class ChartWave extends React.Component {
 			{ u: unit, n: name } = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field], ...new Array(99).fill().map(_ => null) ]
+		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => null) ]
 
 		let options = {
 			grid: {
@@ -80,8 +82,8 @@ export default class ChartWave extends React.Component {
 		let myChart = echart.getEchartsInstance()
 		let { minValue, maxValue } = config[field] || {}
 		data[++index] = realTime[field]
-		data[index == 99? 0: index + 1] = null
-		if (index >= 99) index = 0
+		data[index == limit? 0: index + 1] = null
+		if (index >= limit) index = 0
 
 		myChart.setOption({
 			yAxis: {
@@ -90,10 +92,8 @@ export default class ChartWave extends React.Component {
 			},
 			series: [{ data }]
 		})
-		// if (field === 'PAW') {
-		// 	console.clear()
-		// 	console.log(data)
-		// }
+
+		console.log(data)
 		this.setState({ data, index })
 	}
 	render() {

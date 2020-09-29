@@ -87,14 +87,17 @@ class Box extends React.Component {
 	render() {
 		let { waveState, waveValue, measureState, measureValue, wait } = this.state
 		let { data } = this.props
-		let { alarm, config, device, measure, realTime } = data
-		let wave = __Map__.r[waveValue]
+		let { alarm, config, device, measure, realTime } = data,
+			{ id, positionName } = device,
+			// keyIndex = __DeviceKey__[id],
+			wave = __Map__.r[waveValue]
+
 		return (
 			<div className="dashboard-box">
 				<div className="db-info fx h40 bc-blue c-white">
 					<div className="db-info-item col-6 p4 pl8" onClick={e => this.toPage(device)}>
 						<p className="fs12 lh12">床号:</p>
-						<p className="fs20 lh20">{device.positionName}</p>
+						<p className="fs20 lh20">{positionName}</p>
 					</div>
 					<div className="db-info-item col-6 p4 pl8">
 						<p className="fs20 lh20">VC-AC</p>

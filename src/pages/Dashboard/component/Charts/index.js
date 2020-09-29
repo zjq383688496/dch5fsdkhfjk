@@ -8,6 +8,8 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
+const limit = 150 - 1
+
 export default class Charts extends React.Component {
 	constructor(props) {
 		super(props)
@@ -16,7 +18,7 @@ export default class Charts extends React.Component {
 			{ u: unit, n: name }   = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field], ...new Array(99).fill().map(_ => __Null__) ]
+		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => __Null__) ]
 		let options = {
 			grid: {
 				top:    '14px',
@@ -68,8 +70,8 @@ export default class Charts extends React.Component {
 		let myChart = echart.getEchartsInstance()
 
 		data[++index] = value
-		data[index == 99? 0: index + 1] = __Null__
-		if (index >= 99) index = 0
+		data[index == limit? 0: index + 1] = __Null__
+		if (index >= limit) index = 0
 
 		myChart.setOption({
 			yAxis: {

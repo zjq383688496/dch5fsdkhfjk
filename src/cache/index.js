@@ -69,21 +69,19 @@ export function data2cache(data) {
 
 	if (!new Set(group).has(id)) group.push(id)
 
-	// let { data = [] } = global_data
-	// _data2cache(data, Cache)
 	ReduxUpdate({})
 }
 
 // 缓存 进入 渲染
 export function cache2device(time = 100) {
 	let { Cache, Devices } = window.__Redux__
-	// clearInterval(_interval)
-	// _interval = setTimeout(() => {
 	setTimeout(() => {
+		
+		deviceKeyVaild()
+
 		_interval = setInterval(() => {
 			let { group = [] } = Cache
 			group.forEach((id, i) => {
-				// if (!Devices[i]) Devices[i]   = {}
 				if (!Devices[id]) Devices[id]   = {}
 				if (!__Base__[id]) __Base__[id] = {}
 				if (!__MAX__[id])  __MAX__[id]  = {}
@@ -105,22 +103,17 @@ export function cache2device(time = 100) {
 					}
 
 					let value = queue[0]
-					realTime[key] = !wait? { value }: __Null__ 
-					// realTime[key] = queue.shift() || null
+					realTime[key] = !wait? { value }: __Null__
 
 					// 触发等待
-					if (!len) {
-						cacheWait[key] = true
-					}
-					if (len >= 30) {
-						cacheWait[key] = false
-					}
+					if (!len)      cacheWait[key] = true
+					if (len >= 30) cacheWait[key] = false
 				})
 
 				let nowLen = Object.values(realTime).length,
 					newLen = Object.values(realTime).filter(({ value }) => value != null).length
 				
-				if (nowLen === 4 && newLen === 4) {
+				if (nowLen === newLen) {
 					Object.keys(queues).forEach(key => {
 						let val = queues[key].shift()
 
@@ -129,11 +122,9 @@ export function cache2device(time = 100) {
 						if (!Base[key]) Base[key] = {}
 						let max = Base[key]
 						if (!max) return
-						// if (key != 'FLOW') return
 						if (!max[val]) max[val] = 0
 						++max[val]
 						let mv = 0, mk = ''
-						// console.log(val)
 						Object.keys(max).forEach(k => {
 							let v = max[k]
 							if (v > mv) {
@@ -147,7 +138,6 @@ export function cache2device(time = 100) {
 							MX[0]  = true
 							Base[key] = {}
 						}
-						// console.log(`${key} maxValue: `, mk, mv)
 					})
 				} else {
 					console.log('数据异常: ', JSON.stringify(realTime))
@@ -158,12 +148,7 @@ export function cache2device(time = 100) {
 						CO2:    __Null__,
 					}
 				}
-
-				// console.clear()
-				// console.log(queues)
-				// console.log(Object.values(alarm))
 				Object.assign(Device, {
-					// alarm: alarm.map(_ => _.message),
 					alarm: Object.values(alarm).map(_ => _.message),
 					config,
 					device,
@@ -174,6 +159,20 @@ export function cache2device(time = 100) {
 			})
 		}, time)
 	}, 3000)
+}
+
+function deviceKeyVaild() {
+	let { Cache } = window.__Redux__
+	let { group = [] } = Cache
+	group.forEach((id, i) => {
+		if (!__DeviceKey__[id]) __DeviceKey__[id] = {}
+		let device = __DeviceKey__[id],
+			cache  = Cache[id],
+			{ queues } = cache
+		Object.keys(queues).map(key => {
+			device[key] = true
+		})
+	})
 }
 
 const d2c = {
