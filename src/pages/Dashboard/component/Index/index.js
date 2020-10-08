@@ -9,7 +9,7 @@ export default class Index extends React.Component {
 	}
 	render() {
 		let { active, color = 'blue-d', title, data, handleClick } = this.props
-		let { u: unit, n: name } = __Map__.m[title] || {}
+		let { u: unit, n: name } = __Map__.m[title] || __Map__.not[title] || {}
 		let value = data[title]
 		return (
 			<div className={`db-index-item fx-col p4 ${active? 's-active': ''}`} onClick={handleClick}>

@@ -11,7 +11,7 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
-const limit = 150 - 1
+const limit = 200 - 1
 
 export default class ChartWave extends React.Component {
 	constructor(props) {
@@ -26,12 +26,15 @@ export default class ChartWave extends React.Component {
 		let options = {
 			grid: {
 				top:    '32px',
-				right:  '10px',
-				bottom: '32px',
+				right:  '20px',
+				bottom: '48px',
 				left:   '56px',
 			},
 			xAxis: {
-				type: 'category',
+				type: 'value',
+				min: 0,
+				max: limit + 1,
+				interval: 50,
 			},
 			yAxis: {
 				type: 'value',
@@ -93,7 +96,6 @@ export default class ChartWave extends React.Component {
 			series: [{ data }]
 		})
 
-		console.log(data)
 		this.setState({ data, index })
 	}
 	render() {
@@ -102,6 +104,9 @@ export default class ChartWave extends React.Component {
 			<div className="chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b>{name}</b>
+				</div>
+				<div className={`cw-subtitle fs18`}>
+					<b>时间/秒</b>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}

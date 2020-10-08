@@ -8,6 +8,14 @@ import Index     from './component/Index'
 
 import './index.less'
 
+const defData = {
+	alarm:    [],
+	config:   {},
+	device:   {},
+	measure:  {},
+	realTime: {},
+}
+
 class Detail extends React.Component {
 	constructor(props) {
 		super(props)
@@ -36,22 +44,23 @@ class Detail extends React.Component {
 		this.props.history.push('/dashboard')
 	}
 	getDevice(deviceId) {
-		return __Redux__.Devices[deviceId]
+		return __Redux__.Devices[deviceId] || deviceByGrid(deviceId)
 	}
 	render() {
 		let { data, deviceId } = this.state
 		if (!data) return null
 		let { alarm, config, device, measure, realTime } = data,
-			{ positionName = '', name = '', patientName = '' } = device,
+			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device,
 			keyIndex = __DeviceKey__[deviceId]
 		return (
 			<div className="detail">
 				<div className="detail-l fx-col">
 					<div className="d-info h124 bc-blue c-white">
 						<div className="di-title fx-col col-24 p8 pl20">
-							<div className="row-8 fs24">姓 名: {patientName}</div>
-							<div className="row-8 fs24">床 号: {positionName}</div>
-							<div className="row-8 fs24">住院号: {name}</div>
+							<div className="row-6 fs20 lh28">姓 名: {patientName}</div>
+							<div className="row-6 fs20 lh28">点 位: {positionName}</div>
+							<div className="row-6 fs20 lh28">科 室: {departmentName}</div>
+							<div className="row-6 fs20 lh28">设 备: {deviceName}</div>
 						</div>
 					</div>
 					<div className="d-content fx-col">
@@ -76,7 +85,7 @@ class Detail extends React.Component {
 					</div>
 					<div className="d-content fx-col">
 						<div className="row-8">
-							<ChartWave field={'VOLUME'} config={config} realTime={realTime} color={'tan'} />
+							<ChartWave field={'VOLUME'} config={config} realTime={realTime} />
 						</div>
 						<div className="row-8">
 							<ChartWave field={'PAW'} config={config} realTime={realTime} />
@@ -90,7 +99,7 @@ class Detail extends React.Component {
 					<div className="d-info h124 fx bc-blue">
 						<div className="di-title col-24 fx-col fs36 lh40">
 							<div className="row-12 bc-cyan c-black p8">{alarm[2]}</div>
-							<div className="row-12 c-white p8">{alarm[3]}</div>
+							<div className="row-12 c-white p8">仅供测试非临床使用</div>
 						</div>
 					</div>
 					<div className="d-content fx-col">
@@ -104,6 +113,13 @@ class Detail extends React.Component {
 			</div>
 		)
 	}
+}
+
+function deviceByGrid(id) {
+	let grid = __GridIndex__[id],
+		data = deepCopy(defData)
+	data.device = deepCopy(grid)
+	return data
 }
 
 export default Detail

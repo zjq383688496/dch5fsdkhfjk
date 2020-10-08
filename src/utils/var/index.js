@@ -34,11 +34,11 @@ module.exports = Object.assign(window, {
 				n: 'FiO2',
 			},
 			R: {
-				u: 'mbar',	// mbar/L/s
+				u: 'mbar/L/s',	// mbar || mbar/L/s
 				n: 'R',
 			},
 			C: {
-				u: 'mL',	// mL/mbar
+				u: 'mL/mbar',	// mL || mL/mbar
 				n: 'C',
 			},
 			VTE: {

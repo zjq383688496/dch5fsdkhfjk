@@ -15,7 +15,7 @@ class Box extends React.Component {
 			measureState: false,
 			measureIndex: -1,
 			wait: false,
-			indexs: ['ETCO2', 'PEAK', 'VTE', 'MVE']
+			indexs: ['PEAK', 'VT', 'RR', 'FIO2']
 		}
 	}
 	componentWillUnmount() {
@@ -23,6 +23,7 @@ class Box extends React.Component {
 	}
 	timeout = null
 	toPage = ({ id }) => {
+		if (!id) return
 		this.props.history.push(`/detail/${id}`)
 	}
 	// 波形交互界面
@@ -87,9 +88,8 @@ class Box extends React.Component {
 	render() {
 		let { waveState, waveValue, measureState, measureValue, wait } = this.state
 		let { data } = this.props
-		let { alarm, config, device, measure, realTime } = data,
-			{ id, positionName } = device,
-			// keyIndex = __DeviceKey__[id],
+		let { alarm, config, device = {}, measure, realTime } = data,
+			{ positionName = '' } = device,
 			wave = __Map__.r[waveValue]
 
 		return (

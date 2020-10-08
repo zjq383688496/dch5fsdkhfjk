@@ -8,6 +8,8 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
+let { round } = Math
+
 export default class ChartLine extends React.Component {
 	constructor(props) {
 		super(props)
@@ -92,9 +94,9 @@ export default class ChartLine extends React.Component {
 		let { data, echart, state }  = this,
 			{ options, point, equal, max, deviceId } = state,
 			{ series }  = options,
-			MAX  = __MAX__[deviceId],
-			mX   = MAX[fieldX],
-			mY   = MAX[fieldY]
+			MAX  = __MAX__[deviceId] || {},
+			mX   = MAX[fieldX] || 0,
+			mY   = MAX[fieldY] || 0
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
 			rtX = realTime[fieldX] || {},
@@ -103,47 +105,18 @@ export default class ChartLine extends React.Component {
 			vY  = rtY.value,
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
+			rX  = round(vX) + 0,
+			rY  = round(vY) + 0,
 			key = `${vX}_${vY}`,
 			_point = [ vX, vY ]
 
-
-		if (mX && mY && mX[vX] && mY[vY]) {
-			console.log(mX, mY)
+		if (mX && mY && mX[rX] && mY[rY]) {
+			// console.log(mX, mY, rX, rY)
 			this.data = data = [ _point ]
 			this.updateChart(myChart, cX, cY, data)
 			return this.setState({ data, equal, point: _point, max })
 		}
 
-		// if (__MAX__[deviceId]) {}
-
-		// console.log(vX, vY)
-		// console.log(JSON.stringify(max))
-		// if (!max[key]) max[key] = 0
-		// ++max[key]
-
-		// let mv = 0,
-		// 	mk = ''
-		// Object.keys(max).forEach(key => {
-		// 	let v = max[key]
-		// 	if (v > mv) {
-		// 		mv = v
-		// 		mk = key
-		// 	}
-		// })
-		// console.log('maxValue: ', mk, mv)
-		// if (JSON.stringify(_point) === JSON.stringify(point)) {
-		// 	equal++
-		// 	if (equal > 3) {
-		// 		this.data = data = [ _point ]
-		// 		// console.log('相等: ', equal, vX, vY)
-		// 		this.updateChart(myChart, cX, cY, data)
-		// 		return this.setState({ data, equal, point: _point, max })
-		// 	}
-		// } else {
-		// 	equal = 0
-		// }
-
-		// data.shift()
 		data.push([ rtX.value, rtY.value ])
 
 		this.updateChart(myChart, cX, cY, data)
