@@ -1,0 +1,27 @@
+.notepad-box {
+	display: flex;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	table {
+		width: 100%;
+		table-layout: fixed;
+		tr {
+			border-top: 1px solid #000;
+			border-left: 1px solid #000;
+		}
+		th,
+		td {
+			padding: 0 5px;
+			border-right: 1px solid #000;
+			border-bottom: 1px solid #000;
+		}
+		th {
+			line-height: 32px;
+			background-color: #fff;
+		}
+		td {
+			line-height: 28px;
+		}
+	}
+}

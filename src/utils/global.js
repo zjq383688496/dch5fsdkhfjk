@@ -83,6 +83,15 @@ module.exports = Object.assign(window, {
 			}, time)
 		})
 	},
+	// 获取日期时间
+	getDate(da = new Date()) {
+		let year  = da.getFullYear(),
+			month = ('0' + (da.getMonth() + 1)).substr(-2),
+			date  = ('0' + da.getDate()).substr(-2),
+			hour  = ('0' + da.getHours()).substr(-2),
+			minu  = ('0' + da.getMinutes()).substr(-2)
+		return { year, month, date, hour, minu }
+	},
 	// 删除遮罩层
 	removeMask() {
 		let mk = document.querySelectorAll('.help-mask')
