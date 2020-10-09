@@ -24,7 +24,7 @@ class Detail extends React.Component {
 		this.state = {
 			data: null,
 			deviceId,
-			trendStatus: true,
+			trendStatus: false,
 		}
 	}
 	componentDidMount() {
@@ -54,9 +54,10 @@ class Detail extends React.Component {
 	}
 	render() {
 		let { data, deviceId, trendStatus } = this.state
-		if (!data) return null
+		if (!data || !__MIN_STATE__) return null
 		let { alarm, config, device, measure, realTime } = data,
-			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device
+			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device,
+			MIN = __MIN__[deviceId]
 		return (
 			<div className="detail fx-col">
 				<div className="detail-top h124">
@@ -105,23 +106,33 @@ class Detail extends React.Component {
 							<div className="detail-l fx-col">
 								<div className="d-content fx-col">
 									<div className="row-12">
-										{<ChartLine config={config} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />}
+										{
+											MIN
+											?
+											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
+											: null
+										}
 									</div>
 									<div className="row-12">
-										<ChartLine config={config} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
+										{
+											MIN
+											?
+											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
+											: null
+										}
 									</div>
 								</div>
 							</div>
 							<div className="detail-c fx-col">
 								<div className="d-content fx-col">
 									<div className="row-8">
-										<ChartWave field={'VOLUME'}  config={config} realTime={realTime} color={'tan'} />
+										{<ChartWave field={'VOLUME'}  config={config} realTime={realTime} />}
 									</div>
 									<div className="row-8">
-										<ChartWave field={'PAW'}  config={config} realTime={realTime} />
+										{<ChartWave field={'PAW'}  config={config} realTime={realTime} />}
 									</div>
 									<div className="row-8">
-										<ChartWave field={'FLOW'} config={config} realTime={realTime} />
+										{<ChartWave field={'FLOW'} config={config} realTime={realTime} />}
 									</div>
 								</div>
 							</div>

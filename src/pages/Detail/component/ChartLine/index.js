@@ -8,13 +8,15 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
-let { round } = Math
+const { abs, round } = Math
+const diffVal  = 10
+const maxIndex = 5
 
 export default class ChartLine extends React.Component {
 	constructor(props) {
 		super(props)
 		
-		let { fieldX, fieldY, config = {}, realTime = {}, deviceId } = props,
+		let { MIN, fieldX, fieldY, config = {}, realTime = {}, deviceId } = props,
 			rtX = realTime[fieldX] || {},
 			rtY = realTime[fieldY] || {},
 			cX  = config[fieldX] || {},
@@ -36,13 +38,11 @@ export default class ChartLine extends React.Component {
 				type: 'value',
 				min: cX.minValue || 0,
 				max: cX.maxValue || 100,
-				// interval: 5,
 				splitLine: { show: false },
 			},
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
-				// interval: 2,
 				splitLine: { show: false },
 				min: cY.minValue || 0,
 				max: cY.maxValue || 100,
@@ -65,6 +65,7 @@ export default class ChartLine extends React.Component {
 			}],
 			animation: false
 		}
+
 		this.state = {
 			deviceId,
 			options,
@@ -73,8 +74,7 @@ export default class ChartLine extends React.Component {
 			infoX,
 			infoY,
 			point,
-			equal: 0,
-			max: {}
+			minDis: getPointDis({ x: MIN[fieldX], y: MIN[fieldY] }),
 		}
 	}
 	componentDidMount() {
@@ -85,18 +85,42 @@ export default class ChartLine extends React.Component {
 	}
 	componentWillUnmount() {
 		clearTimeout(this.timeout)
+		clearTimeout(this.clear_timeout)
 	}
+	index = 0
 	timeout = null
-	task = () => {
-		this.timeout = setTimeout()
+	clear_timeout = null
+	clearTask = () => {
+		clearTimeout(this.clear_timeout)
+		this.clear_timeout = setTimeout(() => {
+			this.clearData()
+		}, 10000)
+	}
+	// task = () => {
+	// 	this.timeout = setTimeout()
+	// }
+	clearData = () => {
+		let { echart, props } = this,
+			{ fieldX, fieldY, config = {}, realTime = {} } = props
+		if (!echart || !echart.getEchartsInstance) return
+		let myChart = echart.getEchartsInstance()
+		let rtX = realTime[fieldX] || {},
+			rtY = realTime[fieldY] || {},
+			vX  = rtX.value,
+			vY  = rtY.value,
+			cX  = config[fieldX] || {},
+			cY  = config[fieldY] || {},
+			_point = [ vX, vY ],
+			data = this.data = [ _point ]
+		this.updateChart(myChart, cX, cY, data)
+		this.index = 0
+		this.setState({ data })
+		this.clearTask()
 	}
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
 		let { data, echart, state }  = this,
-			{ options, point, equal, max, deviceId } = state,
-			{ series }  = options,
-			MAX  = __MAX__[deviceId] || {},
-			mX   = MAX[fieldX] || 0,
-			mY   = MAX[fieldY] || 0
+			{ minDis, options, point, deviceId } = state,
+			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
 			rtX = realTime[fieldX] || {},
@@ -105,25 +129,32 @@ export default class ChartLine extends React.Component {
 			vY  = rtY.value,
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
-			rX  = round(vX) + 0,
-			rY  = round(vY) + 0,
-			key = `${vX}_${vY}`,
 			_point = [ vX, vY ]
 
-		if (mX && mY && mX[rX] && mY[rY]) {
-			// console.log(mX, mY, rX, rY)
-			this.data = data = [ _point ]
-			this.updateChart(myChart, cX, cY, data)
-			return this.setState({ data, equal, point: _point, max })
+		let curDis = getPointDis({ x: vX, y: vY }),
+			difDis = abs(curDis - minDis)
+
+		console.log(minDis, curDis, difDis)
+		if (difDis < diffVal) {
+			++this.index
+		} else {
+			this.index = 0
+		}
+
+		if (this.index > maxIndex) {
+			return this.clearData()
+			// this.data = data = [ _point ]
+			// this.updateChart(myChart, cX, cY, data)
+			// this.index = 0
+			// return this.setState({ data, point: _point })
 		}
 
 		data.push([ rtX.value, rtY.value ])
-
 		this.updateChart(myChart, cX, cY, data)
-
-		this.setState({ data, equal, point: _point, max })
+		this.setState({ data, point: _point })
 	}
-	updateChart(chart, x, y, data) {
+
+	updateChart(chart, x = {}, y = {}, data) {
 		chart.setOption({
 			xAxis: {
 				min: x.minValue || 0,

@@ -1,4 +1,4 @@
-var { random, round } = Math
+var { random, round, sqrt } = Math
 
 /* window 扩展方法 */
 module.exports = Object.assign(window, {
@@ -102,4 +102,10 @@ module.exports = Object.assign(window, {
 		return `${parseFloat(px) / 19.2}vw`
 	},
 	Ajax: require('./ajax'),
+	// 获取2点距离
+	getPointDis(point1, point2 = { x: 0, y: 0 }) {
+		let difX = point2.x - point1.x,
+			difY = point2.y - point1.y
+		return sqrt(difX * difX + difY * difY)
+	},
 })

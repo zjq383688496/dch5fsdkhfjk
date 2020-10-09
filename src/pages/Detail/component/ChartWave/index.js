@@ -11,7 +11,7 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
-const limit = 200 - 1
+const limit = 201 - 1
 
 export default class ChartWave extends React.Component {
 	constructor(props) {
@@ -27,14 +27,20 @@ export default class ChartWave extends React.Component {
 			grid: {
 				top:    '32px',
 				right:  '20px',
-				bottom: '48px',
+				bottom: '56px',
 				left:   '56px',
 			},
 			xAxis: {
-				type: 'value',
+				type: 'category',
 				min: 0,
-				max: limit + 1,
-				interval: 50,
+				max: limit,
+				data: splitNumber(limit),
+				axisTick: {
+					interval: 50,
+				},
+				axisLabel: {
+					verticalAlign: 'middle',
+				}
 			},
 			yAxis: {
 				type: 'value',
@@ -48,7 +54,7 @@ export default class ChartWave extends React.Component {
 					textStyle: {
 						fontSize: 16
 					}
-				}
+				},
 			},
 			series: [{
 				name: '模拟数据',
@@ -119,4 +125,11 @@ export default class ChartWave extends React.Component {
 			</div>
 		)
 	}
+}
+
+function splitNumber(limit, split = 50, div = 10) {
+	return new Array(limit + 1).fill().map((_, i) => {
+		let num = i % split
+		return num? '': i / div
+	})
 }

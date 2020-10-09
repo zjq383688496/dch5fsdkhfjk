@@ -10,7 +10,7 @@ let cacheWait = {
 	VOLUME: false,
 }
 
-let { round } = Math
+let { abs, round } = Math
 
 // 数据 存入 缓存
 export function data2cache(data) {
@@ -39,92 +39,79 @@ export function data2cache(data) {
 }
 
 // 缓存 进入 渲染
-export function cache2device(time = 100) {
+export async function cache2device(time = 100) {
 	let { Cache, Devices } = window.__Redux__
-	setTimeout(() => {
-		
-		deviceKeyVaild()
+	await _wait(3000)
+	deviceKeyVaild()
+	_interval = setInterval(() => {
+		let { group = [] } = Cache
+		group.forEach((id, i) => {
+			if (!Devices[id]) Devices[id]   = {}
+			if (!__Base__[id]) __Base__[id] = {}
+			if (!__MIN__[id])  __MIN__[id]  = {}
+			let Base   = __Base__[id]
+			let MIN    = __MIN__[id]
+			let Device = Devices[id]
+			let cache  = Cache[id],
+				{ alarm, config, device, deviceId, measure, queues } = cache,
+				realTime = {}
 
-		_interval = setInterval(() => {
-			let { group = [] } = Cache
-			group.forEach((id, i) => {
-				if (!Devices[id]) Devices[id]   = {}
-				if (!__Base__[id]) __Base__[id] = {}
-				if (!__MAX__[id])  __MAX__[id]  = {}
-				let Base   = __Base__[id]
-				let MAX    = __MAX__[id]
-				let Device = Devices[id]
-				let cache  = Cache[id],
-					{ alarm, config, device, deviceId, measure, queues } = cache,
-					realTime = {}
+			// 遍历波形数据队列
+			Object.keys(queues).forEach(key => {
+				let queue = queues[key],
+					len   = queue.length,
+					wait  = cacheWait[key]
 
-				// 遍历波形数据队列
-				Object.keys(queues).forEach(key => {
-					let queue = queues[key],
-						len   = queue.length,
-						wait  = cacheWait[key]
-
-					if (len >= 60) {
-						queue.splice(0, len - 30)
-					}
-
-					let value = queue[0]
-					realTime[key] = !wait? { value }: __Null__
-
-					// 触发等待
-					if (!len)      cacheWait[key] = true
-					if (len >= 30) cacheWait[key] = false
-				})
-
-				let nowLen = Object.values(realTime).length,
-					newLen = Object.values(realTime).filter(({ value }) => value != null).length
-				
-				if (nowLen === newLen) {
-					Object.keys(queues).forEach(key => {
-						let val = round(queues[key].shift())
-						// 获取波形基数
-						if (MAX[key]) return
-						if (!Base[key]) Base[key] = {}
-						let max = Base[key]
-						if (!max) return
-						if (!max[val]) max[val] = 0
-						++max[val]
-						let mv = 0, mk = ''
-						Object.keys(max).forEach(k => {
-							let v = max[k]
-							if (v > mv) {
-								mv = v
-								mk = k
-							}
-						})
-						if (mv > 16) {
-							// console.log(mv)
-							let MX = MAX[key] = {}
-							MX[mk] = true
-							MX[0]  = true
-							Base[key] = {}
-						}
-					})
-				} else {
-					console.log('数据异常: ', JSON.stringify(realTime))
-					realTime = {
-						PAW:    __Null__,
-						FLOW:   __Null__,
-						VOLUME: __Null__,
-						CO2:    __Null__,
-					}
+				if (len >= 60) {
+					queue.splice(0, len - 30)
 				}
-				Object.assign(Device, {
-					alarm: Object.values(alarm).map(_ => _.message),
-					config,
-					device,
-					deviceId,
-					measure,
-					realTime,
-				})
+
+				let value = queue[0]
+				realTime[key] = !wait? { value }: __Null__
+
+				// 触发等待
+				if (!len)      cacheWait[key] = true
+				if (len >= 30) cacheWait[key] = false
 			})
-		}, time)
-	}, 3000)
+
+			let nowLen = Object.values(realTime).length,
+				newLen = Object.values(realTime).filter(({ value }) => value != null).length
+			
+			if (nowLen === newLen) {
+				Object.keys(queues).forEach(key => {
+					let val = round(queues[key].shift())
+					// 获取波形基数
+					if (__MIN_STATE__) return
+					if (MIN[key] === undefined) {
+						MIN[key] = val
+					} else {
+						let MX  = abs(MIN[key]),
+							VAL = abs(val)
+						if (VAL < MX) MIN[key] = val
+					}
+
+				})
+			} else {
+				console.log('数据异常: ', JSON.stringify(realTime))
+				realTime = {
+					PAW:    __Null__,
+					FLOW:   __Null__,
+					VOLUME: __Null__,
+					CO2:    __Null__,
+				}
+			}
+			Object.assign(Device, {
+				alarm: Object.values(alarm).map(_ => _.message),
+				config,
+				device,
+				deviceId,
+				measure,
+				realTime,
+			})
+		})
+	}, time)
+	await _wait(6000)
+	__MIN_STATE__ = true
 }
 
 function deviceKeyVaild() {
@@ -166,7 +153,7 @@ const d2c = {
 				maxValue: Math.ceil(maxValue)
 			})
 
-			console.log(realTimeConfiguration)
+			// console.log(realTimeConfiguration)
 
 			config[key] = realTimeConfiguration
 		})

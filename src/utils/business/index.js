@@ -5,8 +5,9 @@ module.exports = Object.assign(window, {
 	__Grid__: [],
 	__GridIndex__: {},	// 设备布局所以
 	__DeviceKey__: {},	// 设备对应的key数
-	__Base__: {},		// 启示数据测试
-	__MAX__:  {},		// 最大数据保存
+	__Base__: {},		// 起始数据测试
+	__MIN__:  {},		// 最小数据保存
+	__MIN_STATE__: false,	// 最小数据不可用
 	__SOCKET__: null,	// ws服务
 	__Redux__: {
 		CurDevice: null,	// 当前设备
