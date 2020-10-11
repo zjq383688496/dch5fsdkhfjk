@@ -19,7 +19,7 @@ export default class DeviceItem extends React.Component {
 		return (
 			<div className="device-item fx-col">
 				<h2 className="row-10">{name}</h2>
-				<p className="row-6">{id}</p>
+				<p className="row-6">{code}</p>
 				<div className="fx row-6">
 					<span className="col-12">{departmentName}</span>
 					<span className="col-12">{positionName}</span>
