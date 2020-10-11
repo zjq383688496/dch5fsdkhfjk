@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.less'
 
-import { Input, Button, Space } from 'antd'
+import { Input, Button, Space, message } from 'antd'
 import { DeleteFilled, EditFilled } from '@ant-design/icons'
 
 import DeviceItem from '../DeviceItem'
@@ -23,6 +23,9 @@ export default class DropItem extends React.Component {
 	}
 	onFinish = (e, idx) => {
 		let { bedName }  = this.state
+		if (this.isRe(bedName, idx)) {
+			return message.error('床位名称重复!')
+		}
 		__BedName__[idx] = bedName
 		this.setState({ editState: false })
 	}
@@ -31,6 +34,17 @@ export default class DropItem extends React.Component {
 	}
 	update = config => {
 		this.setState(config)
+	}
+	isRe(name, idx) {
+		if (!name || __BedName__[idx] === name) return false
+		let jg = false
+		Object.keys(__BedName__).forEach(i => {
+			if (i === idx) return
+			if (__BedName__[i] === name) {
+				jg = true
+			}
+		})
+		return jg
 	}
 	render() {
 		let { editState, bedName } = this.state
