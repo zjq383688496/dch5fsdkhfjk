@@ -22,6 +22,8 @@ function WS() {
 		if (!/^{/.test(data)) return
 		let da = JSON.parse(data)
 		data2cache(da)
+		console.log(data)
+		console.log('-----------------')
 		// if (da.packageCode === 'REAL_TIME_CONFIGURATION') {
 		// 	console.log(JSON.stringify(da))
 		// 	mmm = da

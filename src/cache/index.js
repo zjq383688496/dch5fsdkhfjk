@@ -41,11 +41,13 @@ export function data2cache(data) {
 // 缓存 进入 渲染
 export async function cache2device(time = 100) {
 	let { Cache, Devices } = window.__Redux__
-	await _wait(3000)
+	await _wait(2000)
 	deviceKeyVaild()
+	// let now = Date.now()
 	_interval = setInterval(() => {
+		// console.log('开始耗时: ', Date.now() - now, 's')
+		// now = Date.now()
 		let { group = [] } = Cache
-		// document.title = __VisibilityState__
 		group.forEach((id, i) => {
 			if (!Devices[id]) Devices[id] = {}
 			if (!__MIN__[id]) __MIN__[id] = {}
@@ -61,8 +63,9 @@ export async function cache2device(time = 100) {
 					len   = queue.length,
 					wait  = cacheWait[key]
 
-				if (len >= 60) {
-					queue.splice(0, len - 30)
+				if (len >= 70) {
+					console.log(`当前数据量已达: ${len}, 清除40条数据!`)
+					queue.splice(0, len - 40)
 				}
 
 				let value = queue[0]
@@ -75,8 +78,18 @@ export async function cache2device(time = 100) {
 
 			let nowLen = Object.values(realTime).length,
 				newLen = Object.values(realTime).filter(({ value }) => value != null).length
+
+			if (nowLen !== newLen) {
+				console.log('====================')
+				Object.keys(realTime).forEach(key => {
+					let { value } = realTime[key]
+					if (value == null) console.log(key, ':', value)
+				})
+				console.log('====================')
+			}
+
 			
-			if (nowLen === newLen) {
+			// if (nowLen === newLen) {
 				Object.keys(queues).forEach(key => {
 					let val = round(queues[key].shift())
 					// 获取波形基数
@@ -90,15 +103,15 @@ export async function cache2device(time = 100) {
 					}
 
 				})
-			} else {
-				console.log('数据异常: ', JSON.stringify(realTime))
-				realTime = {
-					PAW:    __Null__,
-					FLOW:   __Null__,
-					VOLUME: __Null__,
-					CO2:    __Null__,
-				}
-			}
+			// } else {
+			// 	console.log('数据异常: ', JSON.stringify(realTime))
+			// 	realTime = {
+			// 		PAW:    __Null__,
+			// 		FLOW:   __Null__,
+			// 		VOLUME: __Null__,
+			// 		CO2:    __Null__,
+			// 	}
+			// }
 			if (__VisibilityState__ === 'hidden') {
 				realTime = {
 					PAW:    __Null__,
@@ -116,8 +129,9 @@ export async function cache2device(time = 100) {
 				realTime,
 			})
 		})
+		// console.log('执行耗时: ', Date.now() - now, 's')
 	}, time)
-	await _wait(6000)
+	await _wait(5300)
 	__MIN_STATE__ = true
 }
 
@@ -174,7 +188,6 @@ const d2c = {
 				key = code.replace(`${packageCode}_`, '')
 
 			if (!queues[key]) queues[key] = []
-
 			let queue = queues[key]
 			queue.push(+(value).toFixed(4))
 		})
