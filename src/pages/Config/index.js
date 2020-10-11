@@ -66,12 +66,26 @@ export default class Config extends React.Component {
 		let { dashboardId } = __User__
 		serviceApi.dashboards(dashboardId).then(({ config }) => {
 			let gridIndex = {}
-			let grids = config.split(',').map(_ => {
-				let id = +_
-				if (!id) id = undefined
+			if (/^[\d,]+$/.test(config)) {
+				config = config.split(',').map(_ => {
+					let id = +_
+					let obj = {}
+					obj[id] = ''
+					return obj
+				})
+			} else {
+				config = JSON.parse(config)
+			}
+			let grids = config.map((item, i) => {
+				if (!item) {
+					__BedName__[i] = ''
+					return
+				}
+				let id = +Object.keys(item)[0]
 				if (id && !gridIndex[id]) {
 					let device = deviceIndex[id]
 					gridIndex[id] = device
+					__BedName__[i] = item[id]
 					return device
 				}
 			})
@@ -131,12 +145,15 @@ export default class Config extends React.Component {
 		if (!__User__) return
 		let { grids } = this.state
 		let { dashboardId } = __User__
-		let config = grids.map(grid => {
-			if (!grid) return 0
+		let config = JSON.stringify(grids.map((grid, i) => {
+			let obj = {}
+			if (!grid) return obj
 			let { id } = grid
+			__GridMap__[id] = i
 			window.__GridIndex__[id] = grid
-			return grid.id
-		}).join(',')
+			obj[id] = __BedName__[i]
+			return obj
+		}))
 		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {
 			__Grid__ = grids
 			this.websocket()

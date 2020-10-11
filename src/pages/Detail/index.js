@@ -52,12 +52,18 @@ class Detail extends React.Component {
 	getDevice(deviceId) {
 		return __Redux__.Devices[deviceId] || deviceByGrid(deviceId)
 	}
+	getBedName(deviceId) {
+		let idx = __GridMap__[deviceId]
+		let bedName = __BedName__[idx]
+		return bedName
+	}
 	render() {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data || !__MIN_STATE__) return null
 		let { alarm, config, device, measure, realTime } = data,
 			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device,
 			MIN = __MIN__[deviceId]
+		let bedName = this.getBedName(deviceId)
 		return (
 			<div className="detail fx-col">
 				<div className="detail-top h124">
@@ -67,7 +73,8 @@ class Detail extends React.Component {
 								<div className="row-6 fs20 lh28">姓 名: {patientName}</div>
 								<div className="row-6 fs20 lh28">点 位: {positionName}</div>
 								<div className="row-6 fs20 lh28">科 室: {departmentName}</div>
-								<div className="row-6 fs20 lh28">设 备: {deviceName}</div>
+								<div className="row-6 fs20 lh28">设 备: {name}</div>
+								<span className="di-bedName p8 lh28">{bedName}</span>
 							</div>
 						</div>
 					</div>
@@ -150,7 +157,7 @@ class Detail extends React.Component {
 				</div>
 				<div className="btn-box h124 fx-col">
 					<div className="btn-back" onClick={this.goBack}><HomeFilled /></div>
-					<div className="btn-back" onClick={this.goTrend}><HomeFilled /></div>
+					{/*<div className="btn-back" onClick={this.goTrend}><HomeFilled /></div>*/}
 				</div>
 			</div>
 		)

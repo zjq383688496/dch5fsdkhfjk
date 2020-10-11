@@ -108,4 +108,14 @@ module.exports = Object.assign(window, {
 			difY = point2.y - point1.y
 		return sqrt(difX * difX + difY * difY)
 	},
+	getVisibilityState() {
+		var prefixes = ['webkit', 'moz', 'ms', 'o']
+		if ('visibilityState' in document) return 'visibilityState'
+		for (var i = 0; i < prefixes.length; i++) {
+			if ((prefixes[i] + 'VisibilityState') in document) {
+				return prefixes[i] + 'VisibilityState'
+			}
+		}
+		return null
+	},
 })

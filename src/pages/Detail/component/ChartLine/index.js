@@ -134,7 +134,6 @@ export default class ChartLine extends React.Component {
 		let curDis = getPointDis({ x: vX, y: vY }),
 			difDis = abs(curDis - minDis)
 
-		console.log(minDis, curDis, difDis)
 		if (difDis < diffVal) {
 			++this.index
 		} else {

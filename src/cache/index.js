@@ -45,11 +45,10 @@ export async function cache2device(time = 100) {
 	deviceKeyVaild()
 	_interval = setInterval(() => {
 		let { group = [] } = Cache
+		document.title = __VisibilityState__
 		group.forEach((id, i) => {
 			if (!Devices[id]) Devices[id]   = {}
-			if (!__Base__[id]) __Base__[id] = {}
-			if (!__MIN__[id])  __MIN__[id]  = {}
-			let Base   = __Base__[id]
+			if (!__MIN__[id]) __MIN__[id]  = {}
 			let MIN    = __MIN__[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
@@ -93,6 +92,14 @@ export async function cache2device(time = 100) {
 				})
 			} else {
 				console.log('数据异常: ', JSON.stringify(realTime))
+				realTime = {
+					PAW:    __Null__,
+					FLOW:   __Null__,
+					VOLUME: __Null__,
+					CO2:    __Null__,
+				}
+			}
+			if (__VisibilityState__ === 'hidden') {
 				realTime = {
 					PAW:    __Null__,
 					FLOW:   __Null__,

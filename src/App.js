@@ -2,7 +2,6 @@ import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 
 import routes from './routes'
-// import { WS } from '@service'
 import '@utils'
 import 'antd/dist/antd.css'
 import 'assets/common.less'
@@ -12,11 +11,14 @@ export default class App extends React.Component {
 		super(props)
 	}
 	componentDidMount() {
-		// this.websocket()
+		this.visibilitychange()
 	}
-	// websocket = () => {
-	// 	let socket = this.socket = WS()
-	// }
+	visibilitychange = () => {
+		__VisibilityState__ = document[getVisibilityState()]
+		document.addEventListener('visibilitychange', function () {
+			__VisibilityState__ = document[getVisibilityState()]
+		}, false)
+	}
 	render() {
 		return (
 			<Switch>

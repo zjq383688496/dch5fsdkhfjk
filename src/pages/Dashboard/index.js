@@ -38,9 +38,10 @@ export default class Dashboard extends React.Component {
 				{
 					__Grid__.map((grid, i) => {
 						if (!grid) return <div key={i}></div>
-						let device = Devices[grid.id] || deviceByGrid(grid.id)
+						let device  = Devices[grid.id] || deviceByGrid(grid.id)
+						let bedName = __BedName__[i]
 						// if (!device) return <div key={i}></div>
-						return <Box data={device} key={i} />
+						return <Box bedName={bedName} data={device} key={i} />
 					})
 				}
 				<span className="demo fs36 p8">仅供测试非临床使用</span>

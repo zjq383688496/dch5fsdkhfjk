@@ -3,12 +3,14 @@ module.exports = Object.assign(window, {
 	__Null__: { value: null },
 	__User__: null,
 	__Grid__: [],
-	__GridIndex__: {},	// 设备布局所以
-	__DeviceKey__: {},	// 设备对应的key数
-	__Base__: {},		// 起始数据测试
-	__MIN__:  {},		// 最小数据保存
+	__GridMap__:   {},		// 设备布局映射
+	__GridIndex__: {},		// 设备布局索引
+	__DeviceKey__: {},		// 设备对应的key数
+	__BedName__: [],		// 床位名
+	__MIN__:  {},			// 最小数据保存
 	__MIN_STATE__: false,	// 最小数据不可用
-	__SOCKET__: null,	// ws服务
+	__SOCKET__: null,		// ws服务
+	__VisibilityState__: '',	// 标签状态
 	__Redux__: {
 		CurDevice: null,	// 当前设备
 		// 设备数据
