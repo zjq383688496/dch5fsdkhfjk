@@ -45,10 +45,10 @@ export async function cache2device(time = 100) {
 	deviceKeyVaild()
 	_interval = setInterval(() => {
 		let { group = [] } = Cache
-		document.title = __VisibilityState__
+		// document.title = __VisibilityState__
 		group.forEach((id, i) => {
-			if (!Devices[id]) Devices[id]   = {}
-			if (!__MIN__[id]) __MIN__[id]  = {}
+			if (!Devices[id]) Devices[id] = {}
+			if (!__MIN__[id]) __MIN__[id] = {}
 			let MIN    = __MIN__[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
