@@ -24,7 +24,7 @@ export default class ChartWave extends React.Component {
 			{ u: unit, n: name } = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => null) ]
+		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => __Null__) ]
 
 		let options = {
 			grid: {
@@ -93,7 +93,7 @@ export default class ChartWave extends React.Component {
 		this.updateData(props)
 	}
 	clearData = () => {
-		let data = this.data = [ ...new Array(limit).fill().map(_ => null) ]
+		let data = this.data = [ ...new Array(limit).fill().map(_ => __Null__) ]
 		let index = this.index = 0
 		this.setState({ index, data })
 	}

@@ -65,8 +65,12 @@ export async function cache2device(time = 100) {
 					wait  = cacheWait[key]
 
 				// 数据量大于缓存数2倍的时候清除多余数据
+				if (__VisibilityState__ === 'hidden' && len > limit) {
+					console.log(`1当前数据量已达: ${len}, 清除${len - limit}条数据!`)
+					queue.splice(0, limit)
+				}
 				if (len > limit * 2) {
-					console.log(`当前数据量已达: ${len}, 清除${len - limit * 2}条数据!`)
+					console.log(`2当前数据量已达: ${len}, 清除${len - limit * 2}条数据!`)
 					queue.splice(0, limit)
 				}
 
@@ -78,15 +82,15 @@ export async function cache2device(time = 100) {
 				if (len >= limit) cacheWait[key] = false
 			})
 
-			let nowLen = Object.values(realTime).length,
-				newLen = Object.values(realTime).filter(({ value }) => value != null).length
-			if (nowLen !== newLen) {
-				console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
-				Object.keys(realTime).forEach(key => {
-					let { value } = realTime[key]
-					if (value == null) console.log(key, ':', value)
-				})
-			}
+			// let nowLen = Object.values(realTime).length,
+			// 	newLen = Object.values(realTime).filter(({ value }) => value != null).length
+			// if (nowLen !== newLen) {
+			// 	console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
+			// 	Object.keys(realTime).forEach(key => {
+			// 		let { value } = realTime[key]
+			// 		if (value == null) console.log(key, ':', value)
+			// 	})
+			// }
 			
 			// if (nowLen === newLen) {
 				Object.keys(queues).forEach(key => {
@@ -192,11 +196,12 @@ const d2c = {
 		})
 
 		//
-		// console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
-		// Object.keys(queues).map(key => {
-		// 	let queue = queues[key]
-		// 	console.log(key, queue.length)
-		// })
+		console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
+		Object.keys(queues).map((key, i) => {
+			if (i) return
+			let queue = queues[key]
+			console.log('length: ', queue.length)
+		})
 		
 	},
 	// 观测值

@@ -137,7 +137,7 @@ class Box extends React.Component {
 					: null
 				}
 				{
-					!wait
+					!wait && __VisibilityState__ === 'visible'
 					?
 					<Charts field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
 					: null

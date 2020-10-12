@@ -60,7 +60,7 @@ export default class Charts extends React.Component {
 		this.updateData(props)
 	}
 	clearData = () => {
-		let data = this.data = [ ...new Array(limit + 1).fill().map(_ => null) ]
+		let data = this.data = [ ...new Array(limit + 1).fill().map(_ => __Null__) ]
 		let index = this.index = 0
 		this.setState({ index, data })
 	}

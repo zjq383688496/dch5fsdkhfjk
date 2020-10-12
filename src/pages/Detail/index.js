@@ -114,7 +114,7 @@ class Detail extends React.Component {
 								<div className="d-content fx-col">
 									<div className="row-12">
 										{
-											MIN
+											MIN && __VisibilityState__ === 'visible'
 											?
 											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
 											: null
@@ -122,7 +122,7 @@ class Detail extends React.Component {
 									</div>
 									<div className="row-12">
 										{
-											MIN
+											MIN && __VisibilityState__ === 'visible'
 											?
 											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
 											: null
@@ -133,13 +133,28 @@ class Detail extends React.Component {
 							<div className="detail-c fx-col">
 								<div className="d-content fx-col">
 									<div className="row-8">
-										{<ChartWave field={'VOLUME'}  config={config} realTime={realTime} />}
+										{
+											__VisibilityState__ === 'visible'
+											?
+											<ChartWave field={'VOLUME'}  config={config} realTime={realTime} />
+											: null
+										}
 									</div>
 									<div className="row-8">
-										{<ChartWave field={'PAW'}  config={config} realTime={realTime} />}
+										{
+											__VisibilityState__ === 'visible'
+											?
+											<ChartWave field={'PAW'}  config={config} realTime={realTime} />
+											: null
+										}
 									</div>
 									<div className="row-8">
-										{<ChartWave field={'FLOW'} config={config} realTime={realTime} />}
+										{
+											__VisibilityState__ === 'visible'
+											?
+											<ChartWave field={'FLOW'} config={config} realTime={realTime} />
+											: null
+										}
 									</div>
 								</div>
 							</div>
