@@ -80,12 +80,11 @@ export async function cache2device(time = 100) {
 				newLen = Object.values(realTime).filter(({ value }) => value != null).length
 
 			if (nowLen !== newLen) {
-				console.log('====================')
+				console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
 				Object.keys(realTime).forEach(key => {
 					let { value } = realTime[key]
 					if (value == null) console.log(key, ':', value)
 				})
-				console.log('====================')
 			}
 
 			

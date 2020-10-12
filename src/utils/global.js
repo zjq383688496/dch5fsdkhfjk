@@ -118,4 +118,9 @@ module.exports = Object.assign(window, {
 		}
 		return null
 	},
+	// log时间
+	getLogTime() {
+		let now = new Date()
+		return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`
+	}
 })
