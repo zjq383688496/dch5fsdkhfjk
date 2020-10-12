@@ -82,10 +82,14 @@ export default class Config extends React.Component {
 					return
 				}
 				let id = +Object.keys(item)[0]
+
+				if (isNaN(id)) return
+
+				__BedName__[i] = item[id]
+
 				if (id && !gridIndex[id]) {
 					let device = deviceIndex[id]
 					gridIndex[id] = device
-					__BedName__[i] = item[id]
 					return device
 				}
 			})
@@ -147,11 +151,12 @@ export default class Config extends React.Component {
 		let { dashboardId } = __User__
 		let config = JSON.stringify(grids.map((grid, i) => {
 			let obj = {}
-			if (!grid) return obj
-			let { id } = grid
+			let bedName = __BedName__[i]
+			if (!grid && !bedName) return obj
+			let { id = 0 } = grid || {}
 			__GridMap__[id] = i
 			window.__GridIndex__[id] = grid
-			obj[id] = __BedName__[i]
+			obj[id] = bedName
 			return obj
 		}))
 		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {

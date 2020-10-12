@@ -11,6 +11,7 @@ let cacheWait = {
 }
 
 let { abs, round } = Math
+let limit = 30		// 最大缓存量
 
 // 数据 存入 缓存
 export function data2cache(data) {
@@ -63,9 +64,10 @@ export async function cache2device(time = 100) {
 					len   = queue.length,
 					wait  = cacheWait[key]
 
-				if (len >= 70) {
-					console.log(`当前数据量已达: ${len}, 清除40条数据!`)
-					queue.splice(0, len - 40)
+				// 数据量大于缓存数2倍的时候清除多余数据
+				if (len > limit * 2) {
+					console.log(`当前数据量已达: ${len}, 清除${len - limit * 2}条数据!`)
+					queue.splice(0, limit)
 				}
 
 				let value = queue[0]
@@ -73,12 +75,11 @@ export async function cache2device(time = 100) {
 
 				// 触发等待
 				if (!len)      cacheWait[key] = true
-				if (len >= 30) cacheWait[key] = false
+				if (len >= limit) cacheWait[key] = false
 			})
 
 			let nowLen = Object.values(realTime).length,
 				newLen = Object.values(realTime).filter(({ value }) => value != null).length
-
 			if (nowLen !== newLen) {
 				console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
 				Object.keys(realTime).forEach(key => {
@@ -86,7 +87,6 @@ export async function cache2device(time = 100) {
 					if (value == null) console.log(key, ':', value)
 				})
 			}
-
 			
 			// if (nowLen === newLen) {
 				Object.keys(queues).forEach(key => {
@@ -190,6 +190,14 @@ const d2c = {
 			let queue = queues[key]
 			queue.push(+(value).toFixed(4))
 		})
+
+		//
+		// console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
+		// Object.keys(queues).map(key => {
+		// 	let queue = queues[key]
+		// 	console.log(key, queue.length)
+		// })
+		
 	},
 	// 观测值
 	MEASURED_DATA_P1(data, cache) {

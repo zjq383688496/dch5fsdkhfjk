@@ -114,12 +114,12 @@ export default class ChartLine extends React.Component {
 			data = this.data = [ _point ]
 		this.updateChart(myChart, cX, cY, data)
 		this.index = 0
-		this.setState({ data })
+		this.setState({ data, visibilityState: __VisibilityState__, })
 		this.clearTask()
 	}
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
 		let { data, echart, state }  = this,
-			{ minDis, options, point, deviceId } = state,
+			{ minDis, options, point, deviceId, visibilityState } = state,
 			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
@@ -131,6 +131,8 @@ export default class ChartLine extends React.Component {
 			cY  = config[fieldY] || {},
 			_point = [ vX, vY ]
 
+		if (__VisibilityState__ === 'hidden') return this.clearData()
+
 		let curDis = getPointDis({ x: vX, y: vY }),
 			difDis = abs(curDis - minDis)
 
@@ -140,17 +142,11 @@ export default class ChartLine extends React.Component {
 			this.index = 0
 		}
 
-		if (this.index > maxIndex) {
-			return this.clearData()
-			// this.data = data = [ _point ]
-			// this.updateChart(myChart, cX, cY, data)
-			// this.index = 0
-			// return this.setState({ data, point: _point })
-		}
+		if (this.index > maxIndex) return this.clearData()
 
 		data.push([ rtX.value, rtY.value ])
 		this.updateChart(myChart, cX, cY, data)
-		this.setState({ data, point: _point })
+		this.setState({ data, point: _point, visibilityState: __VisibilityState__, })
 	}
 
 	updateChart(chart, x = {}, y = {}, data) {

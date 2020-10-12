@@ -6,12 +6,15 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
+const { ceil } = Math
+
 const colorMap = {
 	'tan':    '#a89f20',
 	'blue-d': '#020c7e',
 }
 
 const limit = 201 - 1
+const interval = 49
 
 export default class ChartWave extends React.Component {
 	constructor(props) {
@@ -32,20 +35,26 @@ export default class ChartWave extends React.Component {
 			},
 			xAxis: {
 				type: 'category',
-				min: 0,
-				max: limit,
 				data: splitNumber(limit),
 				axisTick: {
-					interval: 50,
+					interval,
 				},
 				axisLabel: {
-					verticalAlign: 'middle',
+					interval: (index, value) => {
+						return ({
+							0:   true,
+							50:  true,
+							100: true,
+							150: true,
+							199: true,
+						})[index]
+					},
+					verticalAlign: 'top',
 				}
 			},
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
-				// splitNumber: 1,
 				interval: 1000,
 				splitLine: { show: false },
 				min: minValue || 0,
@@ -83,12 +92,21 @@ export default class ChartWave extends React.Component {
 	componentWillReceiveProps(props) {
 		this.updateData(props)
 	}
+	clearData = () => {
+		let data = this.data = [ ...new Array(limit).fill().map(_ => null) ]
+		let index = this.index = 0
+		this.setState({ index, data })
+	}
 	updateData = ({ config, realTime, field }) => {
 		let { data, echart, state }  = this,
-			{ index, options } = state,
+			{ index, options, visibilityState } = state,
 			{ series } = options
+
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance()
+
+		if (__VisibilityState__ === 'hidden') return this.clearData()
+
 		let { minValue, maxValue } = config[field] || {}
 		data[++index] = realTime[field]
 		data[index == limit? 0: index + 1] = null
@@ -105,11 +123,12 @@ export default class ChartWave extends React.Component {
 		this.setState({ data, index })
 	}
 	render() {
-		let { color, name, options } = this.state
+		let { color, name, unit, options } = this.state
 		return (
 			<div className="chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b>{name}</b>
+					<span>{unit}</span>
 				</div>
 				<div className={`cw-subtitle fs18`}>
 					<b>时间/秒</b>
@@ -128,8 +147,12 @@ export default class ChartWave extends React.Component {
 }
 
 function splitNumber(limit, split = 50, div = 10) {
-	return new Array(limit + 1).fill().map((_, i) => {
-		let num = i % split
-		return num? '': i / div
+	return new Array(limit).fill().map((_, i) => {
+		if (!i) return 0
+		if (i === limit.length - 1) return limit / div
+		// let num = i % split
+		let num = ceil(i / 10)
+		return num
+		// return num? '': i / div
 	})
 }

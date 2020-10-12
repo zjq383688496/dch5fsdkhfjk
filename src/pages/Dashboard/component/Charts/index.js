@@ -59,15 +59,22 @@ export default class Charts extends React.Component {
 	componentWillReceiveProps(props) {
 		this.updateData(props)
 	}
+	clearData = () => {
+		let data = this.data = [ ...new Array(limit + 1).fill().map(_ => null) ]
+		let index = this.index = 0
+		this.setState({ index, data })
+	}
 	updateData = ({ config, realTime, field }) => {
 		let { data, echart, state }  = this,
-			{ index, options } = state,
+			{ index, options, visibilityState } = state,
 			{ minValue, maxValue } = config[field] || {},
 			{ series }  = options,
 			value = realTime[field]
 
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance()
+
+		if (__VisibilityState__ === 'hidden') return this.clearData()
 
 		data[++index] = value
 		data[index == limit? 0: index + 1] = __Null__
