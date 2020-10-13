@@ -36,6 +36,7 @@ export default class Config extends React.Component {
 		}
 	}
 	componentDidMount() {
+		wsClear()
 		this.getDevices(this.getGrid)
 	}
 	max = randomRange(90, 130)
@@ -166,8 +167,8 @@ export default class Config extends React.Component {
 		})
 	}
 	websocket = () => {
-		if (window.__SOCKET__) return
-		window.__SOCKET__ = WS()
+		if (window._ws) return
+		WS()
 	}
 	render() {
 		let { devices, grids, gridIndex, search } = this.state,

@@ -122,5 +122,16 @@ module.exports = Object.assign(window, {
 	getLogTime() {
 		let now = new Date()
 		return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`
+	},
+	// 打印时间log
+	consoleLog() {
+		console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
+	},
+	wsClear() {
+		clearInterval(__TimeInterval__)
+		__ReduxInit__()
+		if (!window._ws) return
+		if (window._ws.close) window._ws.close()
+		window._ws = null 
 	}
 })

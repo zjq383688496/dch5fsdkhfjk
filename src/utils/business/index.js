@@ -1,5 +1,6 @@
 module.exports = Object.assign(window, {
 	__Interval__: 100,	// 160
+	__TimeInterval__: null,
 	__Null__: { value: null },
 	__User__: null,
 	__Grid__: [],
@@ -32,6 +33,16 @@ module.exports = Object.assign(window, {
 			// return `http://94.191.50.139:8089/experiment/stop/${userId}`
 			return `http://94.191.50.139:8089/experiment/simulate/stop`
 			// return `/experiment/simulate/stop`
+		}
+	},
+	__ReduxInit__() {
+		window.__Redux__ = {
+			CurDevice: null,
+			// 设备数据
+			Devices: {},
+			Cache: {
+				group: []
+			}
 		}
 	}
 })

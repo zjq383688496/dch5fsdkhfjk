@@ -60,7 +60,7 @@ class Detail extends React.Component {
 	render() {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data || !__MIN_STATE__) return null
-		let { alarm, config, device, measure, realTime } = data,
+		let { alarm, config, device, measure, realTime, textMessage } = data,
 			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device,
 			MIN = __MIN__[deviceId]
 		let bedName = this.getBedName(deviceId)
@@ -81,8 +81,7 @@ class Detail extends React.Component {
 					<div className="detail-c fx-col">
 						<div className="d-info h124 fx bc-blue">
 							<div className="di-title fx-col col-8 c-white p8">
-								<div className="row-14 fs48">VC-AC</div>
-								<div className="row-10 fs36 lh36">AutoFlow</div>
+								<div className="row-24 fs48 lh96">{textMessage}</div>
 							</div>
 							<div className="di-title col-16 fx-col fs36 lh40">
 								<div className="row-12 bc-red c-white p12">{alarm[0]}</div>

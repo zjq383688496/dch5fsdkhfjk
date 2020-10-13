@@ -1,7 +1,3 @@
-let _interval = null
-
-let isInit = true
-
 // 缓存等待时间
 let cacheWait = {
 	CO2:    false,
@@ -45,17 +41,19 @@ export async function cache2device(time = 100) {
 	await _wait(2000)
 	deviceKeyVaild()
 	// let now = Date.now()
-	_interval = setInterval(() => {
+	clearInterval(__TimeInterval__)
+	__TimeInterval__ = setInterval(() => {
 		// console.log('开始耗时: ', Date.now() - now, 's')
 		// now = Date.now()
 		let { group = [] } = Cache
 		group.forEach((id, i) => {
 			if (!Devices[id]) Devices[id] = {}
 			if (!__MIN__[id]) __MIN__[id] = {}
+
 			let MIN    = __MIN__[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
-				{ alarm, config, device, deviceId, measure, queues } = cache,
+				{ alarm, config, device, deviceId, measure, queues, textMessage } = cache,
 				realTime = {}
 
 			// 遍历波形数据队列
@@ -76,45 +74,19 @@ export async function cache2device(time = 100) {
 
 				let value = queue[0]
 				realTime[key] = !wait? { value }: __Null__
-
 				// 触发等待
-				if (!len)      cacheWait[key] = true
+				if (!len)         cacheWait[key] = true
 				if (len >= limit) cacheWait[key] = false
 			})
 
 			// let nowLen = Object.values(realTime).length,
 			// 	newLen = Object.values(realTime).filter(({ value }) => value != null).length
-			// if (nowLen !== newLen) {
-			// 	console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
-			// 	Object.keys(realTime).forEach(key => {
-			// 		let { value } = realTime[key]
-			// 		if (value == null) console.log(key, ':', value)
-			// 	})
-			// }
 			
-			// if (nowLen === newLen) {
-				Object.keys(queues).forEach(key => {
-					let val = round(queues[key].shift())
-					// 获取波形基数
-					if (__MIN_STATE__) return
-					if (MIN[key] === undefined) {
-						MIN[key] = val
-					} else {
-						let MX  = abs(MIN[key]),
-							VAL = abs(val)
-						if (VAL < MX) MIN[key] = val
-					}
-
-				})
-			// } else {
-			// 	console.log('数据异常: ', JSON.stringify(realTime))
-			// 	realTime = {
-			// 		PAW:    __Null__,
-			// 		FLOW:   __Null__,
-			// 		VOLUME: __Null__,
-			// 		CO2:    __Null__,
-			// 	}
+			// if (!newLen) {
+			// 	consoleLog()
+			// 	console.log(queues, JSON.stringify(queues))
 			// }
+
 			if (__VisibilityState__ === 'hidden') {
 				realTime = {
 					PAW:    __Null__,
@@ -123,6 +95,24 @@ export async function cache2device(time = 100) {
 					CO2:    __Null__,
 				}
 			}
+
+			Object.keys(queues).forEach(key => {
+				let queue = queues[key]
+				let wait  = cacheWait[key]
+				let val   = queue[0]
+				if (!wait) val = queue.shift()
+				val = round(val)
+				// 获取波形基数
+				if (__MIN_STATE__) return
+				if (MIN[key] === undefined) {
+					MIN[key] = val
+				} else {
+					let MX  = abs(MIN[key]),
+						VAL = abs(val)
+					if (VAL < MX) MIN[key] = val
+				}
+			})
+
 			Object.assign(Device, {
 				alarm: Object.values(alarm).map(_ => _.message),
 				config,
@@ -130,6 +120,7 @@ export async function cache2device(time = 100) {
 				deviceId,
 				measure,
 				realTime,
+				textMessage,
 			})
 		})
 		// console.log('执行耗时: ', Date.now() - now, 's')
@@ -153,9 +144,10 @@ function deviceKeyVaild() {
 }
 
 const d2c = {
-	// TEXT_MESSAGE({ device }) {
-	// 	let { id, name, no, revision } = device
-	// },
+	TEXT_MESSAGE(data, cache) {
+		let { textMessageData } = data
+		cache.textMessage = textMessageData.value
+	},
 	// DEVICE_SETTING({ device }) {
 	// 	let { id, name, no, revision } = device
 	// },
@@ -174,7 +166,7 @@ const d2c = {
 			// 数据极限值替换
 			Object.assign(realTimeConfiguration, {
 				minValue: Math.ceil(minValue),
-				maxValue: Math.ceil(maxValue)
+				maxValue: Math.ceil(maxValue),
 			})
 
 			// console.log(realTimeConfiguration)
@@ -196,13 +188,10 @@ const d2c = {
 		})
 
 		//
-		console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
-		Object.keys(queues).map((key, i) => {
-			if (i) return
-			let queue = queues[key]
-			console.log('length: ', queue.length)
-		})
-		
+		consoleLog()
+		let key = Object.keys(queues)[0]
+		let queue = queues[key]
+		console.log('length: ', queue.length)
 	},
 	// 观测值
 	MEASURED_DATA_P1(data, cache) {

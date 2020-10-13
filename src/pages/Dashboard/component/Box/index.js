@@ -88,7 +88,7 @@ class Box extends React.Component {
 	render() {
 		let { waveState, waveValue, measureState, measureValue, wait } = this.state
 		let { bedName, data } = this.props
-		let { alarm, config, device = {}, measure, realTime } = data,
+		let { alarm, config, device = {}, measure, realTime, textMessage } = data,
 			wave = __Map__.r[waveValue]
 
 		return (
@@ -99,8 +99,7 @@ class Box extends React.Component {
 						<p className="fs20 lh20 ellipsis" title={bedName}>{bedName}</p>
 					</div>
 					<div className="db-info-item col-6 p4 pl8">
-						<p className="fs20 lh20">VC-AC</p>
-						<p className="fs12 lh12">AutoFlow</p>
+						<p className="fs20 lh32">{textMessage}</p>
 					</div>
 					<div className="db-info-item col-12 bc-red p8 pl20 fs24 lh24">
 						<p className="fs-20 lh-20">{alarm[0]}</p>

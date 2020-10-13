@@ -34,8 +34,9 @@ const routes = [
 		component: Dashboard,
 	},
 	{
-		name: 'Detail',
-		path: '/detail/:deviceId',
+		name:  'Detail',
+		title: '详情',
+		path:  '/detail/:deviceId',
 		exact: true,
 		component: Detail,
 		// fetchInitialData: () => video.list()

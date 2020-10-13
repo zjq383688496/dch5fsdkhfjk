@@ -17,6 +17,7 @@ export default class Login extends React.Component {
 		super(props)
 	}
 	componentDidMount() {
+		wsClear()
 	}
 	onFinish = values => {
 		serviceApi.login(values).then(userInfo => {

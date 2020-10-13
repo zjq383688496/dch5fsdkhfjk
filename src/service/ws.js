@@ -1,4 +1,5 @@
 var { data2cache, cache2device } = require('@cache')
+let { message } = require('antd')
 
 var mmm
 var getmmm = function() {
@@ -22,7 +23,7 @@ function WS() {
 		if (!/^{/.test(data)) return
 		let da = JSON.parse(data)
 		data2cache(da)
-		// console.log(`↓↓↓↓↓↓↓↓↓↓ ${getLogTime()} ↓↓↓↓↓↓↓↓↓↓`)
+		// consoleLog()
 		// console.log(data)
 		
 		// if (da.packageCode === 'REAL_TIME_CONFIGURATION') {
@@ -34,19 +35,22 @@ function WS() {
 		// }
 	}
 	socket.onclose = function(e) {
-		console.log('WebSocket is closed now.')
-		reconnect()
+		// console.log('WebSocket is closed now.')
+		message.warning('WebSocket 关闭.')
+		// reconnect(socket)
 	}
 	socket.onerror = function(e) {
-		console.error('WebSocket error observed: ', e)
-		reconnect()
+		// console.error('WebSocket error observed: ', e)
+		reconnect(socket)
+		message.error('WebSocket 出错, 2s后重连.')
 	}
-	return socket
 }
 
 // 重连
-function reconnect() {
+function reconnect(socket) {
 	// 没连接上会一直重连，设置延迟避免请求过多
+	// if (socket.close) socket.close()
+	wsClear()
 	setTimeout(function () {
 		WS()
 	}, 2000)
