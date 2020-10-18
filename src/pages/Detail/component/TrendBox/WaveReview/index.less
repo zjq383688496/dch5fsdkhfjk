@@ -1,0 +1,70 @@
+.wave-review-box {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	.wb-top {
+		display: flex;
+		height: 32px;
+		flex-shrink: 0;
+		justify-content: space-between;
+		.icon-search {
+			width:  32px;
+			height: 32px;
+		}
+	}
+	.wb-content {
+		overflow-x: hidden;
+		overflow-y: auto;
+		flex: 1;
+	}
+	.wb-scroll {
+		position: relative;
+		padding: ;
+		.time-point {
+			position: absolute;
+			top: 0;
+			left: 120px;
+			white-space: nowrap;
+		}
+	}
+	.wb-bottom {
+		display: flex;
+		padding: 8px 0;
+		height: 48px;
+		justify-content: flex-end;
+		align-items: center;
+		a {
+			width: 32px;
+			height: 32px;
+		}
+	}
+	.wb-wave-box {
+		display: flex;
+		height: 33%;
+		.chart-wave {
+			height: 100%;
+			flex-shrink: 0;
+		}
+		.wb-data {
+			display: flex;
+			width: 80px;
+			flex-shrink: 0;
+			justify-content: center;
+			align-items: center;
+			font-weight: bold;
+		}
+	}
+	.wb-line {
+		position: absolute;
+		top: 1.75vw;
+		left: 0;
+		display: none;
+		width: 1px;
+		height: calc(100% - 1.75vw);
+		background-color: #020c7e;
+		pointer-events: none;
+		&.s-active {
+			display: block;
+		}
+	}
+}

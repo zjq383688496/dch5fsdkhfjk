@@ -6,21 +6,19 @@ export default class TabsBox extends React.Component {
 		super(props)
 		let { tabs = [{ key: 1 }] } = props
 		this.state = {
-			activeKey: tabs[0].key
 		}
 	}
 	onChange = key => {
-		let { onChange } = this.props
-		let { activeKey } = this.state
+		let { activeKey, onChange } = this.props
 		if (activeKey == key) return
-		this.setState({ activeKey: key })
 		onChange && onChange(key)
 	}
 	renderTabs = tabs => {
-		let { activeKey } = this.state
-		return tabs.map(({ key, name }) => {
+		let { activeKey } = this.props
+		return tabs.map(({ active, key, name }) => {
 			let cls = `tb-tab`
 			if (activeKey == key) cls += ' s-active'
+			if (!active) cls += ' s-disabled'
 			return <div key={key} className={cls} onClick={() => this.onChange(key)}>{name}</div>
 		})
 	}

@@ -24,7 +24,7 @@ class Detail extends React.Component {
 		this.state = {
 			data: null,
 			deviceId,
-			trendStatus: false,
+			trendStatus: true,
 		}
 	}
 	componentDidMount() {
@@ -170,8 +170,8 @@ class Detail extends React.Component {
 					</div>
 				</div>
 				<div className="btn-box h124 fx-col">
-					<div className="btn-back" onClick={this.goBack}><HomeFilled /></div>
-					{/*<div className="btn-back" onClick={this.goTrend}><HomeFilled /></div>*/}
+					<div className="btn-back icon-home" onClick={this.goBack}></div>
+					<div className="btn-back icon-trend" onClick={this.goTrend}></div>
 				</div>
 			</div>
 		)

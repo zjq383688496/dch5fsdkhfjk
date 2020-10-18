@@ -89,8 +89,9 @@ module.exports = Object.assign(window, {
 			month = ('0' + (da.getMonth() + 1)).substr(-2),
 			date  = ('0' + da.getDate()).substr(-2),
 			hour  = ('0' + da.getHours()).substr(-2),
-			minu  = ('0' + da.getMinutes()).substr(-2)
-		return { year, month, date, hour, minu }
+			minu  = ('0' + da.getMinutes()).substr(-2),
+			seco  = ('0' + da.getSeconds()).substr(-2)
+		return { year, month, date, hour, minu, seco }
 	},
 	// 删除遮罩层
 	removeMask() {
