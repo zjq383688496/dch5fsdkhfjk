@@ -58,7 +58,7 @@ export default class DatePickerComp extends React.Component {
 							<TimePicker value={date} format={'HH:mm:ss'} onChange={this.onChangeTime} />
 						</Space>
 					</Item>
-					<Item label="时长">
+					{/*<Item label="时长">
 						<Space>
 							<Select value={duration} onChange={this.onChangeDuration}>
 								{
@@ -68,7 +68,7 @@ export default class DatePickerComp extends React.Component {
 								}
 							</Select>
 						</Space>
-					</Item>
+					</Item>*/}
 				</Form>
 			</div>
 		)

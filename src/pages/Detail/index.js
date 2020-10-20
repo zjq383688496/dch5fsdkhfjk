@@ -102,7 +102,7 @@ class Detail extends React.Component {
 					{
 						trendStatus
 						?
-						<TrendBox />
+						<TrendBox device={device} />
 						: null
 					}
 					{
@@ -170,8 +170,8 @@ class Detail extends React.Component {
 					</div>
 				</div>
 				<div className="btn-box h124 fx-col">
-					<div className="btn-back icon-home" onClick={this.goBack}></div>
-					<div className="btn-back icon-trend" onClick={this.goTrend}></div>
+					<div className="btn-back icons-home" onClick={this.goBack}></div>
+					<div className="btn-back icons-trend" onClick={this.goTrend}></div>
 				</div>
 			</div>
 		)

@@ -25,16 +25,17 @@ export default class TrendBox extends React.Component {
 		this.setState({ key })
 	}
 	render() {
+		let { device } = this.props
 		let { key } = this.state
 		return (
 			<div className="trend-box">
 				<div className="td-title">趋势/数据</div>
 				<Tabs activeKey={key} tabs={tabs} onChange={this.onChange}/>
 				<div className="tb-content">
-					{ key == 1? <Data />: null }
-					{ key == 2? <Wave />: null }
-					{ key == 3? <WaveReview />: null }
-					{ key == 4? <Notepad />: null }
+					{ key == 1? <Data       device={device} />: null }
+					{ key == 2? <Wave       device={device} />: null }
+					{ key == 3? <WaveReview device={device} />: null }
+					{ key == 4? <Notepad    device={device} />: null }
 				</div>
 			</div>
 		)

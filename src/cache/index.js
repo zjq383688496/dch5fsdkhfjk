@@ -188,10 +188,10 @@ const d2c = {
 		})
 
 		//
-		consoleLog()
-		let key = Object.keys(queues)[0]
-		let queue = queues[key]
-		console.log('length: ', queue.length)
+		// consoleLog()
+		// let key = Object.keys(queues)[0]
+		// let queue = queues[key]
+		// console.log('length: ', queue.length)
 	},
 	// 观测值
 	MEASURED_DATA_P1(data, cache) {
@@ -205,6 +205,9 @@ const d2c = {
 		alarmFun(data, cache)
 	},
 	DEVICE_ALARM_P2(data, cache) {
+		alarmFun(data, cache)
+	},
+	DEVICE_ALARM_P3(data, cache) {
 		alarmFun(data, cache)
 	}
 }
@@ -221,6 +224,7 @@ function alarmFun(data, cache) {
 	})
 	alarmExpire(alarm)
 	cache.alarm = alarmSort(alarm)
+	console.log(cache.alarm)
 	// alarm = cache.alarm = alarm.slice(0, 4)
 
 }

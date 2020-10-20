@@ -7,10 +7,20 @@ import moment from 'moment'
 import StaticWave from './StaticWave'
 import DatePicker from './DatePicker'
 
+import serviceApi from '@service/api'
+
 const { floor } = Math
 const list  = [ 'PAW', 'FLOW', 'VOLUME', 'CO2' ]
 const left  = 60
 const right = 10
+
+const resMap = {
+	flowList:   'FLOW',
+	pawList:    'PAW',
+	volumeList: 'VOLUME',
+}
+
+const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 export default class WaveBox extends React.Component {
 	constructor(props) {
@@ -18,8 +28,8 @@ export default class WaveBox extends React.Component {
 		this.state = {
 			data:     [],
 			duration: 30,
-			date:  moment(),
-			limit: 200,
+			date:  moment(),	// moment('2020-10-20 22:00:00'),
+			limit: 0,
 			lineShow: false,
 			pageX: 0,
 			current: [],
@@ -28,31 +38,39 @@ export default class WaveBox extends React.Component {
 	}
 	timeout = null
 	componentDidMount() {
-		this.getData(2)
+		this.getData()
 	}
 	componentWillUnmount() {
-		clearInterval(this.timeout)
+		// clearInterval(this.timeout)
 	}
 	getData = () => {
 		let { r } = __Map__
+		let { device } = this.props,
+			{ date } = this.state,
+			{ macAddress } = device
 		this.setState({ data: [] })
-		this.timeout = setTimeout(() => {
+		serviceApi.report(macAddress, date.format(dateFormat)).then((res = {}) => {
 			let data = []
-			list.forEach(key => {
-				let val = r[key],
-					da  = {
-						key,
-						name: val.n,
-						unit: val.u,
-						list: new Array(200).fill().map(_ => ({ value: randomRange(20, 30) })),
-						minValue: 0,
-						maxValue: 40,
-						current: undefined,
-					}
+			Object.keys(res).forEach(k => {
+				let item = res[k],
+					key  = resMap[k],
+					val  = r[key]
+				if (!item || !item.dataList || !item.dataList.length) return
+				let da  = {
+					key,
+					name: val.n,
+					unit: val.u,
+					list: item.dataList || [],
+					minValue: item.min || 0,
+					maxValue: item.max || 100,
+					current: undefined,
+				}
 				data.push(da)
 			})
-			this.setState({ data })
-		}, 500)
+			let cfg = { data }
+			if (data.length) cfg.limit = data[0].list.length
+			this.setState(cfg)
+		})
 	}
 	renderWave = height => {
 		let { data, current } = this.state
@@ -85,17 +103,15 @@ export default class WaveBox extends React.Component {
 		let { date } = this.state
 		let { refs } = this
 		let list = []
-		let dateStr = date.format('YYYY-MM-DD HH:mm:ss')
+		let dateStr = date.format(dateFormat)
 
 		html2canvas(document.querySelector('.wb-scroll')).then(canvas => {
 			let a = document.createElement('a')
 			document.body.appendChild(a)
-			// document.body.appendChild(canvas)
 			a.download = `${dateStr}.png`
 			a.href = canvas.toDataURL('image/png')
 			a.click()
 			document.body.removeChild(a)
-			// document.body.removeChild(canvas)
 		})
 	}
 	handleCancel = () => {
@@ -106,13 +122,20 @@ export default class WaveBox extends React.Component {
 		this.setState({ visible: false, ...datePicker.state })
 	}
 	render() {
-		let { lineShow, pageX, visible, date, duration } = this.state
+		let { lineShow, pageX, visible, current, date, duration } = this.state
 		let style = { left: pageX - 20 }
 		let { content } = this.refs
 		let height = 0
 		if (content) height = ~~(content.offsetHeight / 3)
 		let wave = this.renderWave(height)
-		let dateStr = date.format('YYYY-MM-DD HH:mm:ss')
+		let dateStr = date.format(dateFormat)
+		let currentDate = ''
+		if (current.length) {
+			let first = current[0]
+			if (first && first.timestamp) {
+				currentDate = moment(new Date(first.timestamp)).format(dateFormat)
+			}
+		}
 		return (
 			<div className="wave-review-box">
 				<div className="wb-top fs24">
@@ -120,7 +143,7 @@ export default class WaveBox extends React.Component {
 						{dateStr}
 						{duration}秒
 					</Space>
-					<a className="icon-search" onClick={this.setDate}></a>
+					<a className="icons-search" onClick={this.setDate}></a>
 				</div>
 				<div
 					ref="content"
@@ -128,14 +151,14 @@ export default class WaveBox extends React.Component {
 					onMouseMove={this.onMouseMove}
 				>
 					<div className="wb-scroll" style={{ height: height * wave.length }}>
-						<span className="time-point fs20">{dateStr}</span>
+						<span className="time-point fs20">{currentDate}</span>
 						{ wave }
 						<div className={`wb-line${lineShow? ' s-active': ''}`} style={style}>
 						</div>
 					</div>
 				</div>
 				<div className="wb-bottom">
-					<a className="icon-output" onClick={this.setCrop}></a>
+					<a className="icons-output" onClick={this.setCrop}></a>
 				</div>
 				<Modal
 					title="时间设置"
@@ -154,3 +177,4 @@ export default class WaveBox extends React.Component {
 		)
 	}
 }
+

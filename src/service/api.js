@@ -12,4 +12,7 @@ module.exports = {
 	// },
 	// 监控盘
 	dashboardsUpdate: (id, config) => Ajax.put(`/Dashboards/${id}`, config),
+
+	// 波形回顾
+	report: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
 }

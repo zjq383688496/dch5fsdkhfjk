@@ -126,7 +126,7 @@ export default class NotepadBox extends React.Component {
 					</div>
 				</div>
 				<div className="nb-bottom">
-					<a className="icon-output"></a>
+					<a className="icons-output"></a>
 				</div>
 			</div>
 		)
