@@ -88,9 +88,9 @@ class Box extends React.Component {
 	render() {
 		let { waveState, waveValue, measureState, measureValue, wait } = this.state
 		let { bedName, data } = this.props
-		let { alarm, config, device = {}, measure, realTime, textMessage } = data,
-			wave = __Map__.r[waveValue]
-
+		let { alarm: [ alarm1 ], config, device = {}, measure, realTime, textMessage } = data,
+			wave = __Map__.r[waveValue],
+			{ cls, content } = getAlarm(alarm1)
 		return (
 			<div className="dashboard-box">
 				<div className="db-info fx h40 bc-blue c-white">
@@ -101,8 +101,8 @@ class Box extends React.Component {
 					<div className="db-info-item col-6 p4 pl8">
 						<p className="fs20 lh32">{textMessage}</p>
 					</div>
-					<div className="db-info-item col-12 bc-red p8 pl20 fs24 lh24">
-						<p className="fs-20 lh-20">{alarm[0]}</p>
+					<div className={`db-info-item col-12 p8 pl20 fs24 lh24 ${cls}`}>
+						<p className="fs-20 lh-20">{content}</p>
 					</div>
 				</div>
 				{

@@ -15,4 +15,7 @@ module.exports = {
 
 	// 波形回顾
 	report: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
+
+	// 记事本
+	getAlarm: (macAddress, startDate, current, size, type) => Ajax.get(`/report/getAlarm?macAddress=${macAddress}&startDate=${startDate}&current=${current}&size=${size}&type=${type}`),
 }

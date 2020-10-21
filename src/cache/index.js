@@ -25,7 +25,7 @@ export function data2cache(data) {
 	if (!__GridIndex__[id]) return
 	device = __GridIndex__[id]
 
-	if (!Cache[id]) Cache[id] = { alarm: {}, queues: {}, measure: {}, config: {}, device, deviceId: id }
+	if (!Cache[id]) Cache[id] = { alarm: [], queues: {}, measure: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
 	analysisFun(data, cache)
@@ -114,7 +114,7 @@ export async function cache2device(time = 100) {
 			})
 
 			Object.assign(Device, {
-				alarm: Object.values(alarm).map(_ => _.message),
+				alarm,
 				config,
 				device,
 				deviceId,
@@ -213,52 +213,54 @@ const d2c = {
 }
 // 告警通用方法
 function alarmFun(data, cache) {
-	let { packageCode, deviceAlarmList } = data
-	let { alarm } = cache
-	deviceAlarmList.forEach(deviceAlarm => {
-		let { priority, alarmmPhrase } = deviceAlarm
-		let message = alarmmPhrase.replace(/(^\s+|\s+$)/g, '')
-		let key = `${priority}_${message}`
-		alarm[key] = { priority, message, timestamp: Date.now() }
-		// alarm.push({ priority, message: alarmmPhrase, timestamp: Date.now() })
-	})
-	alarmExpire(alarm)
-	cache.alarm = alarmSort(alarm)
-	console.log(cache.alarm)
+	let { deviceAlarmList } = data
+	// let { alarm } = cache
+	cache.alarm = deviceAlarmList
+	// deviceAlarmList.forEach(deviceAlarm => {
+	// 	let { priority, alarmmPhrase } = deviceAlarm
+	// 	let message = alarmmPhrase.replace(/(^\s+|\s+$)/g, '')
+	// 	let key = `${priority}_${message}`
+	// 	alarm[key] = { priority, message, timestamp: Date.now() }
+	// 	alarm.push({ priority, message: alarmmPhrase, timestamp: Date.now() })
+	// })
+	// console.log(deviceAlarmList)
+	// alarmExpire(alarm)
+	// cache.alarm = alarmSort(alarm)
+	// console.log(cache.alarm)
 	// alarm = cache.alarm = alarm.slice(0, 4)
 
 }
 // 告警过期
-function alarmExpire(alarm) {
-	Object.keys(alarm).forEach(key => {
-		let { timestamp } = alarm[key],
-			timeDiff = Date.now() - timestamp
-		if (timeDiff > 3e3) {
-			// console.log('时间差', timeDiff, key)
-			delete alarm[key]
-		}
-	})
-}
+// function alarmExpire(alarm) {
+// 	Object.keys(alarm).forEach(key => {
+// 		let { timestamp } = alarm[key],
+// 			timeDiff = Date.now() - timestamp
+// 		if (timeDiff > 3e3) {
+// 			// console.log('时间差', timeDiff, key)
+// 			delete alarm[key]
+// 		}
+// 	})
+// }
 // 告警排序
-function alarmSort(alarm) {
-	let newAlarm = {}
-	let sortArr = Object.keys(alarm).sort((key1, key2) => {
-		let alarm1 = alarm[key1],
-			alarm2 = alarm[key2],
-			p1     = alarm1.priority,
-			p2     = alarm2.priority,
-			pDiff  = p1 - p2
+// function alarmSort(alarm) {
+// 	let newAlarm = {}
+// 	let sortArr = Object.keys(alarm).sort((key1, key2) => {
+// 		let alarm1 = alarm[key1],
+// 			alarm2 = alarm[key2],
+// 			p1     = alarm1.priority,
+// 			p2     = alarm2.priority,
+// 			pDiff  = p1 - p2
 
-		if (pDiff) return pDiff
-		alarm1.timestamp - alarm2.timestamp
-	})
-	sortArr.forEach((key, i) => {
-		if (i > 3) return
-		alarm[key].idx = i
-		newAlarm[key] = alarm[key]
-	})
-	return newAlarm
-}
+// 		if (pDiff) return pDiff
+// 		alarm1.timestamp - alarm2.timestamp
+// 	})
+// 	sortArr.forEach((key, i) => {
+// 		if (i > 3) return
+// 		alarm[key].idx = i
+// 		newAlarm[key] = alarm[key]
+// 	})
+// 	return newAlarm
+// }
 
 // 观测值通用方法
 function measureFun(data, { measure }) {

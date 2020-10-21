@@ -24,7 +24,7 @@ class Detail extends React.Component {
 		this.state = {
 			data: null,
 			deviceId,
-			trendStatus: true,
+			trendStatus: false,
 		}
 	}
 	componentDidMount() {
@@ -60,10 +60,13 @@ class Detail extends React.Component {
 	render() {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data || !__MIN_STATE__) return null
-		let { alarm, config, device, measure, realTime, textMessage } = data,
-			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '' } = device,
+		let { alarm: [ alarm1, alarm2, alarm3 ], config, device, measure, realTime, textMessage } = data,
+			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '', code = '' } = device,
 			MIN = __MIN__[deviceId]
 		let bedName = this.getBedName(deviceId)
+		let a1 = getAlarm(alarm1),
+			a2 = getAlarm(alarm2),
+			a3 = getAlarm(alarm3)
 		return (
 			<div className="detail fx-col">
 				<div className="detail-top h124">
@@ -73,7 +76,7 @@ class Detail extends React.Component {
 								<div className="row-6 fs20 lh28">姓 名: {patientName}</div>
 								<div className="row-6 fs20 lh28">点 位: {positionName}</div>
 								<div className="row-6 fs20 lh28">科 室: {departmentName}</div>
-								<div className="row-6 fs20 lh28">设 备: {name}</div>
+								<div className="row-6 fs20 lh28">设 备: {code}</div>
 								<span className="di-bedName p8 lh28">{bedName}</span>
 							</div>
 						</div>
@@ -84,15 +87,15 @@ class Detail extends React.Component {
 								<div className="row-24 fs48 lh96">{textMessage}</div>
 							</div>
 							<div className="di-title col-16 fx-col fs36 lh40">
-								<div className="row-12 bc-red c-white p12">{alarm[0]}</div>
-								<div className="row-12 bc-yellow c-black p12">{alarm[1]}</div>
+								<div className={`row-12 p12 ${a1.cls}`}>{a1.content}</div>
+								<div className={`row-12 p12 ${a2.cls}`}>{a2.content}</div>
 							</div>
 						</div>
 					</div>
 					<div className="detail-r fx-col">
 						<div className="d-info h124 fx bc-blue">
 							<div className="di-title col-24 fx-col fs36 lh40">
-								<div className="row-12 bc-cyan c-black p8">{alarm[2]}</div>
+								<div className={`row-12 p8 ${a3.cls}`}>{a3.content}</div>
 								<div className="row-12 c-white p8">仅供测试非临床使用</div>
 							</div>
 						</div>

@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.less'
 
-import { Modal, Space } from 'antd'
+import { Modal, Space, message } from 'antd'
 import moment from 'moment'
 
 import StaticWave from './StaticWave'
@@ -100,9 +100,10 @@ export default class WaveBox extends React.Component {
 		this.setState({ visible: true })
 	}
 	setCrop = () => {
-		let { date } = this.state
+		let { data, date } = this.state
 		let { refs } = this
 		let list = []
+		if (!data.length) return message.warning('无波形数据!')
 		let dateStr = date.format(dateFormat)
 
 		html2canvas(document.querySelector('.wb-scroll')).then(canvas => {
@@ -119,7 +120,7 @@ export default class WaveBox extends React.Component {
 	}
 	handleOk = () => {
 		let { datePicker } = this.refs
-		this.setState({ visible: false, ...datePicker.state })
+		this.setState({ visible: false, ...datePicker.state }, this.getData)
 	}
 	render() {
 		let { lineShow, pageX, visible, current, date, duration } = this.state

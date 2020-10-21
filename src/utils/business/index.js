@@ -44,5 +44,14 @@ module.exports = Object.assign(window, {
 				group: []
 			}
 		}
+	},
+	getAlarm(alarm) {
+		let cls     = 'alarm_0',
+			content = ''
+		if (alarm){
+			cls     = `alarm_${alarm.priority}`
+			content = alarm.alarmmPhrase
+		}
+		return { cls, content }
 	}
 })
