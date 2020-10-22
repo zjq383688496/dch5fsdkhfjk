@@ -20,9 +20,9 @@ export default class StaticWave extends React.Component {
 
 		let options = {
 			grid: {
-				top:    '32px',
+				top:    '10px',
 				right:  `${right}px`,
-				bottom: '32px',
+				bottom: '10px',
 				left:   `${left}px`,
 			},
 			xAxis: {
@@ -69,7 +69,7 @@ export default class StaticWave extends React.Component {
 	render() {
 		let { color, name, options } = this.state
 		return (
-			<div className="chart-wave">
+			<div className="r-chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b>{name}</b>
 				</div>

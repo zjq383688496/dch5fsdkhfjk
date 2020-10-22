@@ -28,7 +28,7 @@ export default class WaveBox extends React.Component {
 		this.state = {
 			data:     [],
 			duration: 30,
-			date:  moment(),	// moment('2020-10-20 22:00:00'),
+			date:  moment(Date.now() - 3e4),	// moment('2020-10-20 22:00:00'),
 			limit: 0,
 			lineShow: false,
 			pageX: 0,
@@ -79,7 +79,7 @@ export default class WaveBox extends React.Component {
 			return (
 				<div key={i} className="wb-wave-box" style={{ height }}>
 					<StaticWave left={left} right={right} ref={`wave_${_.key}`} data={_} />
-					<div className="wb-data fs32 c-blue-d">{cur? cur.value: '--'}</div>
+					<div className="wb-data fs24 c-blue-d">{cur? cur.value: '--'}</div>
 				</div>
 			)
 		})
