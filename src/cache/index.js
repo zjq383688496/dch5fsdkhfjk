@@ -28,7 +28,7 @@ export function data2cache(data) {
 	if (!Cache[id]) Cache[id] = { alarm: [], queues: {}, measure: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
-	analysisFun(data, cache)
+	analysisFun(data, cache, id)
 
 	if (!new Set(group).has(id)) group.push(id)
 
@@ -122,6 +122,8 @@ export async function cache2device(time = 100) {
 				realTime,
 				textMessage,
 			})
+
+			console.log(id, realTime)
 		})
 		// console.log('执行耗时: ', Date.now() - now, 's')
 	}, time)
@@ -146,7 +148,7 @@ function deviceKeyVaild() {
 const d2c = {
 	TEXT_MESSAGE(data, cache) {
 		let { textMessageData } = data
-		cache.textMessage = textMessageData.value
+		cache.textMessage = textMessageData? textMessageData.value: ''
 	},
 	// DEVICE_SETTING({ device }) {
 	// 	let { id, name, no, revision } = device
@@ -175,7 +177,7 @@ const d2c = {
 		})
 	},
 	// 波形数据
-	REAL_TIME_DATA(data, { queues }) {
+	REAL_TIME_DATA(data, { queues }, id) {
 		let { packageCode, realTimeDataList } = data
 
 		realTimeDataList.forEach(realTime => {
@@ -191,7 +193,9 @@ const d2c = {
 		// consoleLog()
 		// let key = Object.keys(queues)[0]
 		// let queue = queues[key]
-		// console.log('length: ', queue.length)
+		// if (id == 18) {
+		// 	console.log(`deviceId: ${id} length: `, queue.length)
+		// }
 	},
 	// 观测值
 	MEASURED_DATA_P1(data, cache) {
