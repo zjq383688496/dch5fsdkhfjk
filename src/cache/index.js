@@ -123,7 +123,7 @@ export async function cache2device(time = 100) {
 				textMessage,
 			})
 
-			console.log(id, realTime)
+			// console.log(id, realTime)
 		})
 		// console.log('执行耗时: ', Date.now() - now, 's')
 	}, time)
