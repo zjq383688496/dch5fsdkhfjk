@@ -59,7 +59,8 @@ class Detail extends React.Component {
 	}
 	render() {
 		let { data, deviceId, trendStatus } = this.state
-		if (!data || !__MIN_STATE__) return null
+		if (!data) return null
+		// if (!data || !__MIN_STATE__) return null
 		let { alarm: [ alarm1, alarm2, alarm3 ], config, device, measure, realTime, textMessage } = data,
 			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '', code = '' } = device,
 			MIN = __MIN__[deviceId]
@@ -104,8 +105,7 @@ class Detail extends React.Component {
 				<div className="detail-body">
 					{
 						trendStatus
-						?
-						<TrendBox device={device} />
+						? <TrendBox device={device} />
 						: null
 					}
 					{
@@ -138,14 +138,6 @@ class Detail extends React.Component {
 										{
 											__VisibilityState__ === 'visible'
 											?
-											<ChartWave field={'VOLUME'}  config={config} realTime={realTime} />
-											: null
-										}
-									</div>
-									<div className="row-8">
-										{
-											__VisibilityState__ === 'visible'
-											?
 											<ChartWave field={'PAW'}  config={config} realTime={realTime} />
 											: null
 										}
@@ -158,6 +150,14 @@ class Detail extends React.Component {
 											: null
 										}
 									</div>
+									<div className="row-8">
+										{
+											__VisibilityState__ === 'visible'
+											?
+											<ChartWave field={'VOLUME'}  config={config} realTime={realTime} />
+											: null
+										}
+									</div>
 								</div>
 							</div>
 						</>
@@ -165,7 +165,7 @@ class Detail extends React.Component {
 					}
 					<div className="detail-r fx-col">
 						<div className="d-content fx-col">
-							<Index data={measure} field1={'PEAK'}  field2={'PPLAT'} field3={'MVSPONT'} />
+							<Index data={measure} field1={'PPEAK'} field2={'PPLAT'} field3={'PEEP'} />
 							<Index data={measure} field1={'MVE'}   field2={'VTE'}   field3={'ETCO2'} />
 							<Index data={measure} field1={'RR'}    field2={'TI'}    field3={'IE'} />
 							<Index data={measure} field1={'FIO2'}  field2={'R'}     field3={'C'} />

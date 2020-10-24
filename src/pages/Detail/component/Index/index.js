@@ -8,11 +8,11 @@ export default class Index extends React.Component {
 	dataFormat = () => {
 		let { color, data, field1, field2, field3 } = this.props
 		let data1  = data[field1],
-			info1  = __Map__.m[field1] || {},
+			info1  = __Map__.all[field1] || {},
 			data2  = data[field2],
-			info2  = __Map__.m[field2] || {},
+			info2  = __Map__.all[field2] || {},
 			data3  = data[field3],
-			info3  = __Map__.m[field3] || {},
+			info3  = __Map__.all[field3] || {},
 			color1 = 'blue-d',
 			color2 = 'blue-d',
 			color3 = 'blue-d'
@@ -25,12 +25,9 @@ export default class Index extends React.Component {
 		return (
 			<div className="detail-index row-6 fx">
 				<div className={`di-border-r col-16 fx-col p12 pl20 c-${color1}`}>
-					<div className="row-7 fx fs28 lh28">
-						<div className="col-6">
-							<b>{info1.n}</b>
-							<p></p>
-						</div>
-						<div className="col-6 fx c-gray">{info1.u}</div>
+					<div className="row-7 fx jc-bw fs28 lh28">
+						<b className="quota-c">{info1.n}</b>
+						<span className="quota-uc">{info1.u}</span>
 					</div>
 					<div className="row-17 fx">
 						<div className="col-6 fx-col fs28 lh28 jc-fe c-gray"></div>
@@ -40,9 +37,9 @@ export default class Index extends React.Component {
 				<div className="col-8 fx-col">
 					<div className={`di-border-b row-12 fx-col p12 c-${color2}`}>
 						<div className="row-6 fx fs24 lh28">
-							<div className="col-24">
-								{info2.n}
-								<span className="ml12 c-gray">{info2.u}</span>
+							<div className="col-24 fx jc-bw">
+								<span className="quota-c">{info2.n}</span>
+								<span className="quota-uc">{info2.u}</span>
 							</div>
 						</div>
 						<div className="row-18 tr fs60 lh70">
@@ -52,9 +49,9 @@ export default class Index extends React.Component {
 					</div>
 					<div className={`row-12 fx-col p12 c-${color3}`}>
 						<div className="row-6 fx fs24 lh28">
-							<div className="col-12">
-								{info3.n}
-								<span className="ml12 c-gray">{info3.u}</span>
+							<div className="col-24 fx jc-bw">
+								<span className="quota-c">{info3.n}</span>
+								<span className="quota-uc">{info3.u}</span>
 							</div>
 						</div>
 						<div className="row-18 fs60 lh70 fx">

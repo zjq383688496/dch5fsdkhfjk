@@ -69,7 +69,7 @@ export default class StaticWave extends React.Component {
 	render() {
 		let { color, name, options } = this.state
 		return (
-			<div className="chart-wave">
+			<div className="w-chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b>{name}</b>
 				</div>

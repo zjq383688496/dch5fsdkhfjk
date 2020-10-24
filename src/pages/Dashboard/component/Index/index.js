@@ -13,20 +13,9 @@ export default class Index extends React.Component {
 		let value = data[title]
 		return (
 			<div className={`db-index-item fx-col p4 ${active? 's-active': ''}`} onClick={handleClick}>
-				<div className="fx row-10">
-					<div className={`col-12 c-${color} fs12`}>
-						<b>{name}</b>
-						{
-							/*name
-							? <p>{name}</p>
-							: null*/
-						}
-					</div>
-					{
-						unit
-						? <div className="col-12 tr">{unit}</div>
-						: null
-					}
+				<div className="fx row-10" style={{ justifyContent: 'space-between' }}>
+					<b className="quota-c fs12">{name}</b>
+					<span className="quota-uc tr">{unit}</span>
 				</div>
 				<div className="row-14 fx">
 					<div className="fx-col col-5 jc-fe fs12 lh16">

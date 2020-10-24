@@ -5,21 +5,14 @@
 	flex: 1;
 	height: 100%;
 	overflow: hidden;
-	.cw-title,
-	.cw-subtitle {
-		position: absolute;
-		z-index: 1;
-		height: 64px;
-	}
 	.cw-title {
-		top: .4vw;
-		left: 3.6vw;
-		b {
-			margin-right: .4vw;
-		}
+		display: flex;
+		flex-shrink: 0;
+		height: 2.5vw;
+		padding-left: 20px;
+		align-items: flex-end;
 	}
-	.cw-subtitle {
-		right:  .5vw;
-		bottom: -2vw;
+	.echarts-for-react {
+		flex: 1;
 	}
 }

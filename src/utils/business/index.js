@@ -53,5 +53,25 @@ module.exports = Object.assign(window, {
 			content = alarm.alarmmPhrase
 		}
 		return { cls, content }
+	},
+	// 获取图表分割数据(s)
+	getChartsSplit(limit, split = 50, div = 10) {
+		return new Array(limit).fill().map((_, i) => {
+			if (!i) return 0
+			if (i === limit.length - 1) return limit / div
+			let num = Math.ceil(i / 10)
+			return num + 's'
+		})
+	},
+	// 获取图表分割数据的可见索引
+	getChartsInterval(limit = 0, split = 50) {
+		let num = ~~(limit / split),
+			obj = {}
+		new Array(num + 1).fill().forEach((_, i) => {
+			let x = i * 50
+			if (i == num) x -= 1
+			obj[x] = true
+		})
+		return obj
 	}
 })

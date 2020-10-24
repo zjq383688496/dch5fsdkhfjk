@@ -11,22 +11,38 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
+const interval = 49
+
 export default class StaticWave extends React.Component {
 	constructor(props) {
 		super(props)
 
 		let { color = 'blue-d', data, left, right } = props,
-			{ list, unit, name, minValue, maxValue } = data || {}
+			{ list = [], unit, name, minValue, maxValue } = data || {}
 
+		let limit = list.length
 		let options = {
 			grid: {
 				top:    '10px',
 				right:  `${right}px`,
-				bottom: '10px',
+				bottom: '24px',
 				left:   `${left}px`,
 			},
 			xAxis: {
 				type: 'category',
+				data: getChartsSplit(limit),
+				axisTick: {
+					interval,
+				},
+				axisLabel: {
+					interval: (index, value) => {
+						return getChartsInterval(limit)[index]
+					},
+					verticalAlign: 'top',
+					textStyle: {
+						fontSize: 16
+					}
+				}
 			},
 			yAxis: {
 				type: 'value',
@@ -61,17 +77,18 @@ export default class StaticWave extends React.Component {
 		this.state = {
 			options,
 			color,
-			index : 0,
+			index: 0,
 			name,
 			unit,
 		}
 	}
 	render() {
-		let { color, name, options } = this.state
+		let { color, name, unit, options } = this.state
 		return (
 			<div className="r-chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
-					<b>{name}</b>
+					<b className="quota-c">{name}</b>
+					<span className="quota-uc">{unit}</span>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}

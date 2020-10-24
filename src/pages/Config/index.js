@@ -203,7 +203,7 @@ export default class Config extends React.Component {
 						<div className="cg-list">
 							{ this.renderGrids(grids) }
 						</div>
-						<Button type="primary" disabled={allowSubmit} onClick={this.submit}>确定</Button>
+						<Button size="large" type="primary" style={{ width: '10vw' }} disabled={allowSubmit} onClick={this.submit}>确定</Button>
 					</div>
 				</div>
 				<Footer style={{ left: 226 }} />

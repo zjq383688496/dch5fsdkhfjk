@@ -6,7 +6,6 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
-const { ceil } = Math
 
 const colorMap = {
 	'tan':    '#a89f20',
@@ -28,28 +27,25 @@ export default class ChartWave extends React.Component {
 
 		let options = {
 			grid: {
-				top:    '32px',
+				top:    '16px',
 				right:  '20px',
-				bottom: '56px',
+				bottom: '24px',
 				left:   '56px',
 			},
 			xAxis: {
 				type: 'category',
-				data: splitNumber(limit),
+				data: getChartsSplit(limit),
 				axisTick: {
 					interval,
 				},
 				axisLabel: {
 					interval: (index, value) => {
-						return ({
-							0:   true,
-							50:  true,
-							100: true,
-							150: true,
-							199: true,
-						})[index]
+						return getChartsInterval(limit)[index]
 					},
 					verticalAlign: 'top',
+					textStyle: {
+						fontSize: 16
+					}
 				}
 			},
 			yAxis: {
@@ -127,11 +123,8 @@ export default class ChartWave extends React.Component {
 		return (
 			<div className="chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
-					<b>{name}</b>
-					<span>{unit}</span>
-				</div>
-				<div className={`cw-subtitle fs18`}>
-					<b>时间/秒</b>
+					<b className="quota-c">{name}</b>
+					<span className="quota-uc">{unit}</span>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
@@ -144,15 +137,4 @@ export default class ChartWave extends React.Component {
 			</div>
 		)
 	}
-}
-
-function splitNumber(limit, split = 50, div = 10) {
-	return new Array(limit).fill().map((_, i) => {
-		if (!i) return 0
-		if (i === limit.length - 1) return limit / div
-		// let num = i % split
-		let num = ceil(i / 10)
-		return num
-		// return num? '': i / div
-	})
 }

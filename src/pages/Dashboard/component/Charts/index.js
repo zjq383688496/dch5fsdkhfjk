@@ -98,8 +98,8 @@ export default class Charts extends React.Component {
 		return (
 			<div className="charts-draw" onClick={handleClick}>
 				<div className="cd-title fs14">
-					<b style={{ marginRight: 5 }}>{name}</b>
-					<span className="c-gray">{unit}</span>
+					<b className="quota-c">{name}</b>
+					<span className="quota-uc">{unit}</span>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}

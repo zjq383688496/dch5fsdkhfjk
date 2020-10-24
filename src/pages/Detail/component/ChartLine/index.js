@@ -29,7 +29,7 @@ export default class ChartLine extends React.Component {
 		// console.log(rtX.value, rtY.value)
 		let options = {
 			grid: {
-				top:    '20px',
+				top:    '16px',
 				right:  '10px',
 				bottom: '20px',
 				left:   '48px',
@@ -170,8 +170,8 @@ export default class ChartLine extends React.Component {
 		return (
 			<div className="chart-line">
 				<div className="cl-title cl-title-t fs24">
-					<b>{infoY.n}</b>
-					<span>{infoY.u}</span>
+					<b className="quota-c">{infoY.n}</b>
+					<span className="quota-uc">{infoY.u}</span>
 				</div>
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
@@ -182,8 +182,8 @@ export default class ChartLine extends React.Component {
 					style={{height: '100%'}}
 				/>
 				<div className="cl-title cl-title-b fs24">
-					<b>{infoX.n}</b>
-					<span>{infoX.u}</span>
+					<b className="quota-c">{infoX.n}</b>
+					<span className="quota-uc">{infoX.u}</span>
 				</div>
 			</div>
 		)

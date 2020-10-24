@@ -38,6 +38,7 @@ export function data2cache(data) {
 // 缓存 进入 渲染
 export async function cache2device(time = 100) {
 	let { Cache, Devices } = window.__Redux__
+	// let MinNumber = {}
 	await _wait(2000)
 	deviceKeyVaild()
 	// let now = Date.now()
@@ -48,9 +49,11 @@ export async function cache2device(time = 100) {
 		let { group = [] } = Cache
 		group.forEach((id, i) => {
 			if (!Devices[id]) Devices[id] = {}
+			// if (!MinNumber[id])    MinNumber[id] = {}
 			if (!__MIN__[id]) __MIN__[id] = {}
 
 			let MIN    = __MIN__[id]
+			// let MINNum = MinNumber[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
 				{ alarm, config, device, deviceId, measure, queues, textMessage } = cache,
@@ -79,14 +82,6 @@ export async function cache2device(time = 100) {
 				if (len >= limit) cacheWait[key] = false
 			})
 
-			// let nowLen = Object.values(realTime).length,
-			// 	newLen = Object.values(realTime).filter(({ value }) => value != null).length
-			
-			// if (!newLen) {
-			// 	consoleLog()
-			// 	console.log(queues, JSON.stringify(queues))
-			// }
-
 			if (__VisibilityState__ === 'hidden') {
 				realTime = {
 					PAW:    __Null__,
@@ -103,13 +98,24 @@ export async function cache2device(time = 100) {
 				if (!wait) val = queue.shift()
 				val = round(val)
 				// 获取波形基数
-				if (__MIN_STATE__) return
+				if (__MIN_STATE__) return	// 判断是否继续计算最小值
+				// if (MINNum[key] === undefined) MINNum[key] = 0
 				if (MIN[key] === undefined) {
 					MIN[key] = val
+					// console.log(key, '初始值: ', 10000)
 				} else {
 					let MX  = abs(MIN[key]),
+						// MN  = MINNum[key],
 						VAL = abs(val)
 					if (VAL < MX) MIN[key] = val
+					// if (VAL < MX) { 
+					// 	if (MN > 5) {
+					// 		MIN[key] = val
+					// 		MINNum[key] = 0
+					// 		console.log(key, '更新最小值: ', val)
+					// 	}
+					// 	++MINNum[key]
+					// }
 				}
 			})
 
@@ -127,7 +133,7 @@ export async function cache2device(time = 100) {
 		})
 		// console.log('执行耗时: ', Date.now() - now, 's')
 	}, time)
-	await _wait(5300)
+	await _wait(5500)
 	__MIN_STATE__ = true
 }
 
@@ -218,53 +224,9 @@ const d2c = {
 // 告警通用方法
 function alarmFun(data, cache) {
 	let { deviceAlarmList } = data
-	// let { alarm } = cache
 	cache.alarm = deviceAlarmList
-	// deviceAlarmList.forEach(deviceAlarm => {
-	// 	let { priority, alarmmPhrase } = deviceAlarm
-	// 	let message = alarmmPhrase.replace(/(^\s+|\s+$)/g, '')
-	// 	let key = `${priority}_${message}`
-	// 	alarm[key] = { priority, message, timestamp: Date.now() }
-	// 	alarm.push({ priority, message: alarmmPhrase, timestamp: Date.now() })
-	// })
-	// console.log(deviceAlarmList)
-	// alarmExpire(alarm)
-	// cache.alarm = alarmSort(alarm)
-	// console.log(cache.alarm)
-	// alarm = cache.alarm = alarm.slice(0, 4)
 
 }
-// 告警过期
-// function alarmExpire(alarm) {
-// 	Object.keys(alarm).forEach(key => {
-// 		let { timestamp } = alarm[key],
-// 			timeDiff = Date.now() - timestamp
-// 		if (timeDiff > 3e3) {
-// 			// console.log('时间差', timeDiff, key)
-// 			delete alarm[key]
-// 		}
-// 	})
-// }
-// 告警排序
-// function alarmSort(alarm) {
-// 	let newAlarm = {}
-// 	let sortArr = Object.keys(alarm).sort((key1, key2) => {
-// 		let alarm1 = alarm[key1],
-// 			alarm2 = alarm[key2],
-// 			p1     = alarm1.priority,
-// 			p2     = alarm2.priority,
-// 			pDiff  = p1 - p2
-
-// 		if (pDiff) return pDiff
-// 		alarm1.timestamp - alarm2.timestamp
-// 	})
-// 	sortArr.forEach((key, i) => {
-// 		if (i > 3) return
-// 		alarm[key].idx = i
-// 		newAlarm[key] = alarm[key]
-// 	})
-// 	return newAlarm
-// }
 
 // 观测值通用方法
 function measureFun(data, { measure }) {

@@ -93,8 +93,8 @@ class Box extends React.Component {
 			{ cls, content } = getAlarm(alarm1)
 		return (
 			<div className="dashboard-box">
-				<div className="db-info fx h40 bc-blue c-white">
-					<div className="db-info-item col-6 p4 pl8" onClick={e => this.toPage(device)}>
+				<div className="db-info fx h40 bc-blue c-white" onDoubleClick={e => this.toPage(device)}>
+					<div className="db-info-item col-6 p4 pl8">
 						<p className="fs12 lh12">床号:</p>
 						<p className="fs20 lh20 ellipsis" title={bedName}>{bedName}</p>
 					</div>

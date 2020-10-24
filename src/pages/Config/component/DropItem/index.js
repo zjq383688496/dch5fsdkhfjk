@@ -32,8 +32,13 @@ export default class DropItem extends React.Component {
 	onEdit = e => {
 		this.setState({ editState: true })
 	}
-	update = config => {
+	update = (config, idx) => {
+		let { bedName } = config
 		this.setState(config)
+		if (this.isRe(bedName, idx)) {
+			return message.error('床位名称重复!')
+		}
+		__BedName__[idx] = bedName
 	}
 	isRe(name, idx) {
 		if (!name || __BedName__[idx] === name) return false
@@ -74,7 +79,7 @@ export default class DropItem extends React.Component {
 								value={bedName}
 								className="cb-item"
 								placeholder="请输入床位"
-								onChange={e => this.update({ bedName: e.target.value })}
+								onChange={e => this.update({ bedName: e.target.value }, idx)}
 							/>
 							<Button type="primary" onClick={e => this.onFinish(e, idx)}>完成</Button>
 						</Space>

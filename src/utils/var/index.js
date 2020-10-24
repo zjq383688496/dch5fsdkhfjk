@@ -2,8 +2,8 @@ module.exports = Object.assign(window, {
 	__Map__: {
 		m: {
 			ETCO2: {
-				u: '%',
-				n: 'etCO2',
+				u: 'mmHg',		// % || mmHg
+				n: 'etCO₂',
 			},
 			PEAK: {
 				u: 'mbar',
@@ -15,7 +15,7 @@ module.exports = Object.assign(window, {
 			},
 			MVE: {
 				u: 'L/min',
-				n: 'Mve',
+				n: 'MVe',
 			},
 			MVSPONT: {
 				u: 'mbar',
@@ -31,14 +31,14 @@ module.exports = Object.assign(window, {
 			},
 			FIO2: {
 				u: '%',
-				n: 'FiO2',
+				n: 'FiO₂',
 			},
 			R: {
-				u: 'mbar/L/s',	// mbar || mbar/L/s
+				u: 'mbar',	// mbar || mbar/L/s
 				n: 'R',
 			},
 			C: {
-				u: 'mL/mbar',	// mL || mL/mbar
+				u: 'mbar',	// mL || mL/mbar
 				n: 'C',
 			},
 			VTE: {
@@ -71,7 +71,7 @@ module.exports = Object.assign(window, {
 		// 暂无
 		not: {
 			PEEP: {
-				u: '%',
+				u: 'mbar',	// mbar
 				n: 'PEEP',
 			},
 			PMEAN: {
@@ -111,11 +111,13 @@ module.exports = Object.assign(window, {
 				n: 'RSB',
 			},
 			PPEAK: {
-				u: 'ml',
+				u: 'mbar',
 				n: 'Ppeak',
 			},
 		}
 	}
 })
 
-
+__Map__.all = {
+	...__Map__.m, ...__Map__.not
+}

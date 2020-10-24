@@ -19,13 +19,6 @@
 	}
 	.wb-scroll {
 		position: relative;
-		padding: ;
-		.time-point {
-			position: absolute;
-			top: 0;
-			left: 120px;
-			white-space: nowrap;
-		}
 	}
 	.wb-bottom {
 		display: flex;
@@ -39,6 +32,7 @@
 		}
 	}
 	.wb-wave-box {
+		position: relative;
 		display: flex;
 		height: 33%;
 		.chart-wave {
@@ -46,12 +40,40 @@
 			flex-shrink: 0;
 		}
 		.wb-data {
+			position: absolute;
 			display: flex;
 			width: 100px;
+			top:  24px;
+			white-space: nowrap;
+			margin-left: 20px;
 			flex-shrink: 0;
+			color: #333;
 			/*justify-content: center;*/
 			align-items: center;
-			font-weight: bold;
+		}
+		.wb-point {
+			position: absolute;
+			top: 0;
+			width:  .5vw;
+			height: 100%;
+			padding: 58px 0 10px;
+			transform: translateX(-.2vw);
+			z-index: 1;
+			&-dot {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				i {
+					position: absolute;
+					display: block;
+					width:  .5vw;
+					height: .5vw;
+					border-radius: .5vw;
+					background-color: #609bd3;
+					border: 1px solid #45719b;
+					transform: translateY(.25vw);
+				}
+			}
 		}
 	}
 	.wb-line {
@@ -66,5 +88,20 @@
 		&.s-active {
 			display: block;
 		}
+		.time-point {
+			position: absolute;
+			top:  0;
+			left: 0;
+			transform: translate(-50%, -100%);
+			white-space: nowrap;
+		}
+	}
+	.rw-mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		z-index: 10;
 	}
 }

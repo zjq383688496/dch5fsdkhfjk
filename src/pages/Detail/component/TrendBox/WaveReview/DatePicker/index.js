@@ -52,10 +52,10 @@ export default class DatePickerComp extends React.Component {
 		return (
 			<div className="date-picker-comp">
 				<Form {...layout}>
-					<Item label="开始时间">
+					<Item label="选择时刻">
 						<Space>
 							<DatePicker value={date} format={'YYYY-MM-DD'} onChange={this.onChangeDate} />
-							<TimePicker value={date} format={'HH:mm:ss'} onChange={this.onChangeTime} />
+							<TimePicker value={date} format={'HH:mm:ss'} onChange={this.onChangeTime} showNow={false} />
 						</Space>
 					</Item>
 					{/*<Item label="时长">
