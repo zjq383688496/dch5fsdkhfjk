@@ -7,7 +7,26 @@
 	overflow: hidden;
 	border: 1px solid #fff;
 	.td-title {
+		position: relative;
 		padding: 10px;
+		background-color: #fff;
+		flex-shrink: 0;
+		border-bottom: 4px solid #d9ecf1;
+		.td-close {
+			position: absolute;
+			right: 4px;
+			top: 50%;
+			display: flex;
+			width:  32px;
+			height: 32px;
+			justify-content: center;
+			align-items: center;
+			border-radius: 4px;
+			color: #fff;
+			font-size: 24px;
+			background-color: #d9ecf1;
+			transform: translateY(-50%);
+		}
 	}
 	.tb-content {
 		padding: 20px;

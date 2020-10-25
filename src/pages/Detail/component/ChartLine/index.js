@@ -25,7 +25,7 @@ export default class ChartLine extends React.Component {
 			infoY = __Map__.r[fieldY] || {}
 
 		let point = [ rtX.value, rtY.value ]
-		let data  = this.data = [ point, ...new Array(0).fill().map(_ => [ null, null ]) ]
+		let data  = this.data = [ point ]
 		let options = {
 			grid: {
 				top:    '16px',
@@ -79,6 +79,7 @@ export default class ChartLine extends React.Component {
 			infoY,
 			point,
 			minDis: getPointDis({ x: MIN[fieldX], y: MIN[fieldY] }),
+			preVol: getVol(realTime),		// 上一个值
 		}
 	}
 	componentDidMount() {
@@ -123,7 +124,7 @@ export default class ChartLine extends React.Component {
 	}
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
 		let { data, echart, state }  = this,
-			{ minDis, options, point, deviceId, visibilityState } = state,
+			{ minDis, options, point, deviceId, visibilityState, preVol } = state,
 			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
@@ -133,7 +134,8 @@ export default class ChartLine extends React.Component {
 			vY  = rtY.value,
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
-			_point = [ vX, vY ]
+			_point = [ vX, vY ],
+			curVol = getVol(realTime)
 
 		if (__VisibilityState__ === 'hidden') return this.clearData()
 
@@ -192,4 +194,10 @@ export default class ChartLine extends React.Component {
 			</div>
 		)
 	}
+}
+
+// 获取volume的值
+function getVol(realTime) {
+	let vol = realTime['VOLUME'] || {}
+	return vol.value
 }

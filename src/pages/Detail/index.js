@@ -105,7 +105,7 @@ class Detail extends React.Component {
 				<div className="detail-body">
 					{
 						trendStatus
-						? <TrendBox device={device} />
+						? <TrendBox device={device} onClose={this.goTrend} />
 						: null
 					}
 					{
