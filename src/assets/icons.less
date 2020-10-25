@@ -8,6 +8,7 @@
 	height: 64 / @vw;
     background-position: center;
 	background-size: contain;
+	background-repeat: no-repeat;
 }
 
 .icons-home {
@@ -21,6 +22,9 @@
 }
 .icons-trend {
 	background-image: url('icon/trend.png');
+	&.s-selected {
+		background-image: url('icon/trend_selected.png');
+	}
 }
 .icons-camera {
 	background-image: url('icon/camera.png');

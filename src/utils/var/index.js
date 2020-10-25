@@ -72,7 +72,7 @@ module.exports = Object.assign(window, {
 		not: {
 			PEEP: {
 				u: 'mbar',	// mbar
-				n: 'PEEP',
+				n: 'Peep',
 			},
 			PMEAN: {
 				u: 'mbar',

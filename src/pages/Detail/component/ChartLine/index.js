@@ -26,7 +26,6 @@ export default class ChartLine extends React.Component {
 
 		let point = [ rtX.value, rtY.value ]
 		let data  = this.data = [ point, ...new Array(0).fill().map(_ => [ null, null ]) ]
-		// console.log(rtX.value, rtY.value)
 		let options = {
 			grid: {
 				top:    '16px',
@@ -39,6 +38,11 @@ export default class ChartLine extends React.Component {
 				min: cX.minValue || 0,
 				max: cX.maxValue || 100,
 				splitLine: { show: false },
+				axisLabel: {
+					textStyle: {
+						fontSize: 16
+					}
+				}
 			},
 			yAxis: {
 				type: 'value',

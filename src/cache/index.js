@@ -59,11 +59,31 @@ export async function cache2device(time = 100) {
 				{ alarm, config, device, deviceId, measure, queues, textMessage } = cache,
 				realTime = {}
 
+			// 检测判断是否抹平数据
+			let newTime, isSmooth = true, nullLen = false
+			Object.keys(queues).forEach(key => {
+				let queue = queues[key],
+					len   = queue.length
+				if (!len) nullLen = true
+				if (nullLen) return
+				let value = queue[0]
+				if (!newTime) newTime = value.timestamp
+				if (newTime < value.timestamp) {
+					isSmooth = false
+					newTime = value.timestamp
+				}
+			})
+
+			if (!isSmooth) {
+				debugger
+			}
+
 			// 遍历波形数据队列
 			Object.keys(queues).forEach(key => {
 				let queue = queues[key],
 					len   = queue.length,
 					wait  = cacheWait[key]
+				if (!len) return
 
 				// 数据量大于缓存数2倍的时候清除多余数据
 				if (__VisibilityState__ === 'hidden' && len > limit) {
@@ -76,13 +96,14 @@ export async function cache2device(time = 100) {
 				}
 
 				let value = queue[0]
-				realTime[key] = !wait? { value }: __Null__
+
+				realTime[key] = !wait? { value: value.value }: __Null__
 				// 触发等待
 				if (!len)         cacheWait[key] = true
 				if (len >= limit) cacheWait[key] = false
 			})
 
-			if (__VisibilityState__ === 'hidden') {
+			if (__VisibilityState__ === 'hidden' || nullLen) {
 				realTime = {
 					PAW:    __Null__,
 					FLOW:   __Null__,
@@ -187,12 +208,15 @@ const d2c = {
 		let { packageCode, realTimeDataList } = data
 
 		realTimeDataList.forEach(realTime => {
-			let { code, value } = realTime,
+			let { code, value, timestamp } = realTime,
 				key = code.replace(`${packageCode}_`, '')
-
 			if (!queues[key]) queues[key] = []
 			let queue = queues[key]
-			queue.push(+(value).toFixed(4))
+			// queue.push(+(value).toFixed(4))
+			queue.push({
+				value: +value.toFixed(4),
+				timestamp,
+			})
 		})
 
 		//

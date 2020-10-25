@@ -173,8 +173,12 @@ class Detail extends React.Component {
 					</div>
 				</div>
 				<div className="btn-box h124 fx-col">
-					<div className="btn-back icons-home" onClick={this.goBack}></div>
-					<div className="btn-back icons-trend" onClick={this.goTrend}></div>
+					<div className="btn-back" onClick={this.goBack}>
+						<i className="icons-home"></i>
+					</div>
+					<div className="btn-back" onClick={this.goTrend}>
+						<i className={`icons-trend${trendStatus? ' s-selected': ''}`}></i>
+					</div>
 				</div>
 			</div>
 		)
