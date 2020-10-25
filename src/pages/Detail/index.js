@@ -60,14 +60,15 @@ class Detail extends React.Component {
 	render() {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data) return null
-		// if (!data || !__MIN_STATE__) return null
-		let { alarm: [ alarm1, alarm2, alarm3 ], config, device, measure, realTime, textMessage } = data,
+		let { alarm: [ alarm1, alarm2, alarm3 ], clear, config, device, measure, realTime, textMessage, timestamp = '' } = data,
 			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '', code = '' } = device,
 			MIN = __MIN__[deviceId]
 		let bedName = this.getBedName(deviceId)
 		let a1 = getAlarm(alarm1),
 			a2 = getAlarm(alarm2),
-			a3 = getAlarm(alarm3)
+			a3 = getAlarm(alarm3),
+			clearValue = clear[timestamp] != undefined
+		if (clearValue) delete clear[timestamp]
 		return (
 			<div className="detail fx-col">
 				<div className="detail-top h124">
@@ -118,7 +119,7 @@ class Detail extends React.Component {
 										{
 											MIN && __VisibilityState__ === 'visible'
 											?
-											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
+											<ChartLine clear={clearValue} config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
 											: null
 										}
 									</div>
@@ -126,7 +127,7 @@ class Detail extends React.Component {
 										{
 											MIN && __VisibilityState__ === 'visible'
 											?
-											<ChartLine config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
+											<ChartLine clear={clearValue} config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
 											: null
 										}
 									</div>

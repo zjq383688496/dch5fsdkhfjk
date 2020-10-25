@@ -21,8 +21,8 @@ export default class ChartLine extends React.Component {
 			rtY = realTime[fieldY] || {},
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
-			infoX = __Map__.r[fieldX] || {},
-			infoY = __Map__.r[fieldY] || {}
+			infoX   = __Map__.r[fieldX] || {},
+			infoY   = __Map__.r[fieldY] || {}
 
 		let point = [ rtX.value, rtY.value ]
 		let data  = this.data = [ point ]
@@ -78,8 +78,7 @@ export default class ChartLine extends React.Component {
 			infoX,
 			infoY,
 			point,
-			minDis: getPointDis({ x: MIN[fieldX], y: MIN[fieldY] }),
-			preVol: getVol(realTime),		// 上一个值
+			minDis:  getPointDis({ x: MIN[fieldX], y: MIN[fieldY] }),
 		}
 	}
 	componentDidMount() {
@@ -93,6 +92,7 @@ export default class ChartLine extends React.Component {
 		clearTimeout(this.clear_timeout)
 	}
 	index = 0
+	clear_time = Date.now()
 	timeout = null
 	clear_timeout = null
 	clearTask = () => {
@@ -104,11 +104,14 @@ export default class ChartLine extends React.Component {
 	// task = () => {
 	// 	this.timeout = setTimeout()
 	// }
-	clearData = () => {
+	clearData = (focus = false) => {
 		let { echart, props } = this,
 			{ fieldX, fieldY, config = {}, realTime = {} } = props
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance()
+		if (!focus) {
+			if ((Date.now() - this.clear_time) < 2e3) return
+		}
 		let rtX = realTime[fieldX] || {},
 			rtY = realTime[fieldY] || {},
 			vX  = rtX.value,
@@ -119,12 +122,15 @@ export default class ChartLine extends React.Component {
 			data = this.data = [ _point ]
 		this.updateChart(myChart, cX, cY, data)
 		this.index = 0
-		this.setState({ data, visibilityState: __VisibilityState__, })
+		this.setState({ data, visibilityState: __VisibilityState__ })
+		this.clear_time = Date.now()
 		this.clearTask()
+		console.log('清屏!')
 	}
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
-		let { data, echart, state }  = this,
-			{ minDis, options, point, deviceId, visibilityState, preVol } = state,
+		let { data, echart, state, props }  = this,
+			{ clear } = props,
+			{ minDis, options, point, deviceId, visibilityState } = state,
 			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
@@ -134,25 +140,20 @@ export default class ChartLine extends React.Component {
 			vY  = rtY.value,
 			cX  = config[fieldX] || {},
 			cY  = config[fieldY] || {},
-			_point = [ vX, vY ],
-			curVol = getVol(realTime)
+			_point  = [ vX, vY ],
+			curVol  = getVol(realTime)
 
-		if (__VisibilityState__ === 'hidden') return this.clearData()
+
+		if (__VisibilityState__ === 'hidden') return this.clearData(true)
 
 		let curDis = getPointDis({ x: vX, y: vY }),
 			difDis = abs(curDis - minDis)
 
-		if (difDis < diffVal) {
-			++this.index
-		} else {
-			this.index = 0
-		}
-
-		if (this.index > maxIndex) return this.clearData()
+		if (clear) return this.clearData()
 
 		data.push([ rtX.value, rtY.value ])
 		this.updateChart(myChart, cX, cY, data)
-		this.setState({ data, point: _point, visibilityState: __VisibilityState__, })
+		this.setState({ data, point: _point, visibilityState: __VisibilityState__ })
 	}
 
 	updateChart(chart, x = {}, y = {}, data) {
@@ -201,3 +202,8 @@ function getVol(realTime) {
 	let vol = realTime['VOLUME'] || {}
 	return vol.value
 }
+// 获取volume的区间差
+// function getDiff(config) {
+// 	let conVol  = config['VOLUME']
+// 	return conVol.maxValue - conVol.minValue
+// }

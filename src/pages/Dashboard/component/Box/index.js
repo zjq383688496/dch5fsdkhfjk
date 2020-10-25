@@ -11,7 +11,7 @@ class Box extends React.Component {
 		super(props)
 		this.state = {
 			waveState: false,
-			waveValue: 'PAW',
+			waveValue: 'PAW',	// PAW
 			measureState: false,
 			measureIndex: -1,
 			wait: false,

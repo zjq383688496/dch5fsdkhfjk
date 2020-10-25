@@ -148,8 +148,12 @@ export default class WaveBox extends React.Component {
 			let cur = current[i]
 			let { key, maxValue, minValue } = _
 			let val = r[key]
-			let percentage
-			if (cur) percentage = getPercentage(cur.value, minValue, maxValue - minValue)
+			let percentage, newVal
+			if (cur) {
+				percentage = getPercentage(cur.value, minValue, maxValue - minValue)
+				if (key === 'VOLUME') newVal = cur.value.toFixed(0)
+				else newVal = cur.value.toFixed(1)
+			}
 			return (
 				<div key={i} className="wb-wave-box" style={{ height }}>
 					<StaticWave left={left} right={right} ref={`wave_${key}`} data={_} />
@@ -159,7 +163,7 @@ export default class WaveBox extends React.Component {
 						<>
 							<div className="wb-data fs24" style={style}>
 								<b className="quota-c">{val.n}</b>
-								<span className="quota-uc" style={{color: '#333' }}>{cur? cur.value: '--'}</span>
+								<span className="quota-uc" style={{color: '#333' }}>{cur? newVal: '--'}</span>
 							</div>
 							{
 								cur.value != 0
