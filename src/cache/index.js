@@ -325,9 +325,9 @@ const d2c = {
 }
 // 告警通用方法
 function alarmFun(data, cache) {
-	let { deviceAlarmList } = data
+	let { deviceAlarmList = [] } = data
+	if (!deviceAlarmList || !deviceAlarmList.length) deviceAlarmList = []
 	cache.alarm = deviceAlarmList
-
 }
 
 // 观测值通用方法

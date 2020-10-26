@@ -57,6 +57,14 @@ class Detail extends React.Component {
 		let bedName = __BedName__[idx]
 		return bedName
 	}
+	getClear(clear, timestamp) {
+		let clearValue = false
+		if (timestamp) {
+			clearValue = clear[timestamp] != undefined
+			if (clearValue) delete clear[timestamp]
+		}
+		return clearValue
+	}
 	render() {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data) return null
@@ -67,8 +75,7 @@ class Detail extends React.Component {
 		let a1 = getAlarm(alarm1),
 			a2 = getAlarm(alarm2),
 			a3 = getAlarm(alarm3),
-			clearValue = clear[timestamp] != undefined
-		if (clearValue) delete clear[timestamp]
+			clearValue = this.getClear(clear, timestamp)
 		return (
 			<div className="detail fx-col">
 				<div className="detail-top h124">

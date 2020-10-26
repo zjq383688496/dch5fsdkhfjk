@@ -36,6 +36,13 @@ export default class NotepadBox extends React.Component {
 		// clearInterval(this.timeout)
 		table.removeEventListener('scroll', this.scrollUpdate)
 	}
+	getHref = () => {
+		let { device } = this.props,
+			{ date }   = this.state,
+			{ macAddress } = device
+		let href = serviceApi.export(macAddress, date, 1)
+		return href
+	}
 	getData = () => {
 		let { device } = this.props,
 			{ data, date, current, size, page, pages, loading } = this.state,
@@ -98,8 +105,9 @@ export default class NotepadBox extends React.Component {
 	}
 	render() {
 		let { pos } = this.state
-		let td  = this.renderTd()
-		let col = this.renderCol()
+		let td   = this.renderTd()
+		let col  = this.renderCol()
+		let href = this.getHref()
 		return (
 			<div className="notepad-box">
 				<div className="nb-top">
@@ -137,7 +145,7 @@ export default class NotepadBox extends React.Component {
 					</div>
 				</div>
 				<div className="nb-bottom">
-					{/*<a className="icons-output"></a>*/}
+					{<a className="icons-output" target="_blank" href={href}></a>}
 				</div>
 			</div>
 		)

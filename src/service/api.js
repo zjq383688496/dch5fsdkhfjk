@@ -18,4 +18,7 @@ module.exports = {
 
 	// 记事本
 	getAlarm: (macAddress, startDate, current, size, type) => Ajax.get(`/report/getAlarm?macAddress=${macAddress}&startDate=${startDate}&current=${current}&size=${size}&type=${type}`),
+
+	// 记事本导出
+	export: (macAddress, startDate, type) => `http://94.191.50.139:8089/report/export?macAddress=${macAddress}&startDate=${startDate}&type=${type}`,
 }
