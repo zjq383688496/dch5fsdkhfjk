@@ -38,7 +38,7 @@ export default class StaticWave extends React.Component {
 				max: maxValue || 100,
 				axisLabel: {
 					textStyle: {
-						fontSize: 16
+						fontSize: 12
 					}
 				}
 			},

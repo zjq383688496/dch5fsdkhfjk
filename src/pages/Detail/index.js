@@ -86,7 +86,7 @@ class Detail extends React.Component {
 								<div className="row-6 fs20 lh28">点 位: {positionName}</div>
 								<div className="row-6 fs20 lh28">科 室: {departmentName}</div>
 								<div className="row-6 fs20 lh28">设 备: {code}</div>
-								<span className="di-bedName p8 lh28">{bedName}</span>
+								<span className="di-bedName fs20 p8 lh28">床号: {bedName}</span>
 							</div>
 						</div>
 					</div>

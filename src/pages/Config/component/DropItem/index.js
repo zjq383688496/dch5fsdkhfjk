@@ -32,13 +32,23 @@ export default class DropItem extends React.Component {
 	onEdit = e => {
 		this.setState({ editState: true })
 	}
+	onMouseOut = e => {
+		// e.preventDefault()
+		// e.stopPropagation()
+		let { currentTarget, target } = e
+		if (target.className != 'di-btn') return
+		let { idx } = this.props
+		let bedName = __BedName__[idx]
+		this.setState({ bedName, editState: false })
+		console.log('onMouseOut')
+	}
 	update = (config, idx) => {
-		let { bedName } = config
+		// let { bedName } = config
 		this.setState(config)
-		if (this.isRe(bedName, idx)) {
-			return message.error('床位名称重复!')
-		}
-		__BedName__[idx] = bedName
+		// if (this.isRe(bedName, idx)) {
+		// 	return message.error('床位名称重复!')
+		// }
+		// __BedName__[idx] = bedName
 	}
 	isRe(name, idx) {
 		if (!name || __BedName__[idx] === name) return false
@@ -62,6 +72,7 @@ export default class DropItem extends React.Component {
 				onDragLeave={this.onStop}
 				onDragOver={this.onStop}
 				onDrop={e => onDrop(e, idx)}
+				onMouseOut={this.onMouseOut}
 				draggable="true"
 			>
 				<div className="bad-name">{__BedName__[idx]}</div>
@@ -79,7 +90,7 @@ export default class DropItem extends React.Component {
 								value={bedName}
 								className="cb-item"
 								placeholder="请输入床位"
-								onChange={e => this.update({ bedName: e.target.value }, idx)}
+								onChange={e => this.update({ bedName: e.target.value })}
 							/>
 							<Button type="primary" onClick={e => this.onFinish(e, idx)}>完成</Button>
 						</Space>

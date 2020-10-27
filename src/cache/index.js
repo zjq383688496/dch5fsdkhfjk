@@ -277,7 +277,7 @@ const d2c = {
 						let cur  = values[i]
 						let diff = cur - prev
 						if (max < cur) max = cur
-						if (cur > prev || diff > -10) {
+						if (cur > prev || diff > -20) {
 							++upNum
 						}
 					}

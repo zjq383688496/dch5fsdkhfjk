@@ -26,6 +26,57 @@ export default class ChartLine extends React.Component {
 
 		let point = [ rtX.value, rtY.value ]
 		let data  = this.data = [ point ]
+
+		let xAxis = [
+			{
+				type: 'value',
+				boundaryGap: [0, '100%'],
+				min: getMinValue(cX.minValue, fieldX),
+				max: cX.maxValue || 100,
+				splitLine: { show: false },
+				axisTick: { show: false },
+				axisLabel: {
+					textStyle: {
+						fontSize: 12
+					}
+				}
+			}
+		]
+		let yAxis = [
+			{
+				type: 'value',
+				boundaryGap: [0, '100%'],
+				min: getMinValue(cY.minValue, fieldY),
+				max: cY.maxValue || 100,
+				splitLine: { show: false },
+				axisTick: { show: false },
+			}
+		]
+		if (fieldX === 'VOLUME') {
+			xAxis.push({
+				position: 'bottom',
+				type: 'value',
+				boundaryGap: [0, '100%'],
+				min: getMinValue(cX.minValue, fieldX),
+				max: cX.maxValue || 100,
+				splitLine: { show: false },
+				axisLabel: { show: false },
+				axisTick: { show: true },
+			})
+		}
+		if (fieldY === 'VOLUME') {
+			yAxis.push({
+				position: 'left',
+				type: 'value',
+				boundaryGap: [0, '100%'],
+				min: getMinValue(cY.minValue, fieldY),
+				max: cY.maxValue || 100,
+				splitLine: { show: false },
+				axisLabel: { show: false },
+				axisTick: { show: true },
+			})
+		}
+
 		let options = {
 			grid: {
 				top:    '16px',
@@ -33,29 +84,8 @@ export default class ChartLine extends React.Component {
 				bottom: '20px',
 				left:   '48px',
 			},
-			xAxis: {
-				type: 'value',
-				min: cX.minValue || 0,
-				max: cX.maxValue || 100,
-				splitLine: { show: false },
-				axisLabel: {
-					textStyle: {
-						fontSize: 16
-					}
-				}
-			},
-			yAxis: {
-				type: 'value',
-				boundaryGap: [0, '100%'],
-				splitLine: { show: false },
-				min: cY.minValue || 0,
-				max: cY.maxValue || 100,
-				axisLabel: {
-					textStyle: {
-						fontSize: 16
-					}
-				}
-			},
+			xAxis,
+			yAxis,
 			series: [{
 				name: '模拟数据',
 				type: 'line',
@@ -120,7 +150,7 @@ export default class ChartLine extends React.Component {
 			cY  = config[fieldY] || {},
 			_point = [ vX, vY ],
 			data = this.data = [ _point ]
-		this.updateChart(myChart, cX, cY, data)
+		this.updateChart(myChart, cX, cY, data, fieldX, fieldY)
 		this.index = 0
 		this.setState({ data, visibilityState: __VisibilityState__ })
 		this.clear_time = Date.now()
@@ -152,20 +182,38 @@ export default class ChartLine extends React.Component {
 		if (clear) return this.clearData()
 
 		data.push([ rtX.value, rtY.value ])
-		this.updateChart(myChart, cX, cY, data)
+		this.updateChart(myChart, cX, cY, data, fieldX, fieldY)
 		this.setState({ data, point: _point, visibilityState: __VisibilityState__ })
 	}
 
-	updateChart(chart, x = {}, y = {}, data) {
-		chart.setOption({
-			xAxis: {
-				min: x.minValue || 0,
+	updateChart(chart, x = {}, y = {}, data, fieldX, fieldY) {
+		let xAxis = [
+			{
+				min: getMinValue(x.minValue, fieldX),
 				max: x.maxValue || 100,
-			},
-			yAxis: {
-				min: y.minValue || 0,
+			}
+		]
+		let yAxis = [
+			{
+				min: getMinValue(y.minValue, fieldY),
 				max: y.maxValue || 100,
-			},
+			}
+		]
+		if (fieldX === 'VOLUME') {
+			xAxis.push({
+				min: getMinValue(x.minValue, fieldX),
+				max: x.maxValue || 100,
+			})
+		}
+		if (fieldY === 'VOLUME') {
+			yAxis.push({
+				min: getMinValue(y.minValue, fieldY),
+				max: y.maxValue || 100,
+			})
+		}
+		chart.setOption({
+			xAxis,
+			yAxis,
 			series: [{ data }]
 		})
 	}
@@ -176,7 +224,7 @@ export default class ChartLine extends React.Component {
 
 		return (
 			<div className="chart-line">
-				<div className="cl-title cl-title-t fs24">
+				<div className="cl-title cl-title-t fs20">
 					<b className="quota-c">{infoY.n}</b>
 					<span className="quota-uc">{infoY.u}</span>
 				</div>
@@ -188,7 +236,7 @@ export default class ChartLine extends React.Component {
 					option={options}
 					style={{height: '100%'}}
 				/>
-				<div className="cl-title cl-title-b fs24">
+				<div className="cl-title cl-title-b fs20">
 					<b className="quota-c">{infoX.n}</b>
 					<span className="quota-uc">{infoX.u}</span>
 				</div>

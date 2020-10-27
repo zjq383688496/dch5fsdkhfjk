@@ -59,7 +59,7 @@ class Box extends React.Component {
 		e.stopPropagation()
 		let { indexs, measureIndex } = this.state
 		if (indexs[measureIndex] === key) return 
-		if (__Map__.not[key]) return this.measureShow(e, -1, false)
+		// if (__Map__.not[key]) return this.measureShow(e, -1, false)
 		indexs[measureIndex] = key
 		this.setState({ indexs })
 		this.measureShow(e, -1, false)
@@ -138,7 +138,7 @@ class Box extends React.Component {
 				{
 					!wait && __VisibilityState__ === 'visible'
 					?
-					<Charts field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
+					<Charts active={waveState} field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
 					: null
 				}
 				<div className="db-index fx h92 fs12">

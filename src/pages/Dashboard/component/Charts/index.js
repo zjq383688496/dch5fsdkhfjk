@@ -8,7 +8,9 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
-const limit = 150 - 1
+const limit = 150
+
+const interval = 49
 
 export default class Charts extends React.Component {
 	constructor(props) {
@@ -18,23 +20,26 @@ export default class Charts extends React.Component {
 			{ u: unit, n: name }   = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => __Null__) ]
+		let data = this.data = new Array(limit).fill().map(_ => __Null__)
 		let options = {
 			grid: {
 				top:    '14px',
-				right:  '2px',
-				bottom: '14px',
+				right:  '20px',
+				bottom: '24px',
 				left:   '32px',
 			},
-			xAxis: {
-				type: 'category',
-			},
+			xAxis: createXAxis(limit),
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
 				splitLine: { show: false },
-				min: minValue || 0,
+				min: getMinValue(minValue, field),
 				max: maxValue || 100,
+				axisLabel: {
+					textStyle: {
+						fontSize: 12
+					}
+				}
 			},
 			series: [{
 				name: '模拟数据',
@@ -82,7 +87,7 @@ export default class Charts extends React.Component {
 
 		myChart.setOption({
 			yAxis: {
-				min: minValue || 0,
+				min: getMinValue(minValue, field),
 				max: maxValue || 100,
 			},
 			series: [{ data }]
@@ -92,11 +97,11 @@ export default class Charts extends React.Component {
 	}
 
 	render() {
-		let { data, handleClick }   = this.props
+		let { active, data, handleClick }   = this.props
 		let { options, name, unit } = this.state
 
 		return (
-			<div className="charts-draw" onClick={handleClick}>
+			<div className={`charts-draw${active? ' s-active': ''}`} onClick={handleClick}>
 				<div className="cd-title fs14">
 					<b className="quota-c">{name}</b>
 					<span className="quota-uc">{unit}</span>

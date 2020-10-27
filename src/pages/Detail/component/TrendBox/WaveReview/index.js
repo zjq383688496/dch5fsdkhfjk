@@ -85,6 +85,7 @@ export default class WaveBox extends React.Component {
 			})
 			let cfg = { data, lineShow: false }
 			if (data.length) cfg.limit = data[0].list.length
+			console.log(data.length)
 			this.setState(cfg)
 		})
 	}
@@ -156,7 +157,7 @@ export default class WaveBox extends React.Component {
 			}
 			return (
 				<div key={i} className="wb-wave-box" style={{ height }}>
-					<StaticWave left={left} right={right} ref={`wave_${key}`} data={_} />
+					<StaticWave left={left} field={key} right={right} ref={`wave_${key}`} data={_} />
 					{
 						lineShow && cur
 						?

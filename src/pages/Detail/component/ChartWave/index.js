@@ -12,8 +12,7 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
-const limit = 201 - 1
-const interval = 49
+const limit = 200
 
 export default class ChartWave extends React.Component {
 	constructor(props) {
@@ -23,7 +22,7 @@ export default class ChartWave extends React.Component {
 			{ u: unit, n: name } = __Map__.r[field] || {},
 			{ minValue, maxValue } = config[field] || {}
 
-		let data = this.data = [ realTime[field], ...new Array(limit).fill().map(_ => __Null__) ]
+		let data = this.data = new Array(limit).fill().map(_ => __Null__)
 
 		let options = {
 			grid: {
@@ -32,32 +31,17 @@ export default class ChartWave extends React.Component {
 				bottom: '24px',
 				left:   '56px',
 			},
-			xAxis: {
-				type: 'category',
-				data: getChartsSplit(limit),
-				axisTick: {
-					interval,
-				},
-				axisLabel: {
-					interval: (index, value) => {
-						return getChartsInterval(limit)[index]
-					},
-					verticalAlign: 'top',
-					textStyle: {
-						fontSize: 16
-					}
-				}
-			},
+			xAxis: createXAxis(limit),
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
 				interval: 1000,
 				splitLine: { show: false },
-				min: minValue || 0,
+				min: getMinValue(minValue, field),
 				max: maxValue || 100,
 				axisLabel: {
 					textStyle: {
-						fontSize: 16
+						fontSize: 12
 					}
 				},
 			},
@@ -89,7 +73,7 @@ export default class ChartWave extends React.Component {
 		this.updateData(props)
 	}
 	clearData = () => {
-		let data = this.data = [ ...new Array(limit).fill().map(_ => __Null__) ]
+		let data = this.data = new Array(limit).fill().map(_ => __Null__)
 		let index = this.index = 0
 		this.setState({ index, data })
 	}
@@ -110,7 +94,7 @@ export default class ChartWave extends React.Component {
 
 		myChart.setOption({
 			yAxis: {
-				min: minValue || 0,
+				min: getMinValue(minValue, field),
 				max: maxValue || 100,
 			},
 			series: [{ data }]

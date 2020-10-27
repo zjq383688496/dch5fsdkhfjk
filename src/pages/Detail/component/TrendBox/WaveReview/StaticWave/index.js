@@ -17,7 +17,7 @@ export default class StaticWave extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { color = 'blue-d', data, left, right } = props,
+		let { color = 'blue-d', data, left, right, field } = props,
 			{ list = [], unit, name, minValue, maxValue } = data || {}
 
 		let limit = list.length
@@ -28,33 +28,18 @@ export default class StaticWave extends React.Component {
 				bottom: '24px',
 				left:   `${left}px`,
 			},
-			xAxis: {
-				type: 'category',
-				data: getChartsSplit(limit),
-				axisTick: {
-					interval,
-				},
-				axisLabel: {
-					interval: (index, value) => {
-						return getChartsInterval(limit)[index]
-					},
-					verticalAlign: 'top',
-					textStyle: {
-						fontSize: 16
-					}
-				}
-			},
+			xAxis: createXAxis(limit),
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
 				// splitNumber: 1,
 				interval: 1000,
 				splitLine: { show: false },
-				min: minValue || 0,
+				min: getMinValue(minValue, field),
 				max: maxValue || 100,
 				axisLabel: {
 					textStyle: {
-						fontSize: 16
+						fontSize: 12
 					}
 				}
 			},
