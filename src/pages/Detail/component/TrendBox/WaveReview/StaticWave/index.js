@@ -11,6 +11,8 @@ const colorMap = {
 	'blue-d': '#020c7e',
 }
 
+const { abs } = Math
+
 const interval = 49
 
 export default class StaticWave extends React.Component {
@@ -25,10 +27,19 @@ export default class StaticWave extends React.Component {
 			grid: {
 				top:    '10px',
 				right:  `${right}px`,
-				bottom: '24px',
+				bottom: '0px',
 				left:   `${left}px`,
 			},
-			xAxis: createXAxis(limit),
+			xAxis: {
+				type: 'category',
+				axisLine: {
+					lineStyle: {
+						type: 'dashed'
+					}
+				},
+				axisTick:  { show: false },
+				axisLabel: { show: false },
+			},
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
@@ -37,11 +48,8 @@ export default class StaticWave extends React.Component {
 				splitLine: { show: false },
 				min: getMinValue(minValue, field),
 				max: maxValue || 100,
-				axisLabel: {
-					textStyle: {
-						fontSize: 12
-					}
-				}
+				axisTick:  { show: false },
+				axisLabel: { show: false },
 			},
 			series: [{
 				name: '模拟数据',
@@ -65,16 +73,36 @@ export default class StaticWave extends React.Component {
 			index: 0,
 			name,
 			unit,
+			minValue,
+			maxValue,
+			field
 		}
 	}
 	render() {
-		let { color, name, unit, options } = this.state
+		let { color, name, unit, options } = this.state,
+			{ data, field } = this.props,
+			{ minValue, maxValue } = data || {},
+			min = getMinValue(minValue, field),
+			max = maxValue || 100,
+			hasZero = false,
+			range  = max - min,
+			minVal = Math.min(abs(min), max),
+			ratio  = minVal / range * 100
+
+		if (ratio > 8) hasZero = true
+
 		return (
 			<div className="r-chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b className="quota-c">{name}</b>
 					<span className="quota-uc">{unit}</span>
 				</div>
+				<div className="y-line"></div>
+				<div className="y-max-min">
+					<span>{max}</span>
+					<span>{min}</span>
+				</div>
+				{ hasZero? <div className="y-zero">0</div>: null }
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
 					echarts={echarts}

@@ -101,7 +101,7 @@ export default class WaveBox extends React.Component {
 		let { pageX } = e
 		let current = []
 		let startX = 20 + left,
-			width  = content.offsetWidth - left - right,
+			width  = content.offsetWidth - left - right - 110,
 			endX   = startX + width
 		if (pageX < startX || pageX > endX) {
 			if (pageX > endX) console.log('大于结束点')
@@ -158,14 +158,13 @@ export default class WaveBox extends React.Component {
 			return (
 				<div key={i} className="wb-wave-box" style={{ height }}>
 					<StaticWave left={left} field={key} right={right} ref={`wave_${key}`} data={_} />
+					<div className="wb-data fs28">
+						<b className="quota-c">{lineShow && cur? newVal: '--.-'}</b>
+					</div>
 					{
 						lineShow && cur
 						?
 						<>
-							<div className="wb-data fs24" style={style}>
-								<b className="quota-c">{val.n}</b>
-								<span className="quota-uc" style={{color: '#333' }}>{cur? newVal: '--'}</span>
-							</div>
 							{
 								cur.value != 0
 								?

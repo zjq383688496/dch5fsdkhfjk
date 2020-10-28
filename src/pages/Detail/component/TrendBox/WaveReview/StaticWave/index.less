@@ -6,12 +6,32 @@
 	overflow: hidden;
 	pointer-events: none;
 	.cw-title {
+		padding-left: 70px;
 		flex-shrink: 0;
 		width: 100%;
 		height: 48px;
+		line-height: 48px;
 		pointer-events: none;
 	}
 	.echarts-for-react {
 		flex: 1;
+	}
+	.y-line {
+		position: absolute;
+		left: 60px;
+		width: 1px;
+		height: 100%;
+		background-color: #000;
+	}
+	.y-max-min {
+		position: absolute;
+		display: flex;
+		width: 60px;
+		height: 100%;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: flex-end;
+		padding: 4px;
+		font-size: 12px;
 	}
 }

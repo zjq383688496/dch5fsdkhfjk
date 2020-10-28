@@ -40,7 +40,6 @@ export default class DropItem extends React.Component {
 		let { idx } = this.props
 		let bedName = __BedName__[idx]
 		this.setState({ bedName, editState: false })
-		console.log('onMouseOut')
 	}
 	update = (config, idx) => {
 		// let { bedName } = config

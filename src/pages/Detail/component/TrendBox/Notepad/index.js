@@ -71,6 +71,7 @@ export default class NotepadBox extends React.Component {
 		else if ((st + ch) >= sh) pos = 'bottom'
 		this.setState({ pos })
 		if (pos === 'bottom') this.getData()
+		console.clear()
 	}
 	scrollTo = num => {
 		let { table } = this.refs
@@ -104,6 +105,7 @@ export default class NotepadBox extends React.Component {
 		)
 	}
 	render() {
+		let { table } = this.refs
 		let { pos } = this.state
 		let td   = this.renderTd()
 		let col  = this.renderCol()
@@ -139,8 +141,8 @@ export default class NotepadBox extends React.Component {
 							<a className="btn-scroll bs-top"    disabled={pos === 'top'} onClick={e => this.scrollTo(-999999)}><StepBackwardOutlined/></a>
 							<a className="btn-scroll"           disabled={pos === 'top'} onClick={e => this.scrollTo(-50)}><CaretLeftOutlined/></a>
 							<div className="scroll-bar"></div>
-							<a className="btn-scroll"           disabled={pos === 'bottom'} onClick={e => this.scrollTo(50)}><CaretRightOutlined/></a>
-							<a className="btn-scroll bs-bottom" disabled={pos === 'bottom'} onClick={e => this.scrollTo(999999)}><StepForwardOutlined/></a>
+							<a className="btn-scroll"           disabled={pos === 'bottom' || isOnePage(table)} onClick={e => this.scrollTo(50)}><CaretRightOutlined/></a>
+							<a className="btn-scroll bs-bottom" disabled={pos === 'bottom' || isOnePage(table)} onClick={e => this.scrollTo(999999)}><StepForwardOutlined/></a>
 						</div>
 					</div>
 				</div>
@@ -150,4 +152,12 @@ export default class NotepadBox extends React.Component {
 			</div>
 		)
 	}
+}
+
+// 是否只有一页
+function isOnePage(dom) {
+	if (!dom) return true
+	let ch = dom.clientHeight
+	let sh = dom.scrollHeight
+	return ch === sh
 }
