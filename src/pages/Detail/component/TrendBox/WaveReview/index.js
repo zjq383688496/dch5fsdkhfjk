@@ -2,6 +2,7 @@ import React from 'react'
 import './index.less'
 
 import { Modal, Space, Button, message } from 'antd'
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons'
 import moment from 'moment'
 
 import StaticWave from './StaticWave'
@@ -11,7 +12,7 @@ import serviceApi from '@service/api'
 
 const { floor } = Math
 const list  = [ 'PAW', 'FLOW', 'VOLUME', 'CO2' ]
-const left  = 60
+const left  = 50
 const right = 10
 
 const resMap = {
@@ -104,7 +105,6 @@ export default class WaveBox extends React.Component {
 			width  = content.offsetWidth - left - right - 110,
 			endX   = startX + width
 		if (pageX < startX || pageX > endX) {
-			if (pageX > endX) console.log('大于结束点')
 			return this.setState({ pageX: 0, lineShow: false })
 		}
 		let idx = floor((pageX - startX) / width * limit)
@@ -124,12 +124,11 @@ export default class WaveBox extends React.Component {
 		let list = []
 		if (!data.length) return message.warning('无波形数据!')
 		let dateStr = date.format(dateFormat)
-
-		html2canvas(document.querySelector('.wb-scroll')).then(canvas => {
+		html2canvas(document.querySelector('.wave-review-box')).then(canvas => {
 			let a = document.createElement('a')
 			document.body.appendChild(a)
-			a.download = `${dateStr}.png`
-			a.href = canvas.toDataURL('image/png')
+			a.download = `${dateStr}.jpg`
+			a.href = canvas.toDataURL('image/jpeg')
 			a.click()
 			document.body.removeChild(a)
 		})
@@ -142,7 +141,7 @@ export default class WaveBox extends React.Component {
 		this.setState({ visible: false, ...datePicker.state }, this.getData)
 	}
 	// 渲染波形
-	renderWave = (height, style, lineShow) => {
+	renderWave = (style, lineShow) => {
 		let { data, current } = this.state
 		let { r } = __Map__
 		return data.map((_, i) => {
@@ -156,7 +155,7 @@ export default class WaveBox extends React.Component {
 				else newVal = cur.value.toFixed(1)
 			}
 			return (
-				<div key={i} className="wb-wave-box" style={{ height }}>
+				<div key={i} className="wb-wave-box">
 					<StaticWave left={left} field={key} right={right} ref={`wave_${key}`} data={_} />
 					<div className="wb-data fs28">
 						<b className="quota-c">{lineShow && cur? newVal: '--.-'}</b>
@@ -166,7 +165,7 @@ export default class WaveBox extends React.Component {
 						?
 						<>
 							{
-								cur.value != 0
+								parseFloat(cur.value) != 0
 								?
 								<div className="wb-point" style={style}>
 									<div className="wb-point-dot">
@@ -185,10 +184,8 @@ export default class WaveBox extends React.Component {
 	render() {
 		let { dragState, lineShow, pageX, visible, current, date, duration } = this.state
 		let style = { left: pageX - 20 }
-		let { content } = this.refs
 		let height = 0
-		if (content) height = ~~(content.offsetHeight / 3)
-		let wave = this.renderWave(height, style, lineShow)
+		let wave = this.renderWave(style, lineShow)
 		let dateStr = date.format(dateFormat)
 		let currentDate = ''
 		if (current.length) {
@@ -202,26 +199,32 @@ export default class WaveBox extends React.Component {
 			<div className="wave-review-box">
 				<div className="wb-top fs24">
 					{dateStr}
-					<Space>
-						<Button size="small" onClick={e => this.dateJump(-duration)}>← {duration}s</Button>
-						<Button size="small" onClick={e => this.dateJump(duration)} style={{ marginRight: 40 }}>{duration}s →</Button>
+					<Space size={50}>
+						{duration + 's'}
 						<a className="icons-search" onClick={this.setDate}></a>
 					</Space>
 				</div>
-				<div
-					ref="content"
-					className="wb-content"
-					onMouseDown={this.onMouseDown}
-				>
-					<div className="wb-scroll" style={{ height: height * wave.length }}>
+				<div className="wb-content">
+					<div className="wb-timeline">
+						<div className="wb-timeline-bar">
+							{ new Array(duration / 5 + 1).fill().map((_, i) => <i key={i}></i>) }
+						</div>
+						<a className="wb-timeline-btn" onClick={e => this.dateJump(-duration)}><ArrowLeftOutlined /></a>
+						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)}><ArrowRightOutlined /></a>
+					</div>
+					<div
+						ref="content"
+						className="wb-scroll"
+						onMouseDown={this.onMouseDown}
+					>
 						{ wave }
 						<div className={`wb-line${lineShow? ' s-active': ''}`} style={style}>
-							<span className="time-point fs24 c-blue-d">{currentDate}</span>
+							<span className="time-point">{currentDate}</span>
 						</div>
 					</div>
 				</div>
 				<div className="wb-bottom">
-					<a className="icons-camera" onClick={this.setCrop}></a>
+					<a onClick={this.setCrop}>截屏</a>
 				</div>
 				<Modal
 					title="时间设置"

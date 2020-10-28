@@ -2,23 +2,64 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	background-color: #d9ecf1;
 	.wb-top {
 		display: flex;
-		height: 32px;
+		height: 40px;
 		flex-shrink: 0;
+		padding: 0 10px;
 		justify-content: space-between;
+		align-items: flex-start;
+		background-color: #cfe1f1;
 		.icons-search {
 			width:  32px;
 			height: 32px;
 		}
 	}
+	.wb-timeline {
+		display: flex;
+		height: 36px;
+		flex-shrink: 0;
+		.wb-timeline-bar {
+			display: flex;
+			height: 100%;
+			flex: 1;
+			background-color: #fff;
+			padding: 0 50px;
+			justify-content: space-between;
+			align-items: flex-end;
+			> i {
+				display: block;
+				width: 1px;
+				height: 6px;
+				background-color: #000;
+			} 
+		}
+		.wb-timeline-btn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 36px;
+			height: 36px;
+			border: 1px solid #fff;
+			border-radius: 4px;
+			background-color: transparent;
+			color: #000;
+			font-size: 16px;
+			background-color: #cfe1f1;
+			margin-left: 3px;
+		}
+	}
 	.wb-content {
-		overflow-x: hidden;
-		overflow-y: auto;
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		transform: translate(0);
 	}
 	.wb-scroll {
-		position: relative;
+		flex: 1;
+		background-color: #cfe1f1;
 	}
 	.wb-bottom {
 		display: flex;
@@ -27,8 +68,17 @@
 		justify-content: flex-end;
 		align-items: center;
 		a {
-			width: 32px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 0 16px;
 			height: 32px;
+			border: 1px solid #fff;
+			border-radius: 4px;
+			background-color: transparent;
+			color: #000;
+			font-size: 16px;
+			background-color: #cfe1f1;
 		}
 	}
 	.wb-wave-box {
@@ -36,6 +86,7 @@
 		display: flex;
 		height: 33%;
 		border-bottom: 1px solid #020c7e;
+		overflow: hidden;
 		.chart-wave {
 			height: 100%;
 			flex-shrink: 0;
@@ -79,13 +130,15 @@
 	}
 	.wb-line {
 		position: absolute;
-		top: 1.75vw;
+		top: 26px;
 		left: 0;
 		display: none;
 		width: 1px;
-		height: calc(100% - 1.75vw);
+		height: calc(100% - 26px);
+		color: #cbce29;
 		background-color: #cbce29;
 		pointer-events: none;
+		/*transform: translateX(20px);*/
 		&:after {
 			content: '';
 			display: flex;
@@ -102,8 +155,10 @@
 			position: absolute;
 			top:  0;
 			left: 0;
-			transform: translate(-50%, -100%);
+			transform: translate(-52%, -100%);
 			white-space: nowrap;
+			font-size: 14px;
+			line-height: 26px;
 		}
 	}
 	.rw-mask {

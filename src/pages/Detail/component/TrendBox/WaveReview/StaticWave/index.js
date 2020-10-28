@@ -13,8 +13,6 @@ const colorMap = {
 
 const { abs } = Math
 
-const interval = 49
-
 export default class StaticWave extends React.Component {
 	constructor(props) {
 		super(props)
@@ -87,9 +85,13 @@ export default class StaticWave extends React.Component {
 			hasZero = false,
 			range  = max - min,
 			minVal = Math.min(abs(min), max),
-			ratio  = minVal / range * 100
+			ratio  = minVal / range * 100,
+			top = '100%'
 
 		if (ratio > 8) hasZero = true
+		if (min < 0) {
+			top = (100 - abs(min) / range * 100) + '%'
+		}
 
 		return (
 			<div className="r-chart-wave">
@@ -102,7 +104,15 @@ export default class StaticWave extends React.Component {
 					<span>{max}</span>
 					<span>{min}</span>
 				</div>
-				{ hasZero? <div className="y-zero">0</div>: null }
+				{
+					hasZero
+					? (
+						<div className="y-zero">
+							<div style={{ top }}>0</div>
+						</div>
+					)
+					: null
+				}
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
 					echarts={echarts}

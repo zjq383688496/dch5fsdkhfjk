@@ -6,7 +6,7 @@
 	overflow: hidden;
 	pointer-events: none;
 	.cw-title {
-		padding-left: 70px;
+		padding-left: 60px;
 		flex-shrink: 0;
 		width: 100%;
 		height: 48px;
@@ -18,20 +18,31 @@
 	}
 	.y-line {
 		position: absolute;
-		left: 60px;
+		left: 50px;
 		width: 1px;
 		height: 100%;
 		background-color: #000;
 	}
-	.y-max-min {
+	.y-max-min,
+	.y-zero {
 		position: absolute;
 		display: flex;
-		width: 60px;
+		width: 50px;
+		font-size: 12px;
+	}
+	.y-max-min {
 		height: 100%;
 		flex-direction: column;
 		justify-content: space-between;
 		align-items: flex-end;
 		padding: 4px;
-		font-size: 12px;
+	}
+	.y-zero {
+		bottom: 0;
+		height: calc(100% - 48px);
+		div {
+			position: absolute;
+			right: 4px;
+		}
 	}
 }

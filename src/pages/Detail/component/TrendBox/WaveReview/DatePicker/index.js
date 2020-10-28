@@ -23,13 +23,20 @@ const layout = {
 	},
 }
 
+const hoursLimit = 72
+const oneDay = 24 * 3600 * 1000
+
 export default class DatePickerComp extends React.Component {
 	constructor(props) {
 		super(props)
 
+		let { date, duration } = props
+
+		let prevDate = moment(new Date(date._d) - oneDay)
 		this.state = {
-			date:     props.date,
-			duration: props.duration,
+			date,
+			prevDate,
+			duration,
 		}
 	}
 	onChangeDate = m => {
@@ -47,6 +54,11 @@ export default class DatePickerComp extends React.Component {
 	onChangeDuration = duration => {
 		this.setState({ duration })
 	}
+	disabledDate = current => {
+		let { date, prevDate } = this.state
+		if (!current) return false
+		return current < prevDate || current > date
+	}
 	render() {
 		let { date = moment(), duration = 30 } = this.state
 		return (
@@ -54,8 +66,8 @@ export default class DatePickerComp extends React.Component {
 				<Form {...layout}>
 					<Item label="选择时刻">
 						<Space>
-							<DatePicker value={date} format={'YYYY-MM-DD'} onChange={this.onChangeDate} />
-							<TimePicker value={date} format={'HH:mm:ss'} onChange={this.onChangeTime} showNow={false} />
+							<DatePicker value={date} format={'YYYY-MM-DD'} allowClear={false} onChange={this.onChangeDate} />
+							<TimePicker value={date} format={'HH:mm:ss'} allowClear={false} onChange={this.onChangeTime} showNow={false} />
 						</Space>
 					</Item>
 					{/*<Item label="时长">
