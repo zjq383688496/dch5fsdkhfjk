@@ -21,6 +21,8 @@ const resMap = {
 	volumeList: 'VOLUME',
 }
 
+const oneHour = 3600 * 1000
+
 const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
 export default class WaveBox extends React.Component {
@@ -36,6 +38,7 @@ export default class WaveBox extends React.Component {
 			pageX: 0,
 			current: [],
 			visible: false,
+			hours: 72,
 		}
 	}
 	timeout = null
@@ -123,11 +126,11 @@ export default class WaveBox extends React.Component {
 		let { refs } = this
 		let list = []
 		if (!data.length) return message.warning('无波形数据!')
-		let dateStr = date.format(dateFormat)
+		// let dateStr = date.format(dateFormat) + '_' + date.millisecond()
 		html2canvas(document.querySelector('.wave-review-box')).then(canvas => {
 			let a = document.createElement('a')
 			document.body.appendChild(a)
-			a.download = `${dateStr}.jpg`
+			a.download = `${this.getCurrentDate()}.jpg`
 			a.href = canvas.toDataURL('image/jpeg')
 			a.click()
 			document.body.removeChild(a)
@@ -139,6 +142,17 @@ export default class WaveBox extends React.Component {
 	handleOk = () => {
 		let { datePicker } = this.refs
 		this.setState({ visible: false, ...datePicker.state }, this.getData)
+	}
+	getCurrentDate = () => {
+		let { current, date } = this.state,
+			dateStr = date.format(`${dateFormat}:${date.millisecond()}`).replace(/[\s\:]/g, '_')
+		if (!current.length) return dateStr
+		let [ first ] = current
+		if (first && first.timestamp) {
+			let curDate = moment(new Date(first.timestamp))
+			dateStr = curDate.format(`${dateFormat}:${curDate.millisecond()}`).replace(/[\s\:]/g, '_')
+		}
+		return dateStr
 	}
 	// 渲染波形
 	renderWave = (style, lineShow) => {
@@ -182,9 +196,12 @@ export default class WaveBox extends React.Component {
 		})
 	}
 	render() {
-		let { dragState, lineShow, pageX, visible, current, date, duration } = this.state
+		let { dragState, lineShow, pageX, visible, current, date, duration, hours } = this.state
 		let style = { left: pageX - 20 }
 		let height = 0
+		let nowTime  = Date.now()
+		let dateTime = new Date(date._d) * 1
+		let prevTime = nowTime - hours * oneHour
 		let wave = this.renderWave(style, lineShow)
 		let dateStr = date.format(dateFormat)
 		let currentDate = ''
@@ -209,8 +226,8 @@ export default class WaveBox extends React.Component {
 						<div className="wb-timeline-bar">
 							{ new Array(duration / 5 + 1).fill().map((_, i) => <i key={i}></i>) }
 						</div>
-						<a className="wb-timeline-btn" onClick={e => this.dateJump(-duration)}><ArrowLeftOutlined /></a>
-						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)}><ArrowRightOutlined /></a>
+						<a className="wb-timeline-btn" onClick={e => this.dateJump(-duration)} disabled={dateTime < prevTime}><ArrowLeftOutlined /></a>
+						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)} disabled={nowTime - dateTime < 6e4}><ArrowRightOutlined /></a>
 					</div>
 					<div
 						ref="content"
@@ -218,8 +235,9 @@ export default class WaveBox extends React.Component {
 						onMouseDown={this.onMouseDown}
 					>
 						{ wave }
-						<div className={`wb-line${lineShow? ' s-active': ''}`} style={style}>
+						<div className={`wb-line${lineShow? ' s-active': ''}`} style={{ ...style, top: 26 }}>
 							<span className="time-point">{currentDate}</span>
+							<i></i>
 						</div>
 					</div>
 				</div>
@@ -235,7 +253,7 @@ export default class WaveBox extends React.Component {
 					{
 						visible
 						?
-						<DatePicker ref="datePicker" date={date} duration={duration} />
+						<DatePicker ref="datePicker" hours={hours} date={date} duration={duration} />
 						: null
 					}
 				</Modal>

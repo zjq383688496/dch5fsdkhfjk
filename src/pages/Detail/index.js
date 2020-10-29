@@ -59,10 +59,9 @@ class Detail extends React.Component {
 	}
 	getClear(clear, timestamp) {
 		let clearValue = false
-		if (timestamp) {
-			clearValue = clear[timestamp] != undefined
-			if (clearValue) delete clear[timestamp]
-		}
+		if (!timestamp) return clearValue
+		clearValue = clear[timestamp] != undefined
+		if (clearValue) delete clear[timestamp]
 		return clearValue
 	}
 	render() {

@@ -127,7 +127,7 @@ export default class NotepadBox extends React.Component {
 								</tbody>
 							</table>
 						</div>
-						<div ref="table" className="nb-table-body">
+						<div ref="table" className="nb-table-body scrollbar">
 							<table>
 								{ col }
 								<tbody>
