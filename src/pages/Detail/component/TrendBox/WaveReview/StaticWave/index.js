@@ -88,7 +88,7 @@ export default class StaticWave extends React.Component {
 			ratio  = minVal / range * 100,
 			top = '100%'
 
-		if (ratio > 8) hasZero = true
+		// if (ratio > 8) hasZero = true
 		if (min < 0) {
 			top = (100 - abs(min) / range * 100) + '%'
 		}
