@@ -87,6 +87,7 @@ export default class DropItem extends React.Component {
 						<Space>
 							<Input
 								value={bedName}
+								maxLength={8}
 								className="cb-item"
 								placeholder="请输入床位"
 								onChange={e => this.update({ bedName: e.target.value })}
