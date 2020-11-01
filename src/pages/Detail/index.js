@@ -1,4 +1,5 @@
 import React from 'react'
+import { WEBSOCKET } from '@service'
 
 import { HomeFilled } from '@ant-design/icons'
 
@@ -8,6 +9,8 @@ import Index     from './component/Index'
 import TrendBox  from './component/TrendBox'
 
 import './index.less'
+
+import { USER_UPDATE } from '@service/storage'
 
 const defData = {
 	alarm:    [],
@@ -29,6 +32,8 @@ class Detail extends React.Component {
 	}
 	componentDidMount() {
 		this.task()
+		USER_UPDATE()
+		WEBSOCKET()
 	}
 	componentWillUnmount() {
 		clearInterval(this.timeout)

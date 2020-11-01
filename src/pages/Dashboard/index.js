@@ -1,7 +1,9 @@
 import React from 'react'
+import { WEBSOCKET } from '@service'
 
 import './index.less'
 
+import { USER_UPDATE } from '@service/storage'
 import Box from './component/Box'
 
 const defData = {
@@ -18,6 +20,8 @@ export default class Dashboard extends React.Component {
 	}
 	componentDidMount() {
 		this.task()
+		USER_UPDATE()
+		WEBSOCKET()
 	}
 	componentWillUnmount() {
 		clearInterval(this.timeout)
@@ -32,7 +36,6 @@ export default class Dashboard extends React.Component {
 	render() {
 		let { Devices } = window.__Redux__
 		if (!__Grid__.length) return null
-		// if (isEmptyObject(Devices)) return null
 		return (
 			<div className="dashboard">
 				{

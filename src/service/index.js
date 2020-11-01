@@ -1,3 +1,4 @@
 module.exports = {
-	WS:  require('./ws'),
+	WS:        require('./ws'),
+	WEBSOCKET: require('./websocket'),
 }

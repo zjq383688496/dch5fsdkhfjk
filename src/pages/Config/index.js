@@ -5,6 +5,7 @@ import { Input, Button, Select, message } from 'antd'
 const { Option } = Select
 
 import { WS } from '@service'
+import { DEVICE_UPDATE } from '@service/storage'
 import Footer from '@comp/Footer'
 import DragItem from './component/DragItem'
 import DropItem from './component/DropItem'
@@ -165,6 +166,7 @@ export default class Config extends React.Component {
 		}))
 		serviceApi.dashboardsUpdate(dashboardId, { config }).then(da => {
 			__Grid__ = grids
+			DEVICE_UPDATE()
 			this.websocket()
 			this.props.history.push('/dashboard')
 		})

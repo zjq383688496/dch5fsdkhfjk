@@ -1,11 +1,12 @@
 import React from 'react'
 import './index.less'
 
-import { Form, Input, Button, Checkbox, Tabs } from 'antd'
+import { Form, Input, Button, Checkbox, Tabs, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 const { Item }    = Form
 const { TabPane } = Tabs
 
+import { USER_UPDATE } from '@service/storage'
 import serviceApi from '@service/api'
 import Footer from '@comp/Footer'
 
@@ -22,6 +23,9 @@ export default class Login extends React.Component {
 	onFinish = values => {
 		serviceApi.login(values).then(userInfo => {
 			window.__User__ = userInfo
+			let { accessMonitorPlatform } = userInfo
+			if (!accessMonitorPlatform) return message.warning('当前用户权限不足.')
+			USER_UPDATE()
 			this.props.history.push('/config')
 		})
 	}

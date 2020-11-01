@@ -8,6 +8,7 @@ import 'moment/locale/zh-cn'
 
 moment.locale('zh-cn')
 
+import { USER_CHECK } from '@service/storage'
 import routes from './routes'
 import '@utils'
 import 'antd/dist/antd.css'
@@ -37,7 +38,8 @@ export default class App extends React.Component {
 
 								// 校验登录状态
 								if (!window.__User__ && pathname != '/login') {
-									history.push('/login')
+									let user = USER_CHECK(pathname)
+									if (!user) history.push('/login')
 								}
 								document.title = `Drager - ${title}`
 								return (<Component {...props} {...rest} />)
