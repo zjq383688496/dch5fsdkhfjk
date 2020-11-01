@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.less'
 
-import { Input, Button, Select } from 'antd'
+import { Input, Button, Select, message } from 'antd'
 const { Option } = Select
 
 import { WS } from '@service'
@@ -131,10 +131,13 @@ export default class Config extends React.Component {
 		console.log('拖拽设备: ', id)
 		e.dataTransfer.setData('id', id)
 	}
+
 	onDrop = (e, idx) => {
 		let { grids, gridIndex, deviceIndex } = this.state
 		let id = e.dataTransfer.getData('id'),
-			device = deviceIndex[id]
+			device = deviceIndex[id],
+			length = Object.keys(gridIndex).length
+		if (length >= 8) return message.warning('床位数不得超过8个.')
 		grids[idx] = gridIndex[id] = device
 		this.setState({ grids, gridIndex }, this.deviceFilter)
 	}

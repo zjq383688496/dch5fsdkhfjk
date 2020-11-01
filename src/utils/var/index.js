@@ -1,30 +1,78 @@
 module.exports = Object.assign(window, {
 	__Map__: {
 		m: {
-			ETCO2: {
-				u: 'mmHg',		// % || mmHg
-				n: 'etCO₂',
-			},
+			// PIP: {
+			// 	u: 'bpm',
+			// 	n: 'PIP',
+			// },
 			PEAK: {
 				u: 'mbar',
-				n: 'Peak',
+				n: 'PIP',	// Peak
 			},
 			PPLAT: {
 				u: 'mbar',
 				n: 'Pplat',
 			},
+			PMEAN: {
+				u: 'mbar',
+				n: 'Pmean',
+			},
+			PEEP: {
+				u: 'mbar',
+				n: 'Peep',
+			},
+			'△P': {
+				u: '',
+				n: '△P',
+			},
+			// 三角P
+
+			/* ----- */
+
+			VTE: {
+				u: 'ml',
+				n: 'Vte',
+			},
+			// VTi
+			VTI: {
+				u: '',
+				n: 'VTi',
+			},
+			// VTi
 			MVE: {
 				u: 'L/min',
 				n: 'MVe',
 			},
-			MVSPONT: {
-				u: 'mbar',
-				n: 'MVspont',
+			// MVi
+			MVI: {
+				u: '',
+				n: 'MVi',
 			},
-			RR: {
-				u: 'bpm',
-				n: 'RR',
+			// MVi
+			ETCO2: {
+				u: 'mmHg',
+				n: 'etCO₂',
 			},
+
+			/* ----- */
+
+			// PIF
+			PIF: {
+				u: '',
+				n: 'PIF',
+			},
+			// PIF
+			// PEF
+			PEF: {
+				u: '',
+				n: 'PEF',
+			},
+			// PEF
+			TI: {
+				u: 's',
+				n: 'Ti',
+			},
+			// ?
 			IE: {
 				u: '',
 				n: 'I:E',
@@ -34,20 +82,72 @@ module.exports = Object.assign(window, {
 				n: 'FiO₂',
 			},
 			R: {
-				u: 'mbar',	// mbar || mbar/L/s
+				u: 'mbar',
 				n: 'R',
 			},
+
+			/* ----- */
+
+
+			TPLAT: {
+				u: 'mbar',	// mbar/L/s
+				n: 'tplat',
+			},
+			RR: {
+				u: 'bpm',
+				n: 'RR',
+			},
+			// RRspont
+			RRSPONT: {
+				u: '',
+				n: 'RRspont',
+			},
+			// RRspont
+			// Tce
+			TCE: {
+				u: '',
+				n: 'Tce',
+			},
+			// Tce
 			C: {
-				u: 'mbar',	// mL || mL/mbar
+				u: 'mbar',
 				n: 'C',
 			},
-			VTE: {
-				u: 'ml',
-				n: 'Vte',
+			RSB: {
+				u: 'mL',
+				n: 'RSB',
 			},
-			TI: {
-				u: 's',
-				n: 'Ti',
+
+			/* ----- */
+
+
+			MVSPONT: {
+				u: 'mbar',
+				n: 'MVspont',
+			},
+			VT: {
+				u: 'mbar',
+				n: 'VT',
+			},
+			VTSPON: {
+				u: 'L/min',
+				n: 'VTspon',
+			},
+			MVLEAK: {
+				u: 'mbar',
+				n: 'MVleak',
+			},
+			IPEAK: {
+				u: '',
+				n: 'ipeak',
+			},
+			'流量': {
+				u: '%',
+				n: '流量',
+			},
+			PPEAK: {
+				u: 'mbar',
+				n: 'PIP',		// Ppeak
 			},
 		},
 		r: {
@@ -68,56 +168,9 @@ module.exports = Object.assign(window, {
 				n: 'Co2',
 			},
 		},
-		// 暂无
-		not: {
-			PEEP: {
-				u: 'mbar',	// mbar
-				n: 'Peep',
-			},
-			PMEAN: {
-				u: 'mbar',
-				n: 'Pmean',
-			},
-			VT: {
-				u: 'mbar',
-				n: 'VT',
-			},
-			VTSPON: {
-				u: 'L/min',
-				n: 'VTspon',
-			},
-			MVLEAK: {
-				u: 'mbar',
-				n: 'MVleak',
-			},
-			PIP: {
-				u: 'bpm',
-				n: 'PIP',
-			},
-			IPEAK: {
-				u: '',
-				n: 'ipeak',
-			},
-			'流量': {
-				u: '%',
-				n: '流量',
-			},
-			TPLAT: {
-				u: 'mbar',	// mbar/L/s
-				n: 'tplat',
-			},
-			RSB: {
-				u: 'mL',	// mL/mbar
-				n: 'RSB',
-			},
-			PPEAK: {
-				u: 'mbar',
-				n: 'Ppeak',
-			},
-		}
 	}
 })
 
 __Map__.all = {
-	...__Map__.m, ...__Map__.not
+	...__Map__.m
 }

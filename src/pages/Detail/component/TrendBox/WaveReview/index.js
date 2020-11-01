@@ -35,6 +35,7 @@ export default class WaveBox extends React.Component {
 			limit: 0,
 			lineShow: false,
 			dragState: false,
+			recordState: false,
 			pageX: 0,
 			current: [],
 			visible: false,
@@ -121,12 +122,13 @@ export default class WaveBox extends React.Component {
 	setDate = () => {
 		this.setState({ visible: true })
 	}
-	setCrop = () => {
+	setCrop = async () => {
 		let { data, date } = this.state
 		let { refs } = this
 		let list = []
 		if (!data.length) return message.warning('无波形数据!')
-		// let dateStr = date.format(dateFormat) + '_' + date.millisecond()
+		this.setState({ recordState: true })
+		await _wait(100)
 		html2canvas(document.querySelector('.wave-review-box')).then(canvas => {
 			let a = document.createElement('a')
 			document.body.appendChild(a)
@@ -134,6 +136,7 @@ export default class WaveBox extends React.Component {
 			a.href = canvas.toDataURL('image/jpeg')
 			a.click()
 			document.body.removeChild(a)
+			this.setState({ recordState: false })
 		})
 	}
 	handleCancel = () => {
@@ -196,7 +199,9 @@ export default class WaveBox extends React.Component {
 		})
 	}
 	render() {
-		let { dragState, lineShow, pageX, visible, current, date, duration, hours } = this.state
+		let { device, bedName } = this.props
+		let { patientName, code } = device
+		let { dragState, recordState, lineShow, pageX, visible, current, date, duration, hours } = this.state
 		let style = { left: pageX - 20 }
 		let height = 0
 		let nowTime  = Date.now()
@@ -242,7 +247,18 @@ export default class WaveBox extends React.Component {
 					</div>
 				</div>
 				<div className="wb-bottom">
-					<a onClick={this.setCrop}>截屏</a>
+					{
+						recordState
+						?
+						<Space size={80} className="fs24">
+							<span>姓名: {patientName}</span>
+							<span>床号: {bedName}</span>
+							<span>入院号: </span>
+							<span style={{ marginRight: 20 }}>设备: {code}</span>
+						</Space>
+						: null
+					}
+					{ !recordState? <a onClick={this.setCrop}>截屏</a>: null }
 				</div>
 				<Modal
 					title="时间设置"

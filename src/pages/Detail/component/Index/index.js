@@ -8,11 +8,11 @@ export default class Index extends React.Component {
 	dataFormat = () => {
 		let { color, data, field1, field2, field3 } = this.props
 		let data1  = data[field1],
-			info1  = __Map__.all[field1] || {},
+			info1  = __Map__.m[field1] || {},
 			data2  = data[field2],
-			info2  = __Map__.all[field2] || {},
+			info2  = __Map__.m[field2] || {},
 			data3  = data[field3],
-			info3  = __Map__.all[field3] || {},
+			info3  = __Map__.m[field3] || {},
 			color1 = 'blue-d',
 			color2 = 'blue-d',
 			color3 = 'blue-d'

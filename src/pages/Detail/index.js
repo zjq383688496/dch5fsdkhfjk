@@ -112,7 +112,7 @@ class Detail extends React.Component {
 				<div className="detail-body">
 					{
 						trendStatus
-						? <TrendBox device={device} onClose={this.goTrend} />
+						? <TrendBox device={device} bedName={bedName} onClose={this.goTrend} />
 						: null
 					}
 					{

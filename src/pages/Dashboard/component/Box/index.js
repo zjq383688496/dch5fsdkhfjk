@@ -6,6 +6,13 @@ import './index.less'
 import Charts from '../Charts'
 import Index  from '../Index'
 
+const measureList = [
+	['PEAK', 'PPLAT', 'PMEAN', 'PEEP', '△P', ''],
+	['VTE', 'VTI', 'MVE', 'MVI', 'ETCO2', ''],
+	['PIF', 'PEF', 'TI', 'IE', 'FIO2', 'R'],
+	['TPLAT', 'RR', 'RRSPONT', 'TCE', 'C', 'RSB'],
+]
+
 class Box extends React.Component {
 	constructor(props) {
 		super(props)
@@ -59,25 +66,30 @@ class Box extends React.Component {
 		e.stopPropagation()
 		let { indexs, measureIndex } = this.state
 		if (indexs[measureIndex] === key) return 
-		// if (__Map__.not[key]) return this.measureShow(e, -1, false)
 		indexs[measureIndex] = key
 		this.setState({ indexs })
 		this.measureShow(e, -1, false)
 	}
 	// 渲染观测选择器
 	renderMeasure = measure => {
-		let { m, not } = __Map__
+		let { m } = __Map__
 		let { indexs, measureIndex } = this.state,
 			cur = indexs[measureIndex]
-		let mDom = Object.keys(m).map(key => {
-			let { n: name } = m[key]
-			return <p key={key} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
+
+		let mDom = measureList.map((mList, i) => {
+			return new Array(6).fill().map((_, j) => {
+				let key = mList[j] || ''
+				if (!key) return <p key={`${i}_${j}`}></p>
+				let { n: name } = m[key]
+				return <p key={`${i}_${j}`} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
+			})
 		})
-		let nDom = Object.keys(not).map(key => {
-			let { n: name } = not[key] || {}
-			return <p key={key} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
-		})
-		return [ ...mDom, ...nDom ]
+		
+		// let mDom = Object.keys(m).map(key => {
+		// 	let { n: name } = m[key]
+		// 	return <p key={key} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
+		// })
+		return mDom
 	}
 	renderIndex = measure => {
 		let { indexs, measureIndex } = this.state

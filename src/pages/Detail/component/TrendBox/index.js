@@ -25,7 +25,7 @@ export default class TrendBox extends React.Component {
 		this.setState({ key })
 	}
 	render() {
-		let { device, onClose } = this.props
+		let { device, bedName, onClose } = this.props
 		let { key } = this.state
 		return (
 			<div className="trend-box">
@@ -35,10 +35,10 @@ export default class TrendBox extends React.Component {
 				</div>
 				<Tabs activeKey={key} tabs={tabs} onChange={this.onChange}/>
 				<div className="tb-content">
-					{ key == 1? <Data       device={device} />: null }
-					{ key == 2? <Wave       device={device} />: null }
-					{ key == 3? <WaveReview device={device} />: null }
-					{ key == 4? <Notepad    device={device} />: null }
+					{ key == 1? <Data       device={device} bedName={bedName} />: null }
+					{ key == 2? <Wave       device={device} bedName={bedName} />: null }
+					{ key == 3? <WaveReview device={device} bedName={bedName} />: null }
+					{ key == 4? <Notepad    device={device} bedName={bedName} />: null }
 				</div>
 			</div>
 		)
