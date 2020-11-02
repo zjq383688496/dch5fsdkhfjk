@@ -22,18 +22,8 @@ module.exports = Object.assign(window, {
 	},
 	__URL__: {
 		getWSUrl(userId) {
-			return `ws://94.191.50.139:8089/webSocket/${userId}`
+			return `ws://${window._BaseUrl_}/webSocket/${userId}`
 		},
-		getWSStart(userId) {
-			// return `http://94.191.50.139:8089/experiment/start/${userId}`
-			return `http://94.191.50.139:8089/experiment/simulate/${userId}`
-			// return `/experiment/simulate/${userId}`
-		},
-		getWSStop() {
-			// return `http://94.191.50.139:8089/experiment/stop/${userId}`
-			return `http://94.191.50.139:8089/experiment/simulate/stop`
-			// return `/experiment/simulate/stop`
-		}
 	},
 	__ReduxInit__() {
 		window.__Redux__ = {

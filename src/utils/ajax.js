@@ -3,7 +3,7 @@ const { message } = require('antd')
 function remote(url, config = {}) {
 	return new Promise((resolve, reject) => {
 		var newConfig = Object.assign({ method: 'GET' }, config)
-		url = 'http://94.191.50.139:8089' + url
+		url = `http://${window._BaseUrl_}` + url
 		fetch(url, newConfig).then(response => response.json()).then(result => {
 			let { data, code, message: msg } = result
 			if (code === '0') {

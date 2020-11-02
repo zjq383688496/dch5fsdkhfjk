@@ -4,7 +4,8 @@ var webpack = require('webpack')
 
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({
-		ENV: JSON.stringify('qa')
+		ENV:       JSON.stringify('qa'),
+		_BaseUrl_: JSON.stringify('94.191.50.139:8089'),
 	})
 )
 

@@ -1,17 +1,6 @@
 var { data2cache, cache2device } = require('@cache')
 let { message } = require('antd')
 
-var mmm
-var getmmm = function() {
-	let da = deepCopy(mmm)
-	da.realTimeConfigurationList.map(_ => {
-		let { minValue, maxValue } = _
-		_.minValue = minValue * randomRange(1, 2, 2)
-		_.maxValue = maxValue * randomRange(1, 2, 2)
-	})
-	return da
-}
-
 function WS() {
 	let { id } = __User__
 	let urlWs  = __URL__.getWSUrl(id)
@@ -25,14 +14,6 @@ function WS() {
 		data2cache(da)
 		// consoleLog()
 		// console.log(data)
-		
-		// if (da.packageCode === 'REAL_TIME_CONFIGURATION') {
-		// 	console.log(JSON.stringify(da))
-		// 	mmm = da
-		// }
-		// if (randomRange(0, 1)) {
-		// 	data2cache(getmmm())
-		// }
 	}
 	socket.onclose = function(e) {
 		// console.log('WebSocket is closed now.')

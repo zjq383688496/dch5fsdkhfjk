@@ -8,7 +8,8 @@ var port = 8222
 
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({
-		ENV: JSON.stringify('dev')
+		ENV: JSON.stringify('dev'),
+		_BaseUrl_: JSON.stringify('94.191.50.139:8089'),
 	}),
 	// 开启 热更新
 	new webpack.HotModuleReplacementPlugin(),
@@ -39,10 +40,10 @@ Object.assign(baseCfg, {
 		hot: true,
 		noInfo: false,
 		proxy: {
-			'/account':    target,
-			'/experiment': target,
-			'/Machines':   target,
-			'/Dashboards': target,
+			// '/account':    target,
+			// '/experiment': target,
+			// '/Machines':   target,
+			// '/Dashboards': target,
 		}
 	}
 })
