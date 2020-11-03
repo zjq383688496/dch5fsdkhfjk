@@ -10,7 +10,7 @@ const measureList = [
 	['PEAK', 'PPLAT', 'PMEAN', 'PEEP', '△P', ''],
 	['VTE', 'VTI', 'MVE', 'MVI', 'ETCO2', ''],
 	['PIF', 'PEF', 'TI', 'IE', 'FIO2', 'R'],
-	['TPLAT', 'RR', 'RRSPONT', 'TCE', 'C', 'RSB'],
+	['TPLAT', 'RR', 'RRSPON', 'TCE', 'C', 'RSB'],
 ]
 
 class Box extends React.Component {
@@ -22,7 +22,7 @@ class Box extends React.Component {
 			measureState: false,
 			measureIndex: -1,
 			wait: false,
-			indexs: ['PEAK', 'VT', 'RR', 'FIO2']
+			indexs: ['PEAK', 'VTE', 'RR', 'FIO2']
 		}
 	}
 	componentWillUnmount() {
@@ -153,7 +153,7 @@ class Box extends React.Component {
 					<Charts active={waveState} field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
 					: null
 				}
-				<div className="db-index fx h92 fs12">
+				<div className="db-index fx h72 fs12">
 					{ this.renderIndex(measure) }
 				</div>
 			</div>

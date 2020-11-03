@@ -1,6 +1,7 @@
 .charts-draw {
-	position: relative;
+	display: flex;
 	flex: 1;
+	flex-direction: column;
 	height: 100%;
 	overflow: hidden;
 	border: 1px solid transparent;
@@ -8,10 +9,6 @@
 		border-color: #ff8f20;
 	}
 	.cd-title {
-		position: absolute;
-		top: 2px;
-		left: 28px;
-		z-index: 1;
 		display: flex;
 		padding-left: 10px;
 		// h4 {
@@ -21,5 +18,39 @@
 		// span {
 		// 	color: #999;
 		// }
+	}
+	.cd-chart {
+		position: relative;
+		flex: 1;
+	}
+	.cd-tick {
+		position: absolute;
+		top:  6px;
+		left: 0;
+		bottom: 24px;
+		width: 32px;
+		display: flex;
+		justify-content: flex-end;
+		// pointer-events: none;
+		&-line {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 5px;
+			height: 1px;
+			background-color: #000;
+			transform: translateY(-100%);
+		}
+		&-zero {
+			position: absolute;
+			display: flex;
+			width: 100%;
+			font-size: 12px;
+			span {
+				position: absolute;
+				right: 7px;
+				transform: translateY(-50%);
+			}
+		}
 	}
 }

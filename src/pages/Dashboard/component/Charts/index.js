@@ -21,9 +21,11 @@ export default class Charts extends React.Component {
 			{ minValue, maxValue } = config[field] || {}
 
 		let data = this.data = new Array(limit).fill().map(_ => __Null__)
+		let min = getMinValue(minValue, field)
+		let max = getMaxValue(maxValue)
 		let options = {
 			grid: {
-				top:    '14px',
+				top:    '6px',
 				right:  '20px',
 				bottom: '24px',
 				left:   '32px',
@@ -33,13 +35,14 @@ export default class Charts extends React.Component {
 				type: 'value',
 				boundaryGap: [0, '100%'],
 				splitLine: { show: false },
-				min: getMinValue(minValue, field),
-				max: maxValue || 100,
+				min,
+				max,
 				axisLabel: {
 					textStyle: {
 						fontSize: 12
-					}
-				}
+					},
+				},
+				interval: 10000,
 			},
 			series: [{
 				name: '模拟数据',
@@ -88,32 +91,53 @@ export default class Charts extends React.Component {
 		myChart.setOption({
 			yAxis: {
 				min: getMinValue(minValue, field),
-				max: maxValue || 100,
+				max: getMaxValue(maxValue),
 			},
 			series: [{ data }]
 		})
 
 		this.setState({ data, index })
 	}
-
+	getZero(min, max) {
+		let range = max - min
+		if (min >= 0 || max <= 0) return null
+		let minVal = Math.min(Math.abs(min), max)
+		let ratio  = minVal / range * 100
+		if (ratio < 9) return null
+		let top = max / range * 100 + '%'
+		return (
+			<div className="cd-tick-zero" style={{ top }}>
+				<span>0</span>
+				<div className="cd-tick-line"></div>
+			</div>
+		)
+	}
 	render() {
-		let { active, data, handleClick }   = this.props
+		let { active, config, data, field, handleClick } = this.props,
+			{ minValue, maxValue }  = config[field] || {}
 		let { options, name, unit } = this.state
-
+		let min  = getMinValue(minValue, field)
+		let max  = getMaxValue(maxValue)
+		let zero = this.getZero(min, max)
 		return (
 			<div className={`charts-draw${active? ' s-active': ''}`} onClick={handleClick}>
 				<div className="cd-title fs14">
 					<b className="quota-c">{name}</b>
 					<span className="quota-uc">{unit}</span>
 				</div>
-				<ReactEchartsCore
-					ref={e => { if (e) this.echart = e }}
-					echarts={echarts}
-					notMerge={false}
-					lazyUpdate={false}
-					option={options}
-					style={{height: '100%'}}
-				/>
+				<div className="cd-chart">
+					<div className="cd-tick">
+						{zero}
+					</div>
+					<ReactEchartsCore
+						ref={e => { if (e) this.echart = e }}
+						echarts={echarts}
+						notMerge={false}
+						lazyUpdate={false}
+						option={options}
+						style={{height: '100%'}}
+					/>
+				</div>
 			</div>
 		)
 	}

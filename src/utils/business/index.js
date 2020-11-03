@@ -44,6 +44,19 @@ module.exports = Object.assign(window, {
 		}
 		return { cls, content }
 	},
+	getIE(data) {
+		let { IEIN: I, IEOUT: E } = data
+		if (I === undefined || E === undefined) return
+		let min = Math.min(I, E)
+		let NI  = I / min
+		let NE  = E / min
+		let IStr = parseInt(NI) === NI? NI: NI.toFixed(1),
+			EStr = parseInt(NE) === NE? NE: NE.toFixed(1)
+
+		return `${IStr}:${EStr}`
+	},
+
+	/* Echarts */
 	// 获取图表分割数据(s)
 	getChartsSplit(limit, split = 50, div = 10) {
 		let arr = new Array(limit).fill().map((_, i) => {
@@ -57,18 +70,6 @@ module.exports = Object.assign(window, {
 		return arr
 	},
 	// 获取图表分割数据的可见索引
-	// getChartsTickInterval(limit = 0, split = 50) {
-	// 	let num = ~~(limit / split),
-	// 		obj = {}
-	// 	new Array(num + 1).fill().forEach((_, i) => {
-	// 		let x = i * 50
-	// 		// if (i == num) x -= 1
-	// 		obj[x] = true
-	// 	})
-	// 	// console.clear()
-	// 	// console.log(obj)
-	// 	return obj
-	// },
 	getChartsTickInterval(limit = 0, lastShow = true, split = 50) {
 		let num = ~~(limit / split),
 			obj = {}
@@ -77,6 +78,17 @@ module.exports = Object.assign(window, {
 			if (lastShow && i == num) x -= 1
 			obj[x] = true
 		})
+		return function(index) {
+			return obj[index]
+		}
+	},
+	getChartsTickIntervalY(min, max) {
+		let obj = {}
+		obj[min] = true
+		obj[max] = true
+		obj[0]   = true
+		console.clear()
+		console.log(obj)
 		return function(index) {
 			return obj[index]
 		}
@@ -93,11 +105,13 @@ module.exports = Object.assign(window, {
 			return obj[index]
 		}
 	},
-	/* Echarts */
 	// 获取最小值
 	getMinValue(minValue, key) {
-		if (key === 'VOLUME') return 0
+		if (key === 'VOLUME' || key === 'PAW') return 0
 		return minValue || 0
+	},
+	getMaxValue(maxValue) {
+		return maxValue || 100
 	},
 	createXAxis(limit) {
 		let data = getChartsSplit(limit)

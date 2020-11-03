@@ -45,7 +45,7 @@ export default class StaticWave extends React.Component {
 				interval: 1000,
 				splitLine: { show: false },
 				min: getMinValue(minValue, field),
-				max: maxValue || 100,
+				max: getMaxValue(maxValue),
 				axisTick:  { show: false },
 				axisLabel: { show: false },
 			},
@@ -76,22 +76,35 @@ export default class StaticWave extends React.Component {
 			field
 		}
 	}
+	getZero(min, max) {
+		let range = max - min
+		if (min >= 0 || max <= 0) return null
+		let minVal = Math.min(Math.abs(min), max)
+		let ratio  = minVal / range * 100
+		if (ratio < 9) return null
+		let top = max / range * 100 + '%'
+		return (
+			<div className="cw-tick-num" style={{ top }}>
+				<span>0</span>
+				<div className="cw-tick-line"></div>
+			</div>
+		)
+	}
+	getNum(min, max, num) {
+		let range = max - min
+		num -= min
+		let top = (100 - num / range * 100) + '%'
+		return top
+	}
 	render() {
 		let { color, name, unit, options } = this.state,
 			{ data, field } = this.props,
 			{ minValue, maxValue } = data || {},
-			min = getMinValue(minValue, field),
-			max = maxValue || 100,
-			hasZero = false,
-			range  = max - min,
-			minVal = Math.min(abs(min), max),
-			ratio  = minVal / range * 100,
-			top = '100%'
-
-		// if (ratio > 8) hasZero = true
-		if (min < 0) {
-			top = (100 - abs(min) / range * 100) + '%'
-		}
+			min  = getMinValue(minValue, field),
+			max  = getMaxValue(maxValue),
+			zero = this.getZero(min, max),
+			maxTop = this.getNum(min, max, max),
+			minTop = this.getNum(min, max, min)
 
 		return (
 			<div className="r-chart-wave">
@@ -100,27 +113,26 @@ export default class StaticWave extends React.Component {
 					<span className="quota-uc">{unit}</span>
 				</div>
 				<div className="y-line"></div>
-				<div className="y-max-min">
-					<span>{max}</span>
-					<span>{min}</span>
-				</div>
-				{
-					hasZero
-					? (
-						<div className="y-zero">
-							<div style={{ top }}>0</div>
+				<div className="cw-chart">
+					<div className="cw-tick">
+						<div className="cw-tick-num" style={{ top: maxTop }}>
+							<span>{max}</span>
+							<div className="cw-tick-line"></div>
 						</div>
-					)
-					: null
-				}
-				<ReactEchartsCore
-					ref={e => { if (e) this.echart = e }}
-					echarts={echarts}
-					notMerge={true}
-					lazyUpdate={true}
-					option={options}
-					style={{height: '100%'}}
-				/>
+						{zero}
+						<div className="cw-tick-num" style={{ bottom: 0 }}>
+							<span>{min}</span>
+						</div>
+					</div>
+					<ReactEchartsCore
+						ref={e => { if (e) this.echart = e }}
+						echarts={echarts}
+						notMerge={true}
+						lazyUpdate={true}
+						option={options}
+						style={{height: '100%'}}
+					/>
+				</div>
 			</div>
 		)
 	}

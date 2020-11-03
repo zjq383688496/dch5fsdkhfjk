@@ -19,7 +19,7 @@ module.exports = Object.assign(window, {
 			},
 			PEEP: {
 				u: 'mbar',
-				n: 'Peep',
+				n: 'PEEP',
 			},
 			'△P': {
 				u: '',
@@ -31,7 +31,7 @@ module.exports = Object.assign(window, {
 
 			VTE: {
 				u: 'ml',
-				n: 'Vte',
+				n: 'VTe',
 			},
 			// VTi
 			VTI: {
@@ -91,24 +91,24 @@ module.exports = Object.assign(window, {
 
 			TPLAT: {
 				u: 'mbar',	// mbar/L/s
-				n: 'tplat',
+				n: 'Tplat',
 			},
 			RR: {
 				u: 'bpm',
 				n: 'RR',
 			},
-			// RRspont
-			RRSPONT: {
+			// RRspon
+			RRSPON: {
 				u: '',
-				n: 'RRspont',
+				n: 'RRspon',
 			},
-			// RRspont
-			// Tce
+			// RRspon
+			// TCe
 			TCE: {
 				u: '',
-				n: 'Tce',
+				n: 'TCe',
 			},
-			// Tce
+			// TCe
 			C: {
 				u: 'mbar',
 				n: 'C',

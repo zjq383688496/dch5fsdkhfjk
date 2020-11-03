@@ -16,6 +16,9 @@ export default class Index extends React.Component {
 			color1 = 'blue-d',
 			color2 = 'blue-d',
 			color3 = 'blue-d'
+		if (field3 === 'IE') {
+			data3 = getIE(data)
+		}
 		return [ data1, data2, data3, field1, field2, field3, color1, color2, color3, info1, info2, info3 ]
 	}
 	render() {

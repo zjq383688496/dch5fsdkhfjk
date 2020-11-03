@@ -13,7 +13,7 @@ import serviceApi from '@service/api'
 const { floor } = Math
 const list  = [ 'PAW', 'FLOW', 'VOLUME', 'CO2' ]
 const left  = 50
-const right = 10
+const right = 0
 
 const resMap = {
 	flowList:   'FLOW',
@@ -82,8 +82,8 @@ export default class WaveBox extends React.Component {
 					name: val.n,
 					unit: val.u,
 					list: item.dataList || [],
-					minValue: item.min || 0,
-					maxValue: item.max,
+					minValue: getMinValue(item.min, key),
+					maxValue: getMaxValue(item.max),
 					current: undefined,
 				}
 				data.push(da)
@@ -171,11 +171,12 @@ export default class WaveBox extends React.Component {
 				if (key === 'VOLUME') newVal = cur.value.toFixed(0)
 				else newVal = cur.value.toFixed(1)
 			}
+			let isZero = parseFloat(newVal) == 0
 			return (
 				<div key={i} className="wb-wave-box">
 					<StaticWave left={left} field={key} right={right} ref={`wave_${key}`} data={_} />
 					<div className="wb-data fs28">
-						<b className="quota-c">{lineShow && cur? newVal: '--.-'}</b>
+						<b className="quota-c">{lineShow && cur? newVal: '--'}</b>
 					</div>
 					{
 						lineShow && cur
@@ -186,7 +187,11 @@ export default class WaveBox extends React.Component {
 								?
 								<div className="wb-point" style={style}>
 									<div className="wb-point-dot">
-										<i className="wb-point-dot" style={{ bottom: `${percentage}%`}}></i>
+										{
+											!isZero
+											? <i className="wb-point-dot" style={{ bottom: `${percentage}%`}}></i>
+											: null
+										}
 									</div>
 								</div>
 								: null
@@ -221,15 +226,13 @@ export default class WaveBox extends React.Component {
 			<div className="wave-review-box">
 				<div className="wb-top fs24">
 					{dateStr}
-					<Space size={50}>
-						{duration + 's'}
-						<a className="icons-search" onClick={this.setDate}></a>
-					</Space>
+					<a className="icons-search" onClick={this.setDate}></a>
 				</div>
 				<div className="wb-content">
 					<div className="wb-timeline">
 						<div className="wb-timeline-bar">
 							{ new Array(duration / 5 + 1).fill().map((_, i) => <i key={i}></i>) }
+							<span>{duration + 's'}</span>
 						</div>
 						<a className="wb-timeline-btn" onClick={e => this.dateJump(-duration)} disabled={dateTime < prevTime}><ArrowLeftOutlined /></a>
 						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)} disabled={nowTime - dateTime < 6e4}><ArrowRightOutlined /></a>
