@@ -108,7 +108,7 @@ export default class Charts extends React.Component {
 		return (
 			<div className="cd-tick-zero" style={{ top }}>
 				<span>0</span>
-				<div className="cd-tick-line"></div>
+				{/*<div className="cd-tick-line"></div>*/}
 			</div>
 		)
 	}

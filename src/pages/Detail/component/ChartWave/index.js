@@ -102,22 +102,46 @@ export default class ChartWave extends React.Component {
 
 		this.setState({ data, index })
 	}
+	getZero(min, max) {
+		let range = max - min
+		if (min >= 0 || max <= 0) return null
+		let minVal = Math.min(Math.abs(min), max)
+		let ratio  = minVal / range * 100
+		if (ratio < 9) return null
+		let top = max / range * 100 + '%'
+		return (
+			<div className="cw-tick-num" style={{ top }}>
+				<span>0</span>
+				{/*<div className="cw-tick-line"></div>*/}
+			</div>
+		)
+	}
 	render() {
-		let { color, name, unit, options } = this.state
+		let { config, field } = this.props,
+			{ color, name, unit, options } = this.state,
+			{ minValue, maxValue } = config[field] || {},
+			min  = getMinValue(minValue, field),
+			max  = getMaxValue(maxValue),
+			zero = this.getZero(min, max)
 		return (
 			<div className="chart-wave">
 				<div className={`cw-title fs24 c-${color}`}>
 					<b className="quota-c">{name}</b>
 					<span className="quota-uc">{unit}</span>
 				</div>
-				<ReactEchartsCore
-					ref={e => { if (e) this.echart = e }}
-					echarts={echarts}
-					notMerge={true}
-					lazyUpdate={true}
-					option={options}
-					style={{height: '100%'}}
-				/>
+				<div className="cw-chart">
+					<div className="cw-tick">
+						{zero}
+					</div>
+					<ReactEchartsCore
+						ref={e => { if (e) this.echart = e }}
+						echarts={echarts}
+						notMerge={true}
+						lazyUpdate={true}
+						option={options}
+						style={{height: '100%'}}
+					/>
+				</div>
 			</div>
 		)
 	}

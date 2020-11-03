@@ -21,7 +21,7 @@ export default class Index extends React.Component {
 					<span className="quota-uc tr">{unit}</span>
 				</div>
 				<div className="row-17 fx">
-					<div className={`col-24 c-${color} fs40 lh44 tc`}>{value}</div>
+					<div className={`col-24 c-${color} fs32 lh44 tc`}>{value}</div>
 				</div>
 			</div>
 		)

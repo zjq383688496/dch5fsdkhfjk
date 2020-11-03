@@ -46,8 +46,7 @@ export default class Index extends React.Component {
 							</div>
 						</div>
 						<div className="row-18 tr fs60 lh70">
-							<div className="col-18 tr">{data2}</div>
-							<div className="col-6"></div>
+							<div className="col-24 tc">{data2}</div>
 						</div>
 					</div>
 					<div className={`row-12 fx-col p12 c-${color3}`}>
@@ -58,7 +57,7 @@ export default class Index extends React.Component {
 							</div>
 						</div>
 						<div className="row-18 fs60 lh70 fx">
-							<div className="col-18 tr">{data3}</div>
+							<div className="col-24 tc">{data3}</div>
 						</div>
 					</div>
 				</div>

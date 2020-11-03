@@ -12,7 +12,36 @@
 		padding-left: 20px;
 		align-items: flex-end;
 	}
-	.echarts-for-react {
+	.cw-chart {
+		position: relative;
 		flex: 1;
+	}
+	.cw-tick {
+		position: absolute;
+		top: 16px;
+		bottom: 24px;
+		display: flex;
+		width: 56px;
+		font-size: 12px;
+		&-line {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 5px;
+			height: 1px;
+			background-color: #000;
+			transform: translateY(-100%);
+		}
+		>.cw-tick-num {
+			position: absolute;
+			display: flex;
+			width: 100%;
+			font-size: 12px;
+			span {
+				position: absolute;
+				right: 7px;
+				transform: translateY(-50%);
+			}
+		}
 	}
 }

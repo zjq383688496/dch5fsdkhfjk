@@ -86,7 +86,7 @@ export default class StaticWave extends React.Component {
 		return (
 			<div className="cw-tick-num" style={{ top }}>
 				<span>0</span>
-				<div className="cw-tick-line"></div>
+				{/*<div className="cw-tick-line"></div>*/}
 			</div>
 		)
 	}
