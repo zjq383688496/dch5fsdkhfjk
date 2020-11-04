@@ -28,11 +28,12 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 export default class WaveBox extends React.Component {
 	constructor(props) {
 		super(props)
+		let duration = 30
 		this.state = {
 			data:     [],
-			duration: 30,
-			date:  moment(Date.now() - 3e4),	// 默认当前时刻前30s波形
-			limit: 0,
+			duration,
+			date:  moment(Date.now() - 4e4),	// 默认当前时刻前40s波形
+			limit: duration * 10,
 			lineShow: false,
 			dragState: false,
 			recordState: false,
@@ -63,7 +64,7 @@ export default class WaveBox extends React.Component {
 	getData = () => {
 		let { r } = __Map__
 		let { device } = this.props,
-			{ date } = this.state,
+			{ date, limit } = this.state,
 			{ macAddress } = device
 		this.setState({ data: [], lineShow: false })
 		serviceApi.report(macAddress, date.format(dateFormat)).then((res = {}) => {
@@ -76,7 +77,7 @@ export default class WaveBox extends React.Component {
 				let item = newRes[k],
 					key  = resMap[k],
 					val  = r[key]
-				if (!item || !item.dataList || !item.dataList.length) return
+				if (!item || !item.dataList) return
 				let da  = {
 					key,
 					name: val.n,
@@ -86,10 +87,12 @@ export default class WaveBox extends React.Component {
 					maxValue: getMaxValue(item.max),
 					current: undefined,
 				}
+				let len = da.list.length
+				if (len < limit) da.list.push(...new Array(limit - len).fill(null))
 				data.push(da)
 			})
 			let cfg = { data, lineShow: false }
-			if (data.length) cfg.limit = data[0].list.length
+			// if (data.length) cfg.limit = data[0].list.length
 			console.log(data.length)
 			this.setState(cfg)
 		})
@@ -111,7 +114,7 @@ export default class WaveBox extends React.Component {
 		if (pageX < startX || pageX > endX) {
 			return this.setState({ pageX: 0, lineShow: false })
 		}
-		let idx = floor((pageX - startX) / width * limit)
+		let idx = floor((pageX - startX) / width * (limit + 1))
 		data.forEach(_ => current.push(_.list[idx]))
 		return this.setState({ data, pageX, lineShow: true, current })
 	}
@@ -235,7 +238,7 @@ export default class WaveBox extends React.Component {
 							<span>{duration + 's'}</span>
 						</div>
 						<a className="wb-timeline-btn" onClick={e => this.dateJump(-duration)} disabled={dateTime < prevTime}><ArrowLeftOutlined /></a>
-						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)} disabled={nowTime - dateTime < 6e4}><ArrowRightOutlined /></a>
+						<a className="wb-timeline-btn" onClick={e => this.dateJump(duration)} disabled={nowTime - dateTime < 7e4}><ArrowRightOutlined /></a>
 					</div>
 					<div
 						ref="content"

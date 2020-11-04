@@ -23,7 +23,9 @@ export default class ChartWave extends React.Component {
 			{ minValue, maxValue } = config[field] || {}
 
 		let data = this.data = new Array(limit).fill().map(_ => __Null__)
-
+		let min = getMinValue(minValue, field)
+		let max = getMaxValue(maxValue)
+		let interval = getInterval(min, max, field)
 		let options = {
 			grid: {
 				top:    '16px',
@@ -35,15 +37,15 @@ export default class ChartWave extends React.Component {
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
-				interval: 1000,
 				splitLine: { show: false },
-				min: getMinValue(minValue, field),
-				max: maxValue || 100,
+				min,
+				max,
 				axisLabel: {
 					textStyle: {
 						fontSize: 12
 					}
 				},
+				interval,
 			},
 			series: [{
 				name: '模拟数据',
@@ -88,14 +90,20 @@ export default class ChartWave extends React.Component {
 		if (__VisibilityState__ === 'hidden') return this.clearData()
 
 		let { minValue, maxValue } = config[field] || {}
-		data[++index] = realTime[field]
-		data[index == limit? 0: index + 1] = null
+		data[index] = realTime[field]
+		++index
 		if (index >= limit) index = 0
+		data[index] = __Null__
+
+		let min = getMinValue(minValue, field)
+		let max = getMaxValue(maxValue)
+		let interval = getInterval(min, max, field)
 
 		myChart.setOption({
 			yAxis: {
-				min: getMinValue(minValue, field),
-				max: maxValue || 100,
+				min,
+				max,
+				interval,
 			},
 			series: [{ data }]
 		})

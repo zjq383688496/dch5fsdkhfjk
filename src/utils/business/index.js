@@ -113,6 +113,12 @@ module.exports = Object.assign(window, {
 	getMaxValue(maxValue) {
 		return maxValue || 100
 	},
+	getInterval(min, max, key) {
+		if (key != 'FLOW') return max / 2
+		// let val = Math.min(Math.abs(min), max)
+		// console.log(val)
+		return 10000
+	},
 	createXAxis(limit) {
 		let data = getChartsSplit(limit)
 		return [

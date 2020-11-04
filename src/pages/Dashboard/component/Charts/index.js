@@ -23,14 +23,18 @@ export default class Charts extends React.Component {
 		let data = this.data = new Array(limit).fill().map(_ => __Null__)
 		let min = getMinValue(minValue, field)
 		let max = getMaxValue(maxValue)
+		let interval = getInterval(min, max, field)
+		let xAxis = createXAxis(limit)
+		xAxis[1].axisTick.length = 6
+		xAxis[1].axisLabel.textStyle.fontSize = 10
 		let options = {
 			grid: {
 				top:    '6px',
 				right:  '20px',
-				bottom: '24px',
+				bottom: '20px',
 				left:   '32px',
 			},
-			xAxis: createXAxis(limit),
+			xAxis,
 			yAxis: {
 				type: 'value',
 				boundaryGap: [0, '100%'],
@@ -39,10 +43,10 @@ export default class Charts extends React.Component {
 				max,
 				axisLabel: {
 					textStyle: {
-						fontSize: 12
+						fontSize: 10
 					},
 				},
-				interval: 10000,
+				interval,
 			},
 			series: [{
 				name: '模拟数据',
@@ -84,14 +88,20 @@ export default class Charts extends React.Component {
 
 		if (__VisibilityState__ === 'hidden') return this.clearData()
 
-		data[++index] = value
-		data[index == limit? 0: index + 1] = __Null__
+		data[index] = value
+		++index
 		if (index >= limit) index = 0
+		data[index] = __Null__
+
+		let min = getMinValue(minValue, field)
+		let max = getMaxValue(maxValue)
+		let interval = getInterval(min, max, field)
 
 		myChart.setOption({
 			yAxis: {
-				min: getMinValue(minValue, field),
-				max: getMaxValue(maxValue),
+				min,
+				max,
+				interval,
 			},
 			series: [{ data }]
 		})
