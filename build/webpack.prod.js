@@ -7,7 +7,7 @@ var webpack  = require('webpack')
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({
 		ENV:       JSON.stringify('prod'),
-		_BaseUrl_: JSON.stringify('draeger-prd.jhdad.com'),
+		_BaseUrl_: JSON.stringify('monitor.zy91.icu'),
 	})
 )
 
