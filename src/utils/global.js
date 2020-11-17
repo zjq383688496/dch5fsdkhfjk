@@ -130,6 +130,7 @@ module.exports = Object.assign(window, {
 	},
 	wsClear() {
 		clearInterval(__TimeInterval__)
+		clearTimeout(__TimeoutHeart__)
 		__ReduxInit__()
 		if (!window._ws) return
 		if (window._ws.close) window._ws.close()

@@ -1,3 +1,6 @@
+import * as ring from './ring'
+import { WS } from '@service'
+
 // 缓存等待时间
 let cacheWait = {
 	CO2:    false,
@@ -25,7 +28,7 @@ export function data2cache(data) {
 	if (!__GridIndex__[id]) return
 	device = __GridIndex__[id]
 
-	if (!Cache[id]) Cache[id] = { clears: [], alarm: [], queues: {}, measure: {}, volume: {}, clear: {}, config: {}, device, deviceId: id }
+	if (!Cache[id]) Cache[id] = { clearRef: {}, clear: {}, alarm: [], queues: {}, measure: {}, volume: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
 	analysisFun(data, cache, id)
@@ -241,7 +244,7 @@ const d2c = {
 	// 波形数据
 	REAL_TIME_DATA(data, cache, id) {
 		let { packageCode, realTimeDataList } = data,
-			{ queues, clear, clears, config, volume } = cache
+			{ queues, clear, clearRef, config } = cache
 
 		realTimeDataList.forEach(realTime => {
 			let { code, value, timestamp } = realTime,
@@ -249,99 +252,19 @@ const d2c = {
 			if (!queues[key]) queues[key] = []
 			let queue  = queues[key]
 			let newVal = +value.toFixed(4)
-			// queue.push(+(value).toFixed(4))
 			// 抹平数据模拟
-			// if (randomRange(0, 1) && randomRange(0, 1) && randomRange(0, 1) && randomRange(0, 1) && randomRange(0, 1)) return
 			let newObj = { value: newVal, timestamp }
 			queue.push(newObj)
-			if (key === 'VOLUME' && config['VOLUME']) {
-				clears.push(newObj)
-				if (clears.length > 16) clears = cache.clears = clears.slice(clears.length - 16)
-				let len = clears.length
-				let maxValue = config['VOLUME'].maxValue
-				let values = clears.map(_ => _.value)
-				let min = Math.min(...values)	// 取最小值
-				let minIdx  = 0					// 最小值索引
-				let upNum   = 0					// 连续增加次数
-				let hasUnique = false	// 是否存在连续的重复数字
-				let unique    = null	// 重复数字
-				let uniqueIdx = null	// 重复数字索引
-				let initIdx   = 5		// 初始查询索引
 
-				// 求最小值索引
-				for (let i = 0; i < len; i++) {
-					if (values[i] === min) {
-						minIdx = i
-						break
-					}
-				}
-				if (min < 80 && minIdx === initIdx) {
-					// 检测连续重复数字
-					values.filter((_, i) => {
-						if (i < initIdx) return false
-						if (!uniqueIdx && _ === values[i - 1]) {
-							uniqueIdx = i - 1
-							unique    = values[uniqueIdx]
-							hasUnique = true
-							return true
-						}
-						return false
-					})
-					if (!uniqueIdx || unique === min) return	// 未找到连续值
-					let maxRatio = unique / maxValue,			// 最大比: 连续值(高位值)比最大值
-						minRatio = unique / min					// 最小比: 连续值(高位值)比最小值
+			let clears = clearRef[key]
+			if (!clears) clears = clearRef[key] = []
 
-					if (maxRatio < .3) return					// 最大比 < .3舍弃
-					// consoleLog()
-					// console.log(min, unique, unique / min, unique / maxValue)
+			let cfg = config[key]
 
-					let node = clears[0]
-					clear[node.timestamp] = node.value
-
-
-					// clear去除多余数据 (防止内存泄漏)
-					let keys = Object.keys(clear),
-						klen = keys.length
-					
-					if (klen < 5) return
-					
-					let newClear = {}
-					keys = keys.slice(klen - 5)
-					keys.forEach(key => {
-						newClear[key] = clear[key]
-					})
-					cache.clear = newClear
-
-					return
-					// 过去的算法
-					// let max = min
-					// values.forEach((cur, i) => {
-					// 	if (i <= initIdx || i > uniqueIdx) return
-					// 	let prev = values[i - 1]
-					// })
-					for (let i = initIdx + 1; i < initIdx + 5; i++) {
-						let cur  = values[i]
-						let prev = values[i - 1]
-						let diff = cur - prev
-						if (max < cur) max = cur
-						if (cur > prev || diff > -20) {
-							++upNum
-						}
-					}
-					// 数据跨度大 并 连续增长
-					if (max - min > 380 && upNum >= 3) {
-						let { updateTime } = volume
-						let nowTime = Date.now()
-						// 判断是否2s内禁止更新值
-						if (updateTime && nowTime - updateTime < 1e3) return// console.log('2s内禁止更新')
-						let node = clears[0]
-						// if (updateTime) console.log(nowTime - updateTime)
-						// console.log(min, max, values, node)
-						Object.assign(volume, { updateTime: nowTime })
-						clear[node.timestamp] = node.value
-					}
-					console.log(max - min, upNum)
-				}
+			// 查询清屏索引
+			let ringFn = ring[`clear_${key}`]
+			if (ringFn && cfg) {
+				return ringFn(key, newObj, clearRef, clear, cfg, cache)
 			}
 		})
 
@@ -369,8 +292,20 @@ const d2c = {
 	},
 	DEVICE_ALARM_P3(data, cache) {
 		alarmFun(data, cache)
+	},
+	HEARTBEAT(data, cache) {
+		let now  = Date.now()
+		// let diff = now - __HeartTime__
+		clearTimeout(__TimeoutHeart__)
+		__TimeoutHeart__ = setTimeout(() => {
+			wsClear()
+			WS()
+		}, 3e4)
+		__HeartTime__ = now
+		// console.log(`心跳包: ${diff}ms`)
 	}
 }
+
 // 告警通用方法
 function alarmFun(data, cache) {
 	let { deviceAlarmList = [] } = data

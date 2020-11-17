@@ -7,13 +7,19 @@ function WS() {
 	let socket = window._ws = new WebSocket(urlWs)
 	socket.onopen = function() {
 		cache2device(__Interval__)
+
+		// 30s未收到心跳包则重启ws
+		__HeartTime__ = Date.now()
+		clearTimeout(__TimeoutHeart__)
+		__TimeoutHeart__ = setTimeout(() => {
+			wsClear()
+			WS()
+		}, 3e4)
 	}
 	socket.onmessage = function({ data }) {
 		if (!/^{/.test(data)) return
 		let da = JSON.parse(data)
 		data2cache(da)
-		// consoleLog()
-		// console.log(data)
 	}
 	socket.onclose = function(e) {
 		// console.log('WebSocket is closed now.')

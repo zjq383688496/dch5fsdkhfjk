@@ -155,7 +155,7 @@ export default class ChartLine extends React.Component {
 		this.setState({ data, visibilityState: __VisibilityState__ })
 		this.clear_time = Date.now()
 		this.clearTask()
-		console.log('清屏!')
+		// console.log('清屏!')
 	}
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
 		let { data, echart, state, props }  = this,

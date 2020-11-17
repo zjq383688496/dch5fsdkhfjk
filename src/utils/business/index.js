@@ -1,6 +1,8 @@
 module.exports = Object.assign(window, {
-	__Interval__: 100,	// 160
-	__TimeInterval__: null,
+	__Interval__: 100,			// 定时任务 - 间隔时间
+	__TimeInterval__: null,		// 定时任务 - 100ms 获取数据
+	__TimeoutHeart__: null,		// 定时任务 - 心跳包未收到
+	__HeartTime__: 0,			// 当前收到心跳包的时间戳
 	__Null__: { value: null },
 	__User__: null,
 	__Grid__: [],

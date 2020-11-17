@@ -82,7 +82,7 @@ module.exports = Object.assign(window, {
 				n: 'FiO₂',
 			},
 			R: {
-				u: 'mbar',
+				u: 'mbar/L/s',
 				n: 'R',
 			},
 
@@ -110,7 +110,7 @@ module.exports = Object.assign(window, {
 			},
 			// TCe
 			C: {
-				u: 'mbar',
+				u: 'mL/mbar',
 				n: 'C',
 			},
 			RSB: {
