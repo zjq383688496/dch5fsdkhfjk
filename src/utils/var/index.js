@@ -25,7 +25,6 @@ module.exports = Object.assign(window, {
 				u: '',
 				n: '△P',
 			},
-			// 三角P
 
 			/* ----- */
 
@@ -37,6 +36,10 @@ module.exports = Object.assign(window, {
 			VTI: {
 				u: '',
 				n: 'VTi',
+			},
+			'VT/kg BW': {
+				u: 'mL/kg',
+				n: 'VT/kg BW',
 			},
 			// VTi
 			MVE: {
@@ -58,13 +61,13 @@ module.exports = Object.assign(window, {
 
 			// PIF
 			PIF: {
-				u: '',
+				u: '%',
 				n: 'PIF',
 			},
 			// PIF
 			// PEF
 			PEF: {
-				u: '',
+				u: '%',
 				n: 'PEF',
 			},
 			// PEF

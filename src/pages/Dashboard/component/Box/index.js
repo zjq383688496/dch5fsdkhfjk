@@ -8,7 +8,7 @@ import Index  from '../Index'
 
 const measureList = [
 	['PEAK', 'PPLAT', 'PMEAN', 'PEEP', '△P', ''],
-	['VTE', 'VTI', 'MVE', 'MVI', 'ETCO2', ''],
+	['VTE', 'VTI', 'VT/kg BW', 'MVE', 'MVI', 'ETCO2'],
 	['PIF', 'PEF', 'TI', 'IE', 'FIO2', 'R'],
 	['TPLAT', 'RR', 'RRSPON', 'TCE', 'C', 'RSB'],
 ]
@@ -80,8 +80,10 @@ class Box extends React.Component {
 			return new Array(6).fill().map((_, j) => {
 				let key = mList[j] || ''
 				if (!key) return <p key={`${i}_${j}`}></p>
+				let cls = cur === key? 's-active': ''
 				let { n: name } = m[key]
-				return <p key={`${i}_${j}`} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
+				if (key === 'VT/kg BW') cls += ' fs11'
+				return <p key={`${i}_${j}`} className={cls} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
 			})
 		})
 		
