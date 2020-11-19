@@ -138,7 +138,7 @@ export default class Config extends React.Component {
 		let id = e.dataTransfer.getData('id'),
 			device = deviceIndex[id],
 			length = Object.keys(gridIndex).length
-		if (length >= 8) return message.warning('床位数不得超过8个.')
+		// if (length >= 8) return message.warning('床位数不得超过8个.')
 		grids[idx] = gridIndex[id] = device
 		this.setState({ grids, gridIndex }, this.deviceFilter)
 	}
