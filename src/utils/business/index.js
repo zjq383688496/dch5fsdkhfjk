@@ -57,7 +57,11 @@ module.exports = Object.assign(window, {
 
 		return `${IStr}:${EStr}`
 	},
-
+	get3AP(data) {
+		let { PPLAT, PEEP } = data
+		if (PPLAT === undefined || PEEP === undefined) return
+		return PPLAT - PEEP
+	},
 	/* Echarts */
 	// 获取图表分割数据(s)
 	getChartsSplit(limit, split = 50, div = 10) {

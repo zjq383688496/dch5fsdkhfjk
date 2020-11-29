@@ -15,6 +15,9 @@ export default class Index extends React.Component {
 		if (title === 'IE') {
 			value = getIE(data)
 		}
+		if (title === '△P') {
+			value = get3AP(data)
+		}
 		return (
 			<div className={`db-index-item fx-col p4 ${active? 's-active': ''}`} onClick={handleClick}>
 				<div className="fx row-7" style={{ justifyContent: 'space-between' }}>

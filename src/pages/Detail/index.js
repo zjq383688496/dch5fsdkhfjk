@@ -177,7 +177,7 @@ class Detail extends React.Component {
 					}
 					<div className="detail-r fx-col">
 						<div className="d-content fx-col">
-							<Index data={measure} field1={'PPEAK'} field2={'PPLAT'} field3={'PEEP'} />
+							<Index data={measure} field1={'PEAK'}  field2={'PPLAT'} field3={'PEEP'} />
 							<Index data={measure} field1={'MVE'}   field2={'VTE'}   field3={'ETCO2'} />
 							<Index data={measure} field1={'RR'}    field2={'TI'}    field3={'IE'} />
 							<Index data={measure} field1={'FIO2'}  field2={'R'}     field3={'C'} />

@@ -1,10 +1,6 @@
 module.exports = Object.assign(window, {
 	__Map__: {
 		m: {
-			// PIP: {
-			// 	u: 'bpm',
-			// 	n: 'PIP',
-			// },
 			PEAK: {
 				u: 'mbar',
 				n: 'PIP',	// Peak
@@ -148,10 +144,10 @@ module.exports = Object.assign(window, {
 				u: '%',
 				n: '流量',
 			},
-			PPEAK: {
-				u: 'mbar',
-				n: 'PIP',		// Ppeak
-			},
+			// PPEAK: {
+			// 	u: 'mbar',
+			// 	n: 'PIP',		// Ppeak
+			// },
 		},
 		r: {
 			PAW:    {
