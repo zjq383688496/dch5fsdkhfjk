@@ -28,7 +28,7 @@ export function data2cache(data) {
 	if (!__GridIndex__[id]) return
 	device = __GridIndex__[id]
 
-	if (!Cache[id]) Cache[id] = { clearRef: {}, clear: {}, alarm: [], queues: {}, measure: {}, volume: {}, config: {}, device, deviceId: id }
+	if (!Cache[id]) Cache[id] = { clearRef: {}, clear: {}, alarm: [], pef: {}, pif: {}, queues: {}, measure: {}, volume: {}, config: {}, device, deviceId: id }
 	let cache = Cache[id]
 
 	analysisFun(data, cache, id)
@@ -59,7 +59,7 @@ export async function cache2device(time = 100) {
 			// let preVol = preVols[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
-				{ alarm, clear, config, device, deviceId, measure, queues, textMessage } = cache,
+				{ alarm, clear, config, device, deviceId, measure, pif, pef, queues, textMessage } = cache,
 				realTime = {}
 
 			// 遍历波形数据队列
@@ -119,8 +119,6 @@ export async function cache2device(time = 100) {
 				}
 			}
 
-			// console.log(newTime, clear)
-
 			if (!isSmooth) {
 				Object.keys(queues).forEach(key => {
 					let queue = queues[key],
@@ -155,30 +153,16 @@ export async function cache2device(time = 100) {
 				let queue = queues[key]
 				let wait  = cacheWait[key]
 				let val   = queue[0]
+				
+				// PEF & PIF 相关
+				if (key === 'FLOW') {
+					let { timestamp } = val
+					if (pif[timestamp]) measure['PIF'] = pif[timestamp].toFixed(0)
+					if (pef[timestamp]) measure['PEF'] = pef[timestamp].toFixed(0)
+				}
+
 				if (!queue.length) return
 				if (!wait) val = queue.shift()
-				// val = round(val.value)
-				// 获取波形基数
-				// if (__MIN_STATE__) return	// 判断是否继续计算最小值
-				// if (MINNum[key] === undefined) MINNum[key] = 0
-				return
-				if (MIN[key] === undefined) {
-					MIN[key] = val
-					// console.log(key, '初始值: ', 10000)
-				} else {
-					let MX  = abs(MIN[key]),
-						// MN  = MINNum[key],
-						VAL = abs(val)
-					if (VAL < MX) MIN[key] = val
-					// if (VAL < MX) { 
-					// 	if (MN > 5) {
-					// 		MIN[key] = val
-					// 		MINNum[key] = 0
-					// 		console.log(key, '更新最小值: ', val)
-					// 	}
-					// 	++MINNum[key]
-					// }
-				}
 			})
 
 			Object.assign(Device, {
@@ -244,7 +228,7 @@ const d2c = {
 	// 波形数据
 	REAL_TIME_DATA(data, cache, id) {
 		let { packageCode, realTimeDataList } = data,
-			{ queues, clear, clearRef, config } = cache
+			{ queues, clear, clearRef, config, pef, pif } = cache
 
 		realTimeDataList.forEach(realTime => {
 			let { code, value, timestamp } = realTime,
@@ -264,7 +248,7 @@ const d2c = {
 			// 查询清屏索引
 			let ringFn = ring[`clear_${key}`]
 			if (ringFn && cfg) {
-				return ringFn(key, newObj, clearRef, clear, cfg, cache)
+				return ringFn(key, newObj, clearRef, clear, cfg, cache, pef, pif)
 			}
 		})
 
