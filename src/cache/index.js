@@ -157,8 +157,8 @@ export async function cache2device(time = 100) {
 				// PEF & PIF 相关
 				if (key === 'FLOW') {
 					let { timestamp } = val
-					if (pif[timestamp]) measure['PIF'] = pif[timestamp].toFixed(0)
-					if (pef[timestamp]) measure['PEF'] = pef[timestamp].toFixed(0)
+					if (pif[timestamp]) measure['PIF'] = pif[timestamp].toFixed(1)
+					if (pef[timestamp]) measure['PEF'] = pef[timestamp].toFixed(1)
 				}
 
 				if (!queue.length) return
