@@ -57,13 +57,13 @@ module.exports = Object.assign(window, {
 
 			// PIF
 			PIF: {
-				u: '%',
+				u: 'L/min',
 				n: 'PIF',
 			},
 			// PIF
 			// PEF
 			PEF: {
-				u: '%',
+				u: 'L/min',
 				n: 'PEF',
 			},
 			// PEF
