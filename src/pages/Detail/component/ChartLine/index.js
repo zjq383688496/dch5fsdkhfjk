@@ -16,7 +16,7 @@ export default class ChartLine extends React.Component {
 	constructor(props) {
 		super(props)
 		
-		let { MIN, fieldX, fieldY, config = {}, realTime = {}, deviceId } = props,
+		let { fieldX, fieldY, config = {}, realTime = {}, deviceId } = props,
 			rtX = realTime[fieldX] || {},
 			rtY = realTime[fieldY] || {},
 			cX  = config[fieldX] || {},
@@ -108,7 +108,6 @@ export default class ChartLine extends React.Component {
 			infoX,
 			infoY,
 			point,
-			minDis:  getPointDis({ x: MIN[fieldX], y: MIN[fieldY] }),
 		}
 	}
 	componentDidMount() {
@@ -160,7 +159,7 @@ export default class ChartLine extends React.Component {
 	updateData = ({ fieldX, fieldY, config = {}, realTime = {} }) => {
 		let { data, echart, state, props }  = this,
 			{ clear } = props,
-			{ minDis, options, point, deviceId, visibilityState } = state,
+			{ options, point, deviceId, visibilityState } = state,
 			{ series }  = options
 		if (!echart || !echart.getEchartsInstance) return
 		let myChart = echart.getEchartsInstance(),
@@ -175,9 +174,6 @@ export default class ChartLine extends React.Component {
 
 
 		if (__VisibilityState__ === 'hidden') return this.clearData(true)
-
-		let curDis = getPointDis({ x: vX, y: vY }),
-			difDis = abs(curDis - minDis)
 
 		if (clear) return this.clearData()
 

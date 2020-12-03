@@ -8,6 +8,8 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
+const { cacheClearById } = require('@cache')
+
 const limit = 150
 
 const interval = 49
@@ -16,9 +18,10 @@ export default class Charts extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { config, realTime, field } = props,
+		let { config, device, realTime, field } = props,
 			{ u: unit, n: name }   = __Map__.r[field] || {},
-			{ minValue, maxValue } = config[field] || {}
+			{ minValue, maxValue } = config[field] || {},
+			{ id } = device
 
 		let data = this.data = new Array(limit).fill().map(_ => __Null__)
 		let min = getMinValue(minValue, field)
@@ -61,12 +64,14 @@ export default class Charts extends React.Component {
 			animation: false
 		}
 		this.state = {
+			id,
 			index: 0,
 			options,
 			name,
 			unit,
 			field,
 		}
+		cacheClearById(id)
 	}
 	componentWillReceiveProps(props) {
 		this.updateData(props)
@@ -78,7 +83,7 @@ export default class Charts extends React.Component {
 	}
 	updateData = ({ config, realTime, field }) => {
 		let { data, echart, state }  = this,
-			{ index, options, visibilityState } = state,
+			{ id, index, options, visibilityState } = state,
 			{ minValue, maxValue } = config[field] || {},
 			{ series }  = options,
 			value = realTime[field]
@@ -90,7 +95,10 @@ export default class Charts extends React.Component {
 
 		data[index] = value
 		++index
-		if (index >= limit) index = 0
+		if (index >= limit) {
+			index = 0
+			cacheClearById(id)
+		}
 		data[index] = __Null__
 
 		let min = getMinValue(minValue, field)

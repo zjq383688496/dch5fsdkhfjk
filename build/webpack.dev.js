@@ -9,15 +9,15 @@ var port = 8222
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({
 		ENV: JSON.stringify('dev'),
-		_BaseUrl_: JSON.stringify('94.191.50.139:8089'),
-		// _BaseUrl_: JSON.stringify('monitor.zy91.icu'),
+		// _BaseUrl_: JSON.stringify('94.191.50.139:8089'),
+		_BaseUrl_: JSON.stringify('monitor.zy91.icu'),
 	}),
 	// 开启 热更新
 	new webpack.HotModuleReplacementPlugin(),
 	// new webpack.NoErrorsPlugin()
 )
 
-var target = 'http://94.191.50.139:8089'
+var target = 'http://monitor.zy91.icu'
 
 Object.assign(baseCfg, {
 	// entry: {
@@ -42,10 +42,30 @@ Object.assign(baseCfg, {
 		hot: true,
 		noInfo: false,
 		proxy: {
-			// '/account':    target,
-			// '/experiment': target,
-			// '/Machines':   target,
-			// '/Dashboards': target,
+			'/account':    {
+				target,
+				enable: true,
+				secure: false,
+				changeOrigin: true,
+			},
+			'/Machines':   {
+				target,
+				enable: true,
+				secure: false,
+				changeOrigin: true,
+			},
+			'/Dashboards': {
+				target,
+				enable: true,
+				secure: false,
+				changeOrigin: true,
+			},
+			'/report': {
+				target,
+				enable: true,
+				secure: false,
+				changeOrigin: true,
+			}
 		}
 	}
 })

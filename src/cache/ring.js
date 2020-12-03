@@ -3,7 +3,7 @@
 export function clear_VOLUME(key, obj, clearRef, clear, cfg, cache) {
 	let clears = clearRef[key]
 	clears.push(obj)
-	if (clears.length > 16) clears = clearRef[key] = clears.slice(clears.length - 16)
+	if (clears.length > 14) clears = clearRef[key] = clears.slice(clears.length - 14)
 	let len = clears.length
 	let maxValue = cfg.maxValue
 	let values = clears.map(_ => _.value)
@@ -13,7 +13,7 @@ export function clear_VOLUME(key, obj, clearRef, clear, cfg, cache) {
 	let hasUnique = false	// 是否存在连续的重复数字
 	let unique    = null	// 重复数字
 	let uniqueIdx = null	// 重复数字索引
-	let initIdx   = 5		// 初始查询索引
+	let initIdx   = 3		// 初始查询索引
 
 	// 求最小值索引
 	for (let i = 0; i < len; i++) {

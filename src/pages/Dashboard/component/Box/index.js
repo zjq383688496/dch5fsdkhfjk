@@ -87,10 +87,6 @@ class Box extends React.Component {
 			})
 		})
 		
-		// let mDom = Object.keys(m).map(key => {
-		// 	let { n: name } = m[key]
-		// 	return <p key={key} className={cur === key? 's-active': ''} onClick={e => this.measureChange(e, key, measure)}>{name}</p>
-		// })
 		return mDom
 	}
 	renderIndex = measure => {
@@ -152,7 +148,7 @@ class Box extends React.Component {
 				{
 					!wait && __VisibilityState__ === 'visible'
 					?
-					<Charts active={waveState} field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
+					<Charts active={waveState} device={device} field={waveValue} config={config} realTime={realTime} handleClick={e => this.waveShow(e, true)} />
 					: null
 				}
 				<div className="db-index fx h72 fs12">

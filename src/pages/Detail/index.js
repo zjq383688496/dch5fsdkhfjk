@@ -44,6 +44,7 @@ class Detail extends React.Component {
 		this.timeout = setInterval(() => {
 			let init = Math.random(),
 				data = this.getDevice(deviceId)
+
 			this.setState({ init, data })
 		}, __Interval__)
 	}
@@ -73,8 +74,7 @@ class Detail extends React.Component {
 		let { data, deviceId, trendStatus } = this.state
 		if (!data) return null
 		let { alarm: [ alarm1, alarm2, alarm3 ], clear, config, device, measure, realTime, textMessage, timestamp = '' } = data,
-			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '', code = '' } = device,
-			MIN = __MIN__[deviceId]
+			{ positionName = '', name = '', deviceName = '', departmentName = '', patientName = '', code = '' } = device
 		let bedName = this.getBedName(deviceId)
 		let a1 = getAlarm(alarm1),
 			a2 = getAlarm(alarm2),
@@ -128,17 +128,17 @@ class Detail extends React.Component {
 								<div className="d-content fx-col">
 									<div className="row-12">
 										{
-											MIN && __VisibilityState__ === 'visible'
+											__VisibilityState__ === 'visible'
 											?
-											<ChartLine clear={clearValue} config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
+											<ChartLine clear={clearValue} config={config} deviceId={deviceId} realTime={realTime} fieldX={'PAW'} fieldY={'VOLUME'} />
 											: null
 										}
 									</div>
 									<div className="row-12">
 										{
-											MIN && __VisibilityState__ === 'visible'
+											__VisibilityState__ === 'visible'
 											?
-											<ChartLine clear={clearValue} config={config} MIN={MIN} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
+											<ChartLine clear={clearValue} config={config} deviceId={deviceId} realTime={realTime} fieldX={'VOLUME'} fieldY={'FLOW'} />
 											: null
 										}
 									</div>

@@ -35,14 +35,12 @@ export function data2cache(data) {
 
 	if (!new Set(group).has(id)) group.push(id)
 
-	ReduxUpdate({})
+	// ReduxUpdate({})
 }
 
 // 缓存 进入 渲染
 export async function cache2device(time = 100) {
 	let { Cache, Devices } = window.__Redux__
-	// let MinNumber = {}
-	// let preVols = {}
 	await _wait(2000)
 	deviceKeyVaild()
 	clearInterval(__TimeInterval__)
@@ -50,18 +48,13 @@ export async function cache2device(time = 100) {
 		let { group = [] } = Cache
 		group.forEach((id, i) => {
 			if (!Devices[id]) Devices[id] = {}
-			// if (!MinNumber[id])    MinNumber[id] = {}
-			// if (!preVols[id]) preVols[id] = {}
-			if (!__MIN__[id]) __MIN__[id] = {}
 
-			let MIN    = __MIN__[id]
-			// let MINNum = MinNumber[id]
-			// let preVol = preVols[id]
 			let Device = Devices[id]
 			let cache  = Cache[id],
 				{ alarm, clear, config, device, deviceId, measure, pif, pef, queues, textMessage } = cache,
 				realTime = {}
 
+			let newTime
 			// 遍历波形数据队列
 			Object.keys(queues).forEach(key => {
 				let queue = queues[key],
@@ -71,17 +64,17 @@ export async function cache2device(time = 100) {
 
 				// 数据量大于缓存数2倍的时候清除多余数据
 				if (__VisibilityState__ === 'hidden' && len > limit) {
-					console.log(`1当前数据量已达: ${len}, 清除${len - limit}条数据!`)
+					console.log(id, `恢复 - 当前数据量已达: ${len}, 清除${len - limit}条数据!`)
 					queue = queues[key] = queue.slice(len - limit)
-					// console.log(queues[key].length)
 				}
-				if (len > limit * 2) {
-					console.log(`2当前数据量已达: ${len}, 清除${len - limit * 2}条数据!`)
+				if (len > limit * 10) {
 					queue = queues[key] = queue.slice(len - limit)
-					// console.log(queues[key].length)
+					console.log(id, `超量 - 当前数据量已达: ${len}, 清除${len - limit}条数据!`, queue.length)
 				}
 
 				let value = queue[0]
+
+				if (!newTime) newTime = value.timestamp
 
 				realTime[key] = !wait && value? { value: value.value }: __Null__
 				// 触发等待
@@ -91,8 +84,7 @@ export async function cache2device(time = 100) {
 
 			/* 抹平数据 开始 */
 			// 检测判断是否抹平数据
-			let newTime,
-				fieldLen = Object.keys(queues).length,
+			/*let fieldLen = Object.keys(queues).length,
 				isSmooth = true,	// 是否需要抹平
 				nullLen  = false,	// length是否为空
 				timeMap  = {}		// 时间戳索引
@@ -119,7 +111,8 @@ export async function cache2device(time = 100) {
 				}
 			}
 
-			if (!isSmooth) {
+			if (isSmooth) {
+				console.log(id, '需要数据不平')
 				Object.keys(queues).forEach(key => {
 					let queue = queues[key],
 						len   = queue.length,
@@ -137,10 +130,10 @@ export async function cache2device(time = 100) {
 					len = queue.length
 					if (!len) nullLen = true
 				})
-			}
+			}*/
 			/* 抹平数据 结束 */
 
-			if (__VisibilityState__ === 'hidden' || nullLen) {
+			if (__VisibilityState__ === 'hidden') {
 				realTime = {
 					PAW:    __Null__,
 					FLOW:   __Null__,
@@ -162,7 +155,10 @@ export async function cache2device(time = 100) {
 				}
 
 				if (!queue.length) return
-				if (!wait) val = queue.shift()
+				if (!wait) {
+					queue.shift()
+					// console.log(`清除点`)
+				}
 			})
 
 			Object.assign(Device, {
@@ -178,6 +174,26 @@ export async function cache2device(time = 100) {
 			})
 		})
 	}, time)
+}
+
+// 主动清理缓存数据 (根据ID)
+export async function cacheClearById(id) {
+	let { Cache } = window.__Redux__
+	if (!Cache[id]) return
+	let { queues } = Cache[id]
+
+	// 遍历波形数据队列
+	Object.keys(queues).forEach(key => {
+		let queue = queues[key],
+			len   = queue.length,
+			wait  = cacheWait[key]
+		if (!len) return
+		if (len > limit * 2) {
+			queue = queues[key] = queue.slice(len - limit)
+			console.log(id, `超量 - 当前数据量已达: ${len}, 清除${len - limit}条数据!`, queue.length)
+		}
+
+	})
 }
 
 function deviceKeyVaild() {
@@ -278,7 +294,7 @@ const d2c = {
 		alarmFun(data, cache)
 	},
 	HEARTBEAT(data, cache) {
-		let now  = Date.now()
+		// let now  = Date.now()
 		// let diff = now - __HeartTime__
 		clearTimeout(__TimeoutHeart__)
 		__TimeoutHeart__ = setTimeout(() => {

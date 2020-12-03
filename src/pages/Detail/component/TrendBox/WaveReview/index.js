@@ -170,9 +170,14 @@ export default class WaveBox extends React.Component {
 			let val = r[key]
 			let percentage, newVal
 			if (cur) {
+				let value  = cur.value
 				percentage = getPercentage(cur.value, minValue, maxValue - minValue)
-				if (key === 'VOLUME') newVal = cur.value.toFixed(0)
-				else newVal = cur.value.toFixed(1)
+				if (value) {
+					if (key === 'VOLUME') newVal = value.toFixed(0)
+					else newVal = value.toFixed(1)
+				} else {
+					newVal = '--'
+				}
 			}
 			let isZero = parseFloat(newVal) == 0
 			return (
