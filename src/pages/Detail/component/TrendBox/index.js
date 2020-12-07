@@ -8,7 +8,7 @@ import WaveReview from './WaveReview'
 import Notepad    from './Notepad'
 
 const tabs = [
-	{ key: 1, name: '趋势数据', active: false, },
+	{ key: 1, name: '趋势数据', active: true, },
 	{ key: 2, name: '趋势波形', active: false, },
 	{ key: 3, name: '波形回顾', active: true, },
 	{ key: 4, name: '记录本',   active: true, },
@@ -18,7 +18,7 @@ export default class TrendBox extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			key: 3
+			key: 1
 		}
 	}
 	onChange = key => {

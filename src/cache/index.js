@@ -294,7 +294,7 @@ const d2c = {
 		alarmFun(data, cache)
 	},
 	HEARTBEAT(data, cache) {
-		// let now  = Date.now()
+		let now  = Date.now()
 		// let diff = now - __HeartTime__
 		clearTimeout(__TimeoutHeart__)
 		__TimeoutHeart__ = setTimeout(() => {
