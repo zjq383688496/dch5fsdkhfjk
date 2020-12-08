@@ -4,16 +4,31 @@ import './index.less'
 import { Table } from 'antd'
 import moment from 'moment'
 
+import Scrollbar from '@comp/Scrollbar'
+import Select    from '@comp/Select'
+
 const limit = 2 + 288		// 参数|单位 + 12小时数据
 
+const options = [
+	{ label: '5min',  value: 5 },
+	{ label: '10min', value: 10 },
+	{ label: '30min', value: 30 },
+	{ label: '1h',    value: 60 },
+	{ label: '2h',    value: 60 * 2 },
+	{ label: '6h',    value: 60 * 6 },
+	{ label: '12h',   value: 60 * 12 },
+	{ label: '1D',    value: 60 * 24 },
+]
 
 export default class DataBox extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			list:   [],
-			times:  [],
-			height: 0,
+			list:     [],
+			times:    [],
+			height:   0,
+			curDate:  '',
+			interval: 5,
 		}
 	}
 	componentDidMount() {
@@ -25,17 +40,23 @@ export default class DataBox extends React.Component {
 		let { body } = this.refs
 		body.removeEventListener('scroll', this.scrollUpdate)
 	}
-	scrollUpdate() {
-		let { times } = this.state
+	scrollUpdate = () => {
+		let { curDate, times } = this.state
 		let { body, header } = this.refs
 		let sl   = body.scrollLeft
 		let idx  = parseInt(sl / 40)
-		let time = times[idx]
+		let da   = times[idx]
 		header.scrollLeft = sl
-		console.log(idx, time)
+		if (!da) return
+		let { date } = da
+		if (date === curDate) return
+		this.setState({ curDate: date })
+		// console.log(idx, date)
 	}
 	getData = async () => {
+		let { interval } = this.state
 		await _wait(100)
+		let len  = 12
 		let item = {
 			name: 'ETCO2',
 			data: new Array(100).fill().map((_, i) => {
@@ -45,9 +66,8 @@ export default class DataBox extends React.Component {
 				}
 			})
 		}
-		let list = new Array(12).fill().map(_ => item)
-
-		this.setState({ list, height: 24 * 12 }, this.getTimes)
+		let list = new Array(len).fill().map(_ => item)
+		this.setState({ list, height: 24 * len }, this.getTimes)
 	}
 	getTimes = () => {
 		let { list } = this.state
@@ -58,7 +78,10 @@ export default class DataBox extends React.Component {
 			let time = mon.format('HH:mm')
 			return { date, time }
 		})
-		this.setState({ times })
+		this.setState({ times }, this.scrollUpdate)
+	}
+	changeParams = params => {
+		this.setState(params)
 	}
 	renderCol = () => {
 		let { times } = this.state
@@ -96,7 +119,7 @@ export default class DataBox extends React.Component {
 			let { data } = td
 			let { u: unit, n: name } = __Map__.m[td.name] || {}
 			let tds = [
-				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name}</td>,
+				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name}{i}</td>,
 				<td key={1} className="db-td-fixed" style={{ position: 'sticky', left: 60 }}>{unit}</td>,
 				...data.map(({ value }, j) => {
 					return <td key={j + 2}>{value}</td>
@@ -111,7 +134,8 @@ export default class DataBox extends React.Component {
 		) 
 	}
 	render() {
-		let { times, height } = this.state
+		let { curDate, times, height, interval } = this.state
+		let { body } = this.refs
 		let colgroup = this.renderCol()
 		let thead    = this.renderTh()
 		let tbody    = this.renderTd()
@@ -119,24 +143,62 @@ export default class DataBox extends React.Component {
 		return (
 			<div className="data-box" style={style}>
 				<div className="data-box-header">
+					<div className="dbh-l">
+						{ curDate }
+					</div>
+					<div className="dbh-r">
+						<Select
+							value={interval}
+							dataSource={options}
+							onChange={interval => this.changeParams({ interval })}
+						/>
+					</div>
 				</div>
-				<div className="data-box-table" style={{ height: height + 24 }}>
-					<div ref="header" className="db-header">
-						<table>
-							{ colgroup }
-							{ thead }
-						</table>
+				<div className="data-box-body">
+					<div className="data-box-table" style={{ height: height + 24 }}>
+						<div ref="header" className="db-header">
+							<table>
+								{ colgroup }
+								{ thead }
+							</table>
+						</div>
+						<div ref="body" className="db-body" style={{ height }}>
+							<table>
+								{ colgroup }
+								{ tbody }
+							</table>
+						</div>
+						<div className="db-line-t"></div>
+						<div className="db-line-r"></div>
+						<div className="db-line-b"></div>
+						<div className="db-line-l"></div>
 					</div>
-					<div ref="body" className="db-body" style={{ height }}>
-						<table>
-							{ colgroup }
-							{ tbody }
-						</table>
+					<div className="data-box-scroll-v">
+						{
+							body && times.length
+							?
+							<Scrollbar
+								dom={body}
+								step={48}
+								type={'v'}
+								scrollEnd={this.scrollEnd}
+							/>
+							: null
+						}
 					</div>
-					<div className="db-line-t"></div>
-					<div className="db-line-r"></div>
-					<div className="db-line-b"></div>
-					<div className="db-line-l"></div>
+				</div>
+				<div className="data-box-scroll-b">
+					{
+						body && times.length
+						?
+						<Scrollbar
+							dom={body}
+							step={80}
+							type={'h'}
+							scrollEnd={this.scrollEnd}
+						/>
+						: null
+					}
 				</div>
 			</div>
 		)

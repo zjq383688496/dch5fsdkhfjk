@@ -1,22 +1,54 @@
 .data-box {
 	width: 100%;
 	height: 100%;
-	display: flex;
+	// display: flex;
 	flex-direction: column;
 	overflow: hidden;
 	.data-box-header {
+		display: flex;
 		height: 24px;
-		background-color: #fff;
+		// background-color: #fff;
 		flex-shrink: 0;
+		.dbh-l,
+		.dbh-r {
+			flex: 1;
+		}
+		.dbh-l {
+
+		}
+		.dbh-r {
+
+		}
+	}
+	.data-box-body {
+		display: flex;
+		width: 100%;
+		height: calc(100% - 64px);
+		flex: 1;
 	}
 	.data-box-table {
 		position: relative;
 		display: flex;
-		width: 100%;
-		flex-shrink: 0;
+		width: calc(100% - 40px);
+		height: 100%;
 		flex: 1;
+		flex-shrink: 0;
 		flex-direction: column;
 		max-height: 100%;
+	}
+	.data-box-scroll-v {
+		width: 40px;
+		height: 100%;
+		padding-left: 10px;
+		flex-shrink: 0;
+		// background-color: #fff;
+	}
+	.data-box-scroll-b {
+		width: calc(100% - 40px);
+		height: 40px;
+		padding-top: 10px;
+		flex-shrink: 0;
+		// background-color: #fff;
 	}
 	.db-header {
 		overflow: hidden;
@@ -24,6 +56,7 @@
 	}
 	.db-body {
 		overflow: auto scroll;
+		flex: 1;
 		/*flex-shrink: 0;*/
 	}
 	.db-td-fixed {
