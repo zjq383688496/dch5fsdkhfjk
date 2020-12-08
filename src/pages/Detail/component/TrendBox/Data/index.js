@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.less'
 
-import { Table } from 'antd'
+import { Space } from 'antd'
 import moment from 'moment'
 
 import Scrollbar from '@comp/Scrollbar'
@@ -147,11 +147,15 @@ export default class DataBox extends React.Component {
 						{ curDate }
 					</div>
 					<div className="dbh-r">
-						<Select
-							value={interval}
-							dataSource={options}
-							onChange={interval => this.changeParams({ interval })}
-						/>
+						<Space size={40}>
+							视图
+							<Select
+								value={interval}
+								dataSource={options}
+								onChange={interval => this.changeParams({ interval })}
+							/>
+							<div className="btn-export">导出</div>
+						</Space>
 					</div>
 				</div>
 				<div className="data-box-body">

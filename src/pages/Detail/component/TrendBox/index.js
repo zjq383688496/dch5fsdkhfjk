@@ -9,7 +9,7 @@ import Notepad    from './Notepad'
 
 const tabs = [
 	{ key: 1, name: '趋势数据', active: true, },
-	{ key: 2, name: '趋势波形', active: false, },
+	{ key: 2, name: '趋势波形', active: true, },
 	{ key: 3, name: '波形回顾', active: true, },
 	{ key: 4, name: '记录本',   active: true, },
 ]
