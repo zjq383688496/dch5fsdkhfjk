@@ -3,7 +3,7 @@ import './index.less'
 
 import Tabs       from './Tabs'
 import Data       from './Data'
-import Wave       from './Wave'
+import WaveTrend  from './WaveTrend'
 import WaveReview from './WaveReview'
 import Notepad    from './Notepad'
 
@@ -18,7 +18,7 @@ export default class TrendBox extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			key: 1
+			key: 2
 		}
 	}
 	onChange = key => {
@@ -36,7 +36,7 @@ export default class TrendBox extends React.Component {
 				<Tabs activeKey={key} tabs={tabs} onChange={this.onChange}/>
 				<div className="tb-content">
 					{ key == 1? <Data       device={device} bedName={bedName} />: null }
-					{ key == 2? <Wave       device={device} bedName={bedName} />: null }
+					{ key == 2? <WaveTrend  device={device} bedName={bedName} />: null }
 					{ key == 3? <WaveReview device={device} bedName={bedName} />: null }
 					{ key == 4? <Notepad    device={device} bedName={bedName} />: null }
 				</div>

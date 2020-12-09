@@ -147,7 +147,7 @@ export default class DataBox extends React.Component {
 						{ curDate }
 					</div>
 					<div className="dbh-r">
-						<Space size={40}>
+						<Space size={20}>
 							视图
 							<Select
 								value={interval}

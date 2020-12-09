@@ -27,7 +27,7 @@ class Detail extends React.Component {
 		this.state = {
 			data: null,
 			deviceId,
-			trendStatus: false,
+			trendStatus: true,
 		}
 	}
 	componentDidMount() {
