@@ -19,6 +19,10 @@ export default class Modal extends React.Component {
 		let { onCancel } = this.props
 		onCancel && onCancel()
 	}
+	onClose = () => {
+		let { onClose } = this.props
+		onClose && onClose()
+	}
 	onSelect = value => {
 		let { onChange } = this.props
 		onChange && onChange(value)
@@ -38,7 +42,10 @@ export default class Modal extends React.Component {
 		let btns = this.renderBtn()
 		return (
 			<div className="modal-box" style={style}>
-				<div className="mb-header">{title}</div>
+				<div className="mb-header">
+					{title}
+					<a className="mb-close" onClick={this.onClose}>✕</a>
+				</div>
 				<div className="mb-content">{btns}</div>
 				<div className="mb-bottom">
 					<a className="mb-btn" onClick={this.onOk}>{ okText || '确定' }</a>

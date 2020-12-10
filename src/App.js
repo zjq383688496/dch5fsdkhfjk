@@ -39,7 +39,7 @@ export default class App extends React.Component {
 								// 校验登录状态
 								if (!window.__User__ && pathname != '/login') {
 									let user = USER_CHECK(pathname)
-									if (!user) history.push('/login')
+									if (!user) return history.push('/login')
 								}
 								document.title = `Drager - ${title}`
 								return (<Component {...props} {...rest} />)

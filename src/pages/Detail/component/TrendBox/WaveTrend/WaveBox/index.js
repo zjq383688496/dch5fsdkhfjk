@@ -1,13 +1,10 @@
 import React from 'react'
 import './index.less'
 
+import moment from 'moment'
+
 import WaveStacked from '../WaveStacked'
 import Modal       from '../Modal'
-
-const colorMap = {
-	'tan':    '#a89f20',
-	'blue-d': '#020c7e',
-}
 
 const parentData = [
 	{ label: '压力',     value: 1 },
@@ -84,10 +81,9 @@ export default class WaveBox extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { color = 'blue-d' } = props
-
 		this.state = {
-			color,
+			colors:    props.colors || ['#3559d4', '#020c7e', '#22c8ee'],
+			times:     props.times || [],
 			curP:      null,
 			checkP:    [],
 			statusP:   false,
@@ -95,6 +91,27 @@ export default class WaveBox extends React.Component {
 			childData: [],
 			statusC:   false,
 			temporary: [],		// 子选项临时队列
+			list:      [],
+
+			waveRefresh: false,		// 波形可见
+			// gridH:     0,			// 波形网格高
+		}
+	}
+	componentDidMount() {
+		// this.init()
+	}
+	// init = () => {
+	// 	let { wave } = this.refs
+	// 	if (!wave) return
+	// 	this.setState({ gridH: Math.ceil(wave.clientHeight / 5) })
+	// }
+	getGridStyle = () => {
+		let { gridH } = this.state
+		if (!gridH) return {}
+		let minH = gridH - 1
+		return {
+			background:     `-webkit-linear-gradient(top, transparent ${minH}px, #999 ${gridH}px),-webkit-linear-gradient(left, transparent ${minH}px, #999 ${gridH}px)`,
+			backgroundSize: `${gridH}px ${gridH}px`
 		}
 	}
 	onEdit = () => {
@@ -116,14 +133,23 @@ export default class WaveBox extends React.Component {
 	}
 	onClearP = () => {
 		this.setState({ curP: null, checkP: [], childData: [], temporary: [], statusP: false })
+		this.waveRefresh()
 	}
 	onCancelP = () => {
 		this.setState({ curP: null, statusP: false })
 	}
 	onOkC = () => {
+		let { data } = this.props
 		let { checkC, temporary } = this.state
 		checkC = deepCopy(temporary)
-		this.setState({ checkC, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
+		let list = checkC.map(_ => data[_])
+		this.setState({ list, checkC, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
+		this.waveRefresh()
+	}
+	waveRefresh = () => {
+		this.setState({ waveRefresh: true }, () => {
+			this.setState && this.setState({ waveRefresh: false })
+		})
 	}
 	onCancelC = () => {
 		let { checkC, temporary } = this.state
@@ -138,48 +164,122 @@ export default class WaveBox extends React.Component {
 		})
 		return Object.keys(check)
 	}
+	// 渲染辅助
+	renderHelper = () => {
+		let { checkC, colors, list } = this.state
+		if (!checkC.length) return null
+
+		return checkC.map((_, i) => {
+			let { u: unit, n: name } = __Map__.m[_] || {}
+			let color = colors[i]
+			let style = { color }
+			let data  = list[i] || {}
+			let { min, max } = data
+			return (
+				<div key={i} className="wbh-block">
+					<div className="wbh-title" style={style}>
+						<b>{name}</b>
+						<span>{unit}</span>
+					</div>
+					<div className="wbh-ruler">
+						<div className="wbh-marking">
+							<b></b>
+							<b></b>
+							<b></b>
+							<b></b>
+							<b></b>
+							<b></b>
+						</div>
+						<div className={`wbh-line wbh-line-${i? 'dashed': 'solid'}`}>
+						</div>
+						<div className="wbh-limit">
+							<b>{min}</b>
+							<b>{max}</b>
+						</div>
+					</div>
+				</div>
+			)
+		})
+	}
+	// 渲染参数
+	renderParams = () => {
+		let { checkC, colors } = this.state
+		if (!checkC.length) return null
+
+		let params = checkC.map((_, i) => {
+			let color = colors[i]
+			let style = { color }
+			return (
+				<li key={i} style={style}>
+					<div>{_}</div>
+					<span>--</span>
+				</li>
+			)
+		})
+		return (
+			<ul className="wb-param">
+				{ params }
+			</ul>
+		)
+	}
+	// 渲染游标
+	renderCursor = () => {
+		let { cursor } = this.props
+		if (!cursor) return null
+		let da   = moment(cursor)
+		let time = da.format('HH:mm')
+		let date = da.format('DD-MM-YYYY')
+		return (
+			<div className="wb-cursor">
+				<div className="wbc-l">游标</div>
+				<div className="wbc-r">
+					<p>{time}</p>
+					<p>{date}</p>
+				</div>
+			</div>
+		)
+	}
 	render() {
-		let { color, curP, checkP, statusP, checkC, statusC, childData, temporary } = this.state
+		let { onLoaded } = this.props
+		let { colors, list, waveRefresh, curP, checkP, statusP, checkC, statusC, childData, temporary, times } = this.state
+		let params = this.renderParams()
+		let cursor = this.renderCursor()
+		let helper = this.renderHelper()
+		// let style  = this.getGridStyle()
 		return (
 			<div className="wave-box">
 				<div className="wb-content">
 					<div className="wb-helper">
+						{ helper }
 					</div>
 					<div className="wb-wave">
-						{/*<WaveStacked />*/}
+						<div ref="wave" className="wb-wave-box" style={{}}>
+							{
+								!waveRefresh && list.length
+								? <WaveStacked parent={this.refs.wave} colors={colors} list={list} times={times} onLoaded={onLoaded} />
+								: null
+							}
+						</div>
 					</div>
 				</div>
 				<div className="wb-ctrl">
 					<div className="wb-norm">
-						<div className="wb-cursor">
-						</div>
-						<ul className="wb-param">
-							<li>
-								<div></div>
-								<span></span>
-							</li>
-							<li>
-								<div></div>
-								<span></span>
-							</li>
-							<li>
-								<div></div>
-								<span></span>
-							</li>
-						</ul>
+						{ cursor }
+						{ params }
 					</div>
-					<a className="icons-search" onClick={this.onEdit}></a>
+					<a className={`icons-search${statusP? ' s-active': ''}`} onClick={this.onEdit}></a>
 					<Modal
 						visible={statusP}
 						title={'设置'}
 						value={checkP}
 						dataSource={parentData}
 						onChange={this.onChangeP}
-						style={{ top: 24, right: 80 }}
+						style={{ top: 24, right: 40 }}
 						okText={'全部清除'}
 						cancelText={'取消'}
 						onOk={this.onClearP}
 						onCancel={this.onCancelP}
+						onClose={this.onCancelP}
 					/>
 					<Modal
 						visible={statusC}
@@ -187,11 +287,12 @@ export default class WaveBox extends React.Component {
 						value={temporary}
 						dataSource={childData}
 						onChange={this.onChangeC}
-						style={{ top: 24, right: 80 }}
+						style={{ top: 24, right: 40 }}
 						okText={'取消'}
 						cancelText={'确定'}
 						onOk={this.onCancelC}
 						onCancel={this.onOkC}
+						onClose={this.onCancelC}
 					/>
 				</div>
 			</div>

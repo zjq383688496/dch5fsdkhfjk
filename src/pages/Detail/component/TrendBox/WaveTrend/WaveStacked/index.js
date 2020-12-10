@@ -6,17 +6,16 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
-const colorMap = {
-	'tan':    '#a89f20',
-	'blue-d': '#020c7e',
-}
+// import moment from 'moment'
 
 export default class WaveStacked extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { color = 'blue-d', data } = props,
-			{ list, unit, name, minValue, maxValue } = data || {}
+		let { colors = [], list = [], xAxis, parent, times = [] } = props
+
+		let length = list[0].data.length
+		let width  = parent.clientWidth
 
 		let options = {
 			grid: {
@@ -28,78 +27,140 @@ export default class WaveStacked extends React.Component {
 			xAxis: {
 				type: 'category',
 				boundaryGap: false,
-				data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-				show: true,
+				data: getCategory(times, width, length),
+				show: false,// xAxis,
+				// axisTick: {
+				// 	length: 6,
+				// }
 			},
-			yAxis: [
-				{
-					type: 'value',
-					interval: 1000,
-					min: 0,
-					max: 250,
-					show: false,
-				},
-				{
-					type: 'value',
-					interval: 1000,
-					min: 0,
-					max: 350,
-					show: false,
-				},
-				{
-					type: 'value',
-					interval: 1000,
-					min: 0,
-					max: 450,
-					show: false,
-				}
-			],
-			series: [
-				{
-					name: '邮件营销',
-					yAxisIndex: 0,
-					type: 'line',
-					showSymbol: false,
-					data: [120, 132, 101, 134, 90, 230, 210]
-				},
-				{
-					name: '联盟广告',
-					yAxisIndex: 1,
-					type: 'line',
-					showSymbol: false,
-					data: [220, 182, 191, 234, 290, 330, 310]
-				},
-				{
-					name: '视频广告',
-					yAxisIndex: 2,
-					type: 'line',
-					showSymbol: false,
-					data: [150, 232, 201, 154, 190, 330, 410]
-				},
-			],
-			animation: false
+			yAxis: getYAxis(list),
+			// [
+			// 	{
+			// 		type: 'value',
+			// 		interval: 1000,
+			// 		min: 0,
+			// 		max: 250,
+			// 		show: false,
+			// 	},
+			// 	{
+			// 		type: 'value',
+			// 		interval: 1000,
+			// 		min: 0,
+			// 		max: 350,
+			// 		show: false,
+			// 	},
+			// 	{
+			// 		type: 'value',
+			// 		interval: 1000,
+			// 		min: 0,
+			// 		max: 450,
+			// 		show: false,
+			// 	}
+			// ],
+			series: getSeries(list, colors),
+			// [
+			// 	{
+			// 		yAxisIndex: 0,
+			// 		type: 'line',
+			// 		showSymbol: false,
+			// 		data: [120, 132, 101, 134, 90, 230, 210]
+			// 	},
+			// 	{
+			// 		yAxisIndex: 1,
+			// 		type: 'line',
+			// 		showSymbol: false,
+			// 		data: [220, 182, 191, 234, 290, 330, 310]
+			// 	},
+			// 	{
+			// 		yAxisIndex: 2,
+			// 		type: 'line',
+			// 		showSymbol: false,
+			// 		data: [150, 232, 201, 154, 190, 330, 410]
+			// 	},
+			// ],
+			animation: false,
 		}
 		this.state = {
 			options,
-			color,
-			index: 0,
-			name,
-			unit,
+			length,
+			width: parent.clientWidth,
+			gridH: 0,
+		}
+	}
+	componentDidMount() {
+		this.init()
+	}
+	init = () => {
+		let { onLoaded } = this.props
+		let { wave } = this.refs
+		if (!wave) return
+		this.setState({ gridH: Math.ceil(wave.clientHeight / 5) })
+		onLoaded && onLoaded(wave)
+	}
+	getGridStyle = () => {
+		let { gridH } = this.state
+		if (!gridH) return {}
+		let minH = gridH - 1
+		return {
+			background:     `-webkit-linear-gradient(top, transparent ${minH}px, #999 ${gridH}px),-webkit-linear-gradient(left, transparent ${minH}px, #999 ${gridH}px)`,
+			backgroundSize: `${gridH}px ${gridH}px`
 		}
 	}
 	render() {
-		let { color, name, options } = this.state
+		let { name, options, length, width } = this.state
+		let style = { height: '100%', ...this.getGridStyle() }
+		if (length > width) style.width = length
 		return (
-			<div className="wave-stacked">
+			<div ref="wave" className="wave-stacked">
 				<ReactEchartsCore
 					ref={e => { if (e) this.echart = e }}
 					echarts={echarts}
 					notMerge={true}
 					lazyUpdate={true}
 					option={options}
-					style={{height: '100%'}}
+					style={style}
 				/>
 			</div>
 		)
 	}
+}
+
+// 创建x轴数据
+function getCategory(times, width, length) {
+	return times.map((timestamp, i) => {
+		// let da   = moment(timestamp)
+		// // let time = da.format('HH:mm')
+		// let time = da.format('HH:mm:ss')
+		// let date = da.format('YYYY-MM-DD')
+		// if (!i || i === length - 1) return date
+		// if (time === '00:00:00') return date
+		return ''
+	})
+}
+// 创建y轴数据
+function getYAxis(list) {
+	return list.map(({ min, max }) => {
+		return {
+			type: 'value',
+			min,
+			max,
+			show: false,
+		}
+	})
+}
+// 生成数据
+function getSeries(list, colors) {
+	return list.map((item, i) => {
+		let { data } = item
+		return {
+			yAxisIndex: i,
+			type: 'line',
+			showSymbol: false,
+			data: data.map(({ value }) => value),
+			lineStyle: {
+				color: colors[i],
+				width: 1,
+			},
+		}
+	})
 }
