@@ -6,6 +6,8 @@ import moment from 'moment'
 import WaveStacked from '../WaveStacked'
 import Modal       from '../Modal'
 
+const { floor, max } = Math
+
 const parentData = [
 	{ label: '压力',     value: 1 },
 	{ label: '气体',     value: 2 },
@@ -94,25 +96,13 @@ export default class WaveBox extends React.Component {
 			list:      [],
 
 			waveRefresh: false,		// 波形可见
-			// gridH:     0,			// 波形网格高
+
+			// 拖拽
+			lineShow: false,
+			dragState: false,
 		}
 	}
 	componentDidMount() {
-		// this.init()
-	}
-	// init = () => {
-	// 	let { wave } = this.refs
-	// 	if (!wave) return
-	// 	this.setState({ gridH: Math.ceil(wave.clientHeight / 5) })
-	// }
-	getGridStyle = () => {
-		let { gridH } = this.state
-		if (!gridH) return {}
-		let minH = gridH - 1
-		return {
-			background:     `-webkit-linear-gradient(top, transparent ${minH}px, #999 ${gridH}px),-webkit-linear-gradient(left, transparent ${minH}px, #999 ${gridH}px)`,
-			backgroundSize: `${gridH}px ${gridH}px`
-		}
 	}
 	onEdit = () => {
 		let { statusP } = this.state
@@ -146,15 +136,15 @@ export default class WaveBox extends React.Component {
 		this.setState({ list, checkC, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
 		this.waveRefresh()
 	}
-	waveRefresh = () => {
-		this.setState({ waveRefresh: true }, () => {
-			this.setState && this.setState({ waveRefresh: false })
-		})
-	}
 	onCancelC = () => {
 		let { checkC, temporary } = this.state
 		temporary = deepCopy(checkC)
 		this.setState({ temporary, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
+	}
+	waveRefresh = () => {
+		this.setState({ waveRefresh: true }, () => {
+			this.setState && this.setState({ waveRefresh: false })
+		})
 	}
 	updateCheckP = checkC => {
 		let check = {}, checkP
@@ -163,6 +153,36 @@ export default class WaveBox extends React.Component {
 			check[parentId] = true
 		})
 		return Object.keys(check)
+	}
+	// 拖拽开启
+	onMouseDown = e => {
+		let { dom } = this.props
+		if (!dom) return console.log('dom: 不存在')
+		this.setState({ dragState: true, lineShow: true })
+	}
+	// 拖拽中
+	onMouseMove = e => {
+		let { dragState } = this.state
+		if (!dragState) return
+		let { dom, width, times, scrollCfg: { scrollLeft }, onDrag } = this.props
+		let length = times.length
+		let maxWidth = max(length, width)
+		let { pageX } = e
+		let current = []
+		let startP = pageX - 20
+		startP = startP < 0? 0: startP
+		startP = startP > width? width: startP
+		let startX = scrollLeft + startP
+		let ratio  = startX / maxWidth
+		let left   = ratio * maxWidth
+		left = left >= maxWidth? maxWidth - 1: left
+		let idx    = floor(ratio * (length - 1))
+		// console.log(idx, `${(startX / maxWidth * 100).toFixed(1)}%`)
+		onDrag && onDrag({ idx, ratio, left })
+	}
+	// 拖拽关闭
+	onMouseUp = e => {
+		this.setState({ dragState: false })
 	}
 	// 渲染辅助
 	renderHelper = () => {
@@ -205,14 +225,15 @@ export default class WaveBox extends React.Component {
 	renderParams = () => {
 		let { checkC, colors } = this.state
 		if (!checkC.length) return null
-
+		let { cursor } = this.props
 		let params = checkC.map((_, i) => {
 			let color = colors[i]
 			let style = { color }
+			let value = cursor && cursor[_] && cursor[_].value? cursor[_].value: '--'
 			return (
 				<li key={i} style={style}>
 					<div>{_}</div>
-					<span>--</span>
+					<span>{value}</span>
 				</li>
 			)
 		})
@@ -226,9 +247,13 @@ export default class WaveBox extends React.Component {
 	renderCursor = () => {
 		let { cursor } = this.props
 		if (!cursor) return null
-		let da   = moment(cursor)
-		let time = da.format('HH:mm')
-		let date = da.format('DD-MM-YYYY')
+		let time = '--',
+			date = '--'
+		if (cursor.timestamp) {
+			let da = moment(cursor.timestamp)
+			time = da.format('HH:mm')
+			date = da.format('DD-MM-YYYY')
+		}
 		return (
 			<div className="wb-cursor">
 				<div className="wbc-l">游标</div>
@@ -240,62 +265,79 @@ export default class WaveBox extends React.Component {
 		)
 	}
 	render() {
-		let { onLoaded } = this.props
-		let { colors, list, waveRefresh, curP, checkP, statusP, checkC, statusC, childData, temporary, times } = this.state
+		let { dragCfg, scrollCfg, onLoaded } = this.props
+		let {
+			colors, list, waveRefresh,
+			curP, checkP, statusP, checkC, statusC,
+			childData, temporary, times,
+			dragState,
+		} = this.state
 		let params = this.renderParams()
 		let cursor = this.renderCursor()
 		let helper = this.renderHelper()
-		// let style  = this.getGridStyle()
 		return (
-			<div className="wave-box">
-				<div className="wb-content">
-					<div className="wb-helper">
-						{ helper }
-					</div>
-					<div className="wb-wave">
-						<div ref="wave" className="wb-wave-box" style={{}}>
-							{
-								!waveRefresh && list.length
-								? <WaveStacked parent={this.refs.wave} colors={colors} list={list} times={times} onLoaded={onLoaded} />
-								: null
-							}
+			<>
+				<div className="wave-box">
+					<div className="wb-content">
+						<div className="wb-helper">
+							{ helper }
+						</div>
+						<div className="wb-wave" onMouseDown={this.onMouseDown}>
+							<div ref="wave" className="wb-wave-box" style={{}}>
+								{
+									!waveRefresh && list.length
+									? <WaveStacked parent={this.refs.wave} dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} onLoaded={onLoaded} />
+									: null
+								}
+							</div>
 						</div>
 					</div>
-				</div>
-				<div className="wb-ctrl">
-					<div className="wb-norm">
-						{ cursor }
-						{ params }
+					<div className="wb-ctrl">
+						<div className="wb-norm">
+							{ cursor }
+							{ params }
+						</div>
+						<a className={`icons-search${statusP? ' s-active': ''}`} onClick={this.onEdit}></a>
+						<Modal
+							visible={statusP}
+							title={'设置'}
+							value={checkP}
+							dataSource={parentData}
+							onChange={this.onChangeP}
+							style={{ top: 24, right: 40 }}
+							okText={'全部清除'}
+							cancelText={'取消'}
+							onOk={this.onClearP}
+							onCancel={this.onCancelP}
+							onClose={this.onCancelP}
+						/>
+						<Modal
+							visible={statusC}
+							title={curP? curP.label: ''}
+							value={temporary}
+							dataSource={childData}
+							onChange={this.onChangeC}
+							style={{ top: 24, right: 40 }}
+							okText={'取消'}
+							cancelText={'确定'}
+							onOk={this.onCancelC}
+							onCancel={this.onOkC}
+							onClose={this.onCancelC}
+						/>
 					</div>
-					<a className={`icons-search${statusP? ' s-active': ''}`} onClick={this.onEdit}></a>
-					<Modal
-						visible={statusP}
-						title={'设置'}
-						value={checkP}
-						dataSource={parentData}
-						onChange={this.onChangeP}
-						style={{ top: 24, right: 40 }}
-						okText={'全部清除'}
-						cancelText={'取消'}
-						onOk={this.onClearP}
-						onCancel={this.onCancelP}
-						onClose={this.onCancelP}
-					/>
-					<Modal
-						visible={statusC}
-						title={curP? curP.label: ''}
-						value={temporary}
-						dataSource={childData}
-						onChange={this.onChangeC}
-						style={{ top: 24, right: 40 }}
-						okText={'取消'}
-						cancelText={'确定'}
-						onOk={this.onCancelC}
-						onCancel={this.onOkC}
-						onClose={this.onCancelC}
-					/>
 				</div>
-			</div>
+				{
+					dragState
+					? 
+					<div
+						className="wave-box-mask"
+						onMouseMove={this.onMouseMove}
+						onMouseUp={this.onMouseUp}
+						onMouseOut={this.onMouseUp}
+					></div>
+					: null
+				}
+			</>
 		)
 	}
 }

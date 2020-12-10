@@ -28,56 +28,10 @@ export default class WaveStacked extends React.Component {
 				type: 'category',
 				boundaryGap: false,
 				data: getCategory(times, width, length),
-				show: false,// xAxis,
-				// axisTick: {
-				// 	length: 6,
-				// }
+				show: false,
 			},
 			yAxis: getYAxis(list),
-			// [
-			// 	{
-			// 		type: 'value',
-			// 		interval: 1000,
-			// 		min: 0,
-			// 		max: 250,
-			// 		show: false,
-			// 	},
-			// 	{
-			// 		type: 'value',
-			// 		interval: 1000,
-			// 		min: 0,
-			// 		max: 350,
-			// 		show: false,
-			// 	},
-			// 	{
-			// 		type: 'value',
-			// 		interval: 1000,
-			// 		min: 0,
-			// 		max: 450,
-			// 		show: false,
-			// 	}
-			// ],
 			series: getSeries(list, colors),
-			// [
-			// 	{
-			// 		yAxisIndex: 0,
-			// 		type: 'line',
-			// 		showSymbol: false,
-			// 		data: [120, 132, 101, 134, 90, 230, 210]
-			// 	},
-			// 	{
-			// 		yAxisIndex: 1,
-			// 		type: 'line',
-			// 		showSymbol: false,
-			// 		data: [220, 182, 191, 234, 290, 330, 310]
-			// 	},
-			// 	{
-			// 		yAxisIndex: 2,
-			// 		type: 'line',
-			// 		showSymbol: false,
-			// 		data: [150, 232, 201, 154, 190, 330, 410]
-			// 	},
-			// ],
 			animation: false,
 		}
 		this.state = {
@@ -91,10 +45,13 @@ export default class WaveStacked extends React.Component {
 		this.init()
 	}
 	init = () => {
-		let { onLoaded } = this.props
+		let { scrollCfg, onLoaded } = this.props
 		let { wave } = this.refs
 		if (!wave) return
 		this.setState({ gridH: Math.ceil(wave.clientHeight / 5) })
+		if (scrollCfg && scrollCfg.scrollLeft) {
+			wave.scrollLeft = scrollCfg.scrollLeft
+		}
 		onLoaded && onLoaded(wave)
 	}
 	getGridStyle = () => {
@@ -106,8 +63,15 @@ export default class WaveStacked extends React.Component {
 			backgroundSize: `${gridH}px ${gridH}px`
 		}
 	}
+	renderLine = () => {
+		let { dragCfg } = this.props
+		if (!dragCfg) return null
+		let { left = 0 } = dragCfg
+		return <div className="ws-line" style={{ left }}></div>
+	}
 	render() {
 		let { name, options, length, width } = this.state
+		let line = this.renderLine()
 		let style = { height: '100%', ...this.getGridStyle() }
 		if (length > width) style.width = length
 		return (
@@ -120,6 +84,7 @@ export default class WaveStacked extends React.Component {
 					option={options}
 					style={style}
 				/>
+				{ line }
 			</div>
 		)
 	}

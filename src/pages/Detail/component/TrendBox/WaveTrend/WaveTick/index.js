@@ -123,7 +123,6 @@ function getChartsTickInterval(times) {
 		if (time === '00:00:00') return obj[i] = true
 		obj[i] = false
 	})
-	console.log(obj)
 	return function(index) {
 		return obj[index]
 	}
