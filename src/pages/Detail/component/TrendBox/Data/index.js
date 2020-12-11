@@ -1,24 +1,35 @@
 import React from 'react'
 import './index.less'
 
-import { Space } from 'antd'
+import { Space, Spin } from 'antd'
 import moment from 'moment'
+
+import serviceApi from '@service/api'
 
 import Scrollbar from '@comp/Scrollbar'
 import Select    from '@comp/Select'
 
-const limit = 2 + 288		// 参数|单位 + 12小时数据
-
 const options = [
-	{ label: '5min',  value: 5 },
-	{ label: '10min', value: 10 },
-	{ label: '30min', value: 30 },
-	{ label: '1h',    value: 60 },
-	{ label: '2h',    value: 60 * 2 },
-	{ label: '6h',    value: 60 * 6 },
-	{ label: '12h',   value: 60 * 12 },
-	{ label: '1D',    value: 60 * 24 },
+	{ label: '5min',  value: 'MIN5' },
+	{ label: '10min', value: 'MIN10' },
+	{ label: '30min', value: 'MIN30' },
+	{ label: '1h',    value: 'H1' },
+	{ label: '2h',    value: 'H2' },
+	{ label: '6h',    value: 'H6' },
+	{ label: '12h',   value: 'H12' },
+	{ label: '1D',    value: 'D1' },
 ]
+
+const timeUnitMap = {
+	MIN5:  'time',
+	MIN10: 'time',
+	MIN30: 'time',
+	H1:    'time',
+	H2:    'time',
+	H6:    'time',
+	H12:   'time',
+	D1:    'date',
+}
 
 export default class DataBox extends React.Component {
 	constructor(props) {
@@ -28,7 +39,7 @@ export default class DataBox extends React.Component {
 			times:    [],
 			height:   0,
 			curDate:  '',
-			interval: 5,
+			timeUnit: 'D1',
 		}
 	}
 	componentDidMount() {
@@ -48,40 +59,49 @@ export default class DataBox extends React.Component {
 		let da   = times[idx]
 		header.scrollLeft = sl
 		if (!da) return
-		let { date } = da
-		if (date === curDate) return
-		this.setState({ curDate: date })
-		// console.log(idx, date)
+		let { ydate } = da
+		if (ydate === curDate) return
+		this.setState({ curDate: ydate })
 	}
 	getData = async () => {
-		let { interval } = this.state
-		await _wait(100)
-		let len  = 12
-		let item = {
-			name: 'ETCO2',
-			data: new Array(100).fill().map((_, i) => {
-				return {
-					value: 1,
-					timestamp: 1607337000000 + i * 3e5
+		let { m } = __Map__
+		let { device } = this.props,
+			{ macAddress } = device
+
+		let { timeUnit } = this.state
+
+		this.setState({ list: [], times: [], height: 0 })
+
+		serviceApi.getTrendData(macAddress, timeUnit).then(res => {
+			let list = res || [],
+				len  = list.length
+			list.forEach(measured => {
+				let { dataCodeEnum, data } = measured
+				let key = dataCodeEnum.replace(/^\S+_/, '')
+				if (!m[key]) {
+					m[key] = {}
+					console.log(key, '不存在')
 				}
+				let { n: name, u: unit }  = m[key]
+				measured.key = key
 			})
-		}
-		let list = new Array(len).fill().map(_ => item)
-		this.setState({ list, height: 24 * len }, this.getTimes)
+			this.setState && this.setState({ list, height: 24 * len }, this.getTimes)
+		})
 	}
 	getTimes = () => {
 		let { list } = this.state
 		let values = deepCopy(list[0])
 		let times  = values.data.map(({ timestamp }) => {
-			let mon = moment(timestamp)
-			let date = mon.format('YYYY-MM-DD')
-			let time = mon.format('HH:mm')
-			return { date, time }
+			let mon   = moment(timestamp)
+			let ydate = mon.format('YYYY-MM-DD')
+			let date  = mon.format('MM-DD')
+			let time  = mon.format('HH:mm')
+			return { ydate, date, time }
 		})
 		this.setState({ times }, this.scrollUpdate)
 	}
 	changeParams = params => {
-		this.setState(params)
+		this.setState(params, this.getData)
 	}
 	renderCol = () => {
 		let { times } = this.state
@@ -99,12 +119,13 @@ export default class DataBox extends React.Component {
 		)
 	}
 	renderTh = () => {
-		let { times } = this.state
+		let { times, timeUnit } = this.state
 		let ths = [
 			<th key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>参数</th>,
 			<th key={1} className="db-td-fixed" style={{ position: 'sticky', left: 60 }}>单位</th>,
-			...times.map(({ time }, i) => {
-				return <th key={i + 2}>{time}</th>
+			...times.map((t, i) => {
+				let key = timeUnitMap[timeUnit]
+				return <th key={i + 2}>{t[key]}</th>
 			})
 		]
 		return (
@@ -117,9 +138,9 @@ export default class DataBox extends React.Component {
 		let { list } = this.state
 		let trs = list.map((td, i) => {
 			let { data } = td
-			let { u: unit, n: name } = __Map__.m[td.name] || {}
+			let { u: unit, n: name } = __Map__.m[td.key] || {}
 			let tds = [
-				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name}{i}</td>,
+				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name}</td>,
 				<td key={1} className="db-td-fixed" style={{ position: 'sticky', left: 60 }}>{unit}</td>,
 				...data.map(({ value }, j) => {
 					return <td key={j + 2}>{value}</td>
@@ -134,7 +155,7 @@ export default class DataBox extends React.Component {
 		) 
 	}
 	render() {
-		let { curDate, times, height, interval } = this.state
+		let { list, curDate, times, height, timeUnit } = this.state
 		let { body } = this.refs
 		let colgroup = this.renderCol()
 		let thead    = this.renderTh()
@@ -150,9 +171,9 @@ export default class DataBox extends React.Component {
 						<Space size={20}>
 							视图
 							<Select
-								value={interval}
+								value={timeUnit}
 								dataSource={options}
-								onChange={interval => this.changeParams({ interval })}
+								onChange={timeUnit => this.changeParams({ timeUnit })}
 							/>
 							<div className="btn-export">导出</div>
 						</Space>

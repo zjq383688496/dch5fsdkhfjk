@@ -18,7 +18,7 @@ export default class TrendBox extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			key: 2
+			key: 1
 		}
 	}
 	onChange = key => {

@@ -31,8 +31,11 @@ export default class Modal extends React.Component {
 		let { dataSource = [], value = [], onBtnRender } = this.props
 		let valMap = valueFormat(value)
 		return dataSource.map((_, i) => {
-			let { label, value } = _
+			let { label, value, disabled = false } = _
 			let text = onBtnRender? onBtnRender(_): label
+			if (disabled) {
+				return <a key={i} className={`mb-btn s-disabled`}>{ text }</a>
+			}
 			return <a key={i} className={`mb-btn${valMap[value]? ' s-active': ''}`} onClick={e => this.onSelect(_)}>{ text }</a>
 		})
 	}

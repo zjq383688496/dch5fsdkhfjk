@@ -6,18 +6,20 @@ var webpack = require('webpack')
 
 var port = 8222
 
+var host = '94.191.50.139:8089'
+// var host = 'monitor.zy91.icu'
+
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({
 		ENV: JSON.stringify('dev'),
-		// _BaseUrl_: JSON.stringify('94.191.50.139:8089'),
-		_BaseUrl_: JSON.stringify('monitor.zy91.icu'),
+		_BaseUrl_: JSON.stringify(host),
 	}),
 	// 开启 热更新
 	new webpack.HotModuleReplacementPlugin(),
 	// new webpack.NoErrorsPlugin()
 )
 
-var target = 'http://monitor.zy91.icu'
+var target = `http://${host}`
 
 Object.assign(baseCfg, {
 	// entry: {

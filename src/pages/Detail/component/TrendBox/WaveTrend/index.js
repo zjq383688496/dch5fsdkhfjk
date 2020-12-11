@@ -1,6 +1,10 @@
 import React from 'react'
 import './index.less'
 
+import { Space, Spin } from 'antd'
+
+import serviceApi from '@service/api'
+
 import WaveBox from './WaveBox'
 
 import Scrollbar from '@comp/Scrollbar'
@@ -8,16 +12,7 @@ import Select    from '@comp/Select'
 
 import WaveTick  from './WaveTick'
 
-const hours = [ 2, 4, 8, 12, 24, 24 * 7 ]
-
-const nameList = [
-	'PEAK', 'PPLAT', 'PMEAN', 'PEEP', '△P',
-	'FIO2', 'ETCO2',
-	'MVE', 'MVI',
-	'TI', 'IE', 'TCE', 'TPLAT', 'RR', 'RRSPON',
-	'VTE', 'VTI', 'VT/kg BW', 'PIF', 'PEF',
-	'C', 'R', 'RSB',
-]
+import { codeMap, options } from './config'
 
 const colors2 = ['#138988', '#3559d4', '#50d1cb']
 
@@ -26,47 +21,76 @@ export default class WaveTrend extends React.Component {
 		super(props)
 		this.state = {
 			data: {},
-			hour: 24,
+			timeUnit:  'D1',
 			scrollCfg: { scrollLeft: 0 },
-			dragCfg: null,
-			current: {},
-			times: [],
+			dragCfg:   null,
+			current:   {},
+			times:     [],
+			loading:   false,
 		}
 	}
 	timeout = null
-	componentDidMount() {
-		this.getData()
-	}
+	componentDidMount() {}
 	componentWillUnmount() {
 		clearInterval(this.timeout)
 	}
-	getData = async () => {
-		let { hour } = this.state
-		await _wait(100)
-		let now = Date.now()
-		let len = nameList.length
-		let data = nameList.map((name, i) => {
-			let value = ~~(100 / len * i * .96) + 5
-			// console.log(name, ': ', value)
-			return {
-				name,
-				min: 0,
-				max: 100,
-				data: new Array(hour * 60).fill().map((_, j) => {
-					return {
-						value,
-						timestamp: 1607337000000 + j * 6e4
-					}
-				})
-			}
+	changeParams = params => {
+		this.setState(params, this.getData)
+	}
+	getData = () => {
+		let { m } = __Map__
+		let { device }   = this.props,
+			{ timeUnit } = this.state,
+			{ wb1, wb2 } = this.refs,
+			{ macAddress } = device,
+			codes = Array.from(new Set([...wb1.state.checkC, ...wb2.state.checkC]))
+
+		this.setState({ data: {}, times: [] })
+		
+		if (!codes.length) return// this.setState({ data: {}, times: [] })
+			
+		this.setState({ loading: true })
+
+		let dataCodes = codes.map(code => codeMap[code]).join(',')
+
+		serviceApi.getTrendView(macAddress, timeUnit, dataCodes).then(res => {
+			let list = res || []
+			let data = {}
+			let len  = list.length
+			list.forEach(measured => {
+				let { dataCodeEnum } = measured
+				let key = dataCodeEnum.replace(/^\S+_/, '')
+				measured.key = key
+				data[key] = measured
+			})
+			let times = this.getTimes? this.getTimes(list[0]): []
+			this.setState && this.setState({ data, times, loading: false })
+		}).catch(e => {
+			this.setState && this.setState({ loading: false })
 		})
-		let times = this.getTimes(data[0])
-		let dataMap = {}
-		data.forEach(_ => {
-			dataMap[_.name] = _
-		})
-		this.setState({ data: dataMap, times })
-		console.log('耗时: ', Date.now() - now, 'ms')
+
+		// let len = nameList.length
+		// let data = nameList.map((name, i) => {
+		// 	let value = ~~(100 / len * i * .96) + 5
+		// 	return {
+		// 		name,
+		// 		min: 0,
+		// 		max: 100,
+		// 		data: new Array(hour * 60).fill().map((_, j) => {
+		// 			return {
+		// 				value,
+		// 				timestamp: 1607337000000 + j * 6e4
+		// 			}
+		// 		})
+		// 	}
+		// })
+		// let times = this.getTimes(data[0])
+		// let dataMap = {}
+		// data.forEach(_ => {
+		// 	dataMap[_.name] = _
+		// })
+		// this.setState({ data: dataMap, times })
+		// console.log('耗时: ', Date.now() - now, 'ms')
 	}
 	getTimes = (data = {}) => {
 		if (!data) return []
@@ -102,18 +126,25 @@ export default class WaveTrend extends React.Component {
 	}
 	render() {
 		let { $dom1, $dom2, $dom3 } = this
-		let { current, data, times, scrollCfg, dragCfg } = this.state
-		if (!Object.keys(data).length) return null
-		let $dom = $dom1 || $dom2
+		let { current, data, timeUnit, times, scrollCfg, dragCfg, loading } = this.state
+		let $dom   = $dom1 || $dom2
 		let length = times.length
 		let width  = $dom? $dom.clientWidth: 0
 		return (
 			<div className="wave-trend">
 				<div className="wt-float">
+					<Space size={20}>
+						视图
+						<Select
+							value={timeUnit}
+							dataSource={options}
+							onChange={timeUnit => this.changeParams({ timeUnit })}
+						/>
+					</Space>
 				</div>
 				<div className="wt-content">
-					<WaveBox dom={$dom1} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} onLoaded={this.getDom1} onDrag={this.onDrag} cursor={current} />
-					<WaveBox dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} onLoaded={this.getDom2} onDrag={this.onDrag} colors={colors2} />
+					<WaveBox ref="wb1" dom={$dom1} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom1} onDrag={this.onDrag} cursor={current} />
+					<WaveBox ref="wb2" dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom2} onDrag={this.onDrag} colors={colors2} />
 					<div className="wt-tick">
 						{
 							$dom
@@ -124,7 +155,7 @@ export default class WaveTrend extends React.Component {
 				</div>
 				<div className="wt-bottom">
 					{
-						length && $dom && length > $dom.clientWidth
+						length && $dom && length > width
 						?
 						<Scrollbar
 							dom={$dom}
@@ -135,6 +166,7 @@ export default class WaveTrend extends React.Component {
 						: null
 					}
 				</div>
+				{ loading? <div className="wt-loading"><Spin/></div>: null }
 			</div>
 		)
 	}

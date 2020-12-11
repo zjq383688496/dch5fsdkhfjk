@@ -7,14 +7,17 @@ module.exports = {
 	login: config => {
 		return Ajax.postJSON(`/account/login`, config)
 	},
-	// login: config => {
-	// 	return Ajax.postJSON(`/common/health`, config)
-	// },
 	// 监控盘
 	dashboardsUpdate: (id, config) => Ajax.put(`/Dashboards/${id}`, config),
 
 	// 波形回顾
-	report: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
+	getReview: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
+	
+	// 波形趋势
+	getTrendView: (macAddress, timeUnit, dataCodes) => Ajax.get(`/report/getMeasuredDataView?macAddress=${macAddress}&timeUnit=${timeUnit}&dataCodes=${dataCodes}`),
+
+	// 趋势数据
+	getTrendData: (macAddress, timeUnit) => Ajax.get(`/report/getMeasuredData?macAddress=${macAddress}&timeUnit=${timeUnit}`),
 
 	// 记事本
 	getAlarm: (macAddress, startDate, current, size, type) => Ajax.get(`/report/getAlarm?macAddress=${macAddress}&startDate=${startDate}&current=${current}&size=${size}&type=${type}`),

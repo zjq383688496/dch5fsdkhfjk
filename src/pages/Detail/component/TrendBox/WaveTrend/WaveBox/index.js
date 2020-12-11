@@ -3,81 +3,14 @@ import './index.less'
 
 import moment from 'moment'
 
+import serviceApi from '@service/api'
+
 import WaveStacked from '../WaveStacked'
 import Modal       from '../Modal'
 
-const { floor, max } = Math
+import { parentData, childMap, parentMap } from './config'
 
-const parentData = [
-	{ label: '压力',     value: 1 },
-	{ label: '气体',     value: 2 },
-	{ label: '分钟容量',  value: 3 },
-	{ label: '时间/周期', value: 4 },
-	{ label: '容量流量',  value: 5 },
-	{ label: '其他',     value: 6 },
-]
-const childMap = {
-	1: [
-		{ label: 'PEAK',  value: 'PEAK' },
-		{ label: 'PPLAT', value: 'PPLAT' },
-		{ label: 'PMEAN', value: 'PMEAN' },
-		{ label: 'PEEP',  value: 'PEEP' },
-		{ label: '△P',    value: '△P' },
-	],
-	2: [
-		{ label: 'FIO2',  value: 'FIO2' },
-		{ label: 'ETCO2', value: 'ETCO2' },
-	],
-	3: [
-		{ label: 'MVE', value: 'MVE' },
-		{ label: 'MVI', value: 'MVI' },
-	],
-	4: [
-		{ label: 'TI',     value: 'TI' },
-		{ label: 'IE',     value: 'IE' },
-		{ label: 'TCE',    value: 'TCE' },
-		{ label: 'TPLAT',  value: 'TPLAT' },
-		{ label: 'RR',     value: 'RR' },
-		{ label: 'RRSPON', value: 'RRSPON' },
-	],
-	5: [
-		{ label: 'VTE',      value: 'VTE' },
-		{ label: 'VTI',      value: 'VTI' },
-		{ label: 'VT/kg BW', value: 'VT/kg BW' },
-		{ label: 'PIF',      value: 'PIF' },
-		{ label: 'PEF',      value: 'PEF' },
-	],
-	6: [
-		{ label: 'C',   value: 'C' },
-		{ label: 'R',   value: 'R' },
-		{ label: 'RSB', value: 'RSB' },
-	],
-}
-const parentMap = {
-	'PEAK':     1,
-	'PPLAT':    1,
-	'PMEAN':    1,
-	'PEEP':     1,
-	'△P':       1,
-	'FIO2':     2,
-	'ETCO2':    2,
-	'MVE':      3,
-	'MVI':      3,
-	'TI':       4,
-	'IE':       4,
-	'TCE':      4,
-	'TPLAT':    4,
-	'RR':       4,
-	'RRSPON':   4,
-	'VTE':      5,
-	'VTI':      5,
-	'VT/kg BW': 5,
-	'PIF':      5,
-	'PEF':      5,
-	'C':        6,
-	'R':        6,
-	'RSB':      6,
-}
+const { floor, max } = Math
 
 export default class WaveBox extends React.Component {
 	constructor(props) {
@@ -85,6 +18,7 @@ export default class WaveBox extends React.Component {
 
 		this.state = {
 			colors:    props.colors || ['#3559d4', '#020c7e', '#22c8ee'],
+			data:      deepCopy(props.data || {}),
 			times:     props.times || [],
 			curP:      null,
 			checkP:    [],
@@ -101,6 +35,13 @@ export default class WaveBox extends React.Component {
 			lineShow: false,
 			dragState: false,
 		}
+	}
+	componentWillReceiveProps(props) {
+		let { data } = props
+		let { checkC } = this.state
+		if (objEqual(data, this.state.data)) return
+		let list = checkC.map(_ => data[_])
+		this.setState({ list, data: deepCopy(data) })
 	}
 	componentDidMount() {
 	}
@@ -133,7 +74,7 @@ export default class WaveBox extends React.Component {
 		let { checkC, temporary } = this.state
 		checkC = deepCopy(temporary)
 		let list = checkC.map(_ => data[_])
-		this.setState({ list, checkC, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
+		this.setState({ checkC, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
 		this.waveRefresh()
 	}
 	onCancelC = () => {
@@ -142,7 +83,9 @@ export default class WaveBox extends React.Component {
 		this.setState({ temporary, checkP: this.updateCheckP(checkC), statusC: false, curP: null, childData: [] })
 	}
 	waveRefresh = () => {
+		let { getData } = this.props
 		this.setState({ waveRefresh: true }, () => {
+			getData()
 			this.setState && this.setState({ waveRefresh: false })
 		})
 	}
@@ -213,8 +156,8 @@ export default class WaveBox extends React.Component {
 						<div className={`wbh-line wbh-line-${i? 'dashed': 'solid'}`}>
 						</div>
 						<div className="wbh-limit">
-							<b>{min}</b>
-							<b>{max}</b>
+							<b>{min || 0}</b>
+							<b>{max || 100}</b>
 						</div>
 					</div>
 				</div>
@@ -275,6 +218,9 @@ export default class WaveBox extends React.Component {
 		let params = this.renderParams()
 		let cursor = this.renderCursor()
 		let helper = this.renderHelper()
+
+		let hasData = list.filter(_ => !!_).length === list.length
+
 		return (
 			<>
 				<div className="wave-box">
@@ -285,7 +231,7 @@ export default class WaveBox extends React.Component {
 						<div className="wb-wave" onMouseDown={this.onMouseDown}>
 							<div ref="wave" className="wb-wave-box" style={{}}>
 								{
-									!waveRefresh && list.length
+									!waveRefresh && list.length && hasData
 									? <WaveStacked parent={this.refs.wave} dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} onLoaded={onLoaded} />
 									: null
 								}

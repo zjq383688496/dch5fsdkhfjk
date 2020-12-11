@@ -1,0 +1,75 @@
+module.exports = {
+	// 父元素选项
+	parentData: [
+		{ label: '压力',     value: 1 },
+		{ label: '气体',     value: 2 },
+		{ label: '分钟容量',  value: 3 },
+		{ label: '时间/周期', value: 4 },
+		{ label: '容量流量',  value: 5 },
+		{ label: '其他',     value: 6 },
+	],
+	// 子元素选项
+	childMap: {
+		1: [
+			{ label: 'PEAK',  value: 'PEAK' },
+			{ label: 'PPLAT', value: 'PPLAT' },
+			{ label: 'PMEAN', value: 'PMEAN' },
+			{ label: 'PEEP',  value: 'PEEP' },
+			{ label: '△P',    value: '△P' },
+		],
+		2: [
+			{ label: 'FIO2',  value: 'FIO2' },
+			{ label: 'ETCO2', value: 'ETCO2' },
+		],
+		3: [
+			{ label: 'MVE', value: 'MVE' },
+			{ label: 'MVI', value: 'MVI', disabled: true },
+		],
+		4: [
+			{ label: 'TI',     value: 'TI' },
+			{ label: 'IE',     value: 'IE' },
+			{ label: 'TCE',    value: 'TCE', disabled: true },
+			{ label: 'TPLAT',  value: 'TPLAT' },
+			{ label: 'RR',     value: 'RR' },
+			{ label: 'RRSPON', value: 'RRSPON', disabled: true },
+		],
+		5: [
+			{ label: 'VTE',      value: 'VTE' },
+			{ label: 'VTI',      value: 'VTI', disabled: true },
+			{ label: 'VT/kg BW', value: 'VT/kg BW', disabled: true },
+			{ label: 'PIF',      value: 'PIF' },
+			{ label: 'PEF',      value: 'PEF' },
+		],
+		6: [
+			{ label: 'C',   value: 'C' },
+			{ label: 'R',   value: 'R' },
+			{ label: 'RSB', value: 'RSB', disabled: true },
+		],
+	},
+	// 父元素Id映射
+	parentMap: {
+		'PEAK':     1,
+		'PPLAT':    1,
+		'PMEAN':    1,
+		'PEEP':     1,
+		'△P':       1,
+		'FIO2':     2,
+		'ETCO2':    2,
+		'MVE':      3,
+		'MVI':      3,
+		'TI':       4,
+		'IE':       4,
+		'TCE':      4,
+		'TPLAT':    4,
+		'RR':       4,
+		'RRSPON':   4,
+		'VTE':      5,
+		'VTI':      5,
+		'VT/kg BW': 5,
+		'PIF':      5,
+		'PEF':      5,
+		'C':        6,
+		'R':        6,
+		'RSB':      6,
+	},
+}

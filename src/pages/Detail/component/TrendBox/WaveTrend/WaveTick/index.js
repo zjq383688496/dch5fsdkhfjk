@@ -3,8 +3,6 @@ import './index.less'
 
 import ReactEchartsCore from 'echarts-for-react/lib/core'
 import echarts from 'echarts/lib/echarts'
-// import 'echarts/lib/chart/line'
-// import 'echarts/lib/chart/bar'
 
 import moment from 'moment'
 
@@ -20,7 +18,7 @@ export default class WaveTick extends React.Component {
 		let options = {
 			grid: {
 				top:    '0',
-				right:  '0',
+				right:  '1px',
 				bottom: '20px',
 				left:   '0',
 			},
@@ -116,13 +114,17 @@ function getCategory(times) {
 function getChartsTickInterval(times) {
 	let length = times.length
 	let obj = {}
+	// let dates = []
 	times.forEach((timestamp, i) => {
 		let da   = moment(timestamp)
-		let time = da.format('HH:mm:ss')
-		if (!i || i === length - 1) return obj[i] = true
-		if (time === '00:00:00') return obj[i] = true
+		let time = da.format('HH:mm')
+		// dates.push(da.format('MM-DD HH:mm:ss'))
+		if (!i || i >= length - 1) return obj[i] = true
+		if (time === '00:00') return obj[i] = true
 		obj[i] = false
 	})
+	// console.log(dates)
+	// console.log(length, obj)
 	return function(index) {
 		return obj[index]
 	}

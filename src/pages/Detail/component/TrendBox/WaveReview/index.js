@@ -67,7 +67,7 @@ export default class WaveBox extends React.Component {
 			{ date, limit } = this.state,
 			{ macAddress } = device
 		this.setState({ data: [], lineShow: false })
-		serviceApi.report(macAddress, date.format(dateFormat)).then((res = {}) => {
+		serviceApi.getReview(macAddress, date.format(dateFormat)).then((res = {}) => {
 			let newRes = {}
 			if (res.pawList)    newRes.pawList    = res.pawList
 			if (res.flowList)   newRes.flowList   = res.flowList
