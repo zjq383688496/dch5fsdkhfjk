@@ -1,5 +1,6 @@
 module.exports = (function (window) {
 
+	window.ENV = ENV
 	window._BaseUrl_ = _BaseUrl_
 
 	require('./prototype')	// 原型链 扩展
