@@ -12,7 +12,7 @@ import Select    from '@comp/Select'
 
 import WaveTick  from './WaveTick'
 
-import { codeMap, options } from './config'
+import { codeMap, keyMap, options } from './config'
 
 const colors2 = ['#138988', '#3559d4', '#50d1cb']
 
@@ -21,7 +21,7 @@ export default class WaveTrend extends React.Component {
 		super(props)
 		this.state = {
 			data: {},
-			timeUnit:  'D1',
+			timeUnit:  'H2',
 			scrollCfg: { scrollLeft: 0 },
 			dragCfg:   null,
 			current:   {},
@@ -46,7 +46,6 @@ export default class WaveTrend extends React.Component {
 			codes = Array.from(new Set([...wb1.state.checkC, ...wb2.state.checkC]))
 
 		this.setState({ data: {}, times: [] })
-		
 		if (!codes.length) return// this.setState({ data: {}, times: [] })
 			
 		this.setState({ loading: true })
@@ -59,38 +58,17 @@ export default class WaveTrend extends React.Component {
 			let len  = list.length
 			list.forEach(measured => {
 				let { dataCodeEnum } = measured
-				let key = dataCodeEnum.replace(/^\S+_/, '')
+				let keyStr = dataCodeEnum.replace(/^MEASURED_DATA_P[\d]_/, '')
+				let key = keyMap[keyStr]
 				measured.key = key
 				data[key] = measured
 			})
+
 			let times = this.getTimes? this.getTimes(list[0]): []
 			this.setState && this.setState({ data, times, loading: false })
 		}).catch(e => {
 			this.setState && this.setState({ loading: false })
 		})
-
-		// let len = nameList.length
-		// let data = nameList.map((name, i) => {
-		// 	let value = ~~(100 / len * i * .96) + 5
-		// 	return {
-		// 		name,
-		// 		min: 0,
-		// 		max: 100,
-		// 		data: new Array(hour * 60).fill().map((_, j) => {
-		// 			return {
-		// 				value,
-		// 				timestamp: 1607337000000 + j * 6e4
-		// 			}
-		// 		})
-		// 	}
-		// })
-		// let times = this.getTimes(data[0])
-		// let dataMap = {}
-		// data.forEach(_ => {
-		// 	dataMap[_.name] = _
-		// })
-		// this.setState({ data: dataMap, times })
-		// console.log('耗时: ', Date.now() - now, 'ms')
 	}
 	getTimes = (data = {}) => {
 		if (!data) return []
@@ -119,7 +97,7 @@ export default class WaveTrend extends React.Component {
 		let { data, times } = this.state
 		let current = {}
 		Object.values(data).map(_ => {
-			current[_.name] = _.data[idx]
+			current[_.key] = _.data[idx]
 		})
 		current.timestamp = times[idx]
 		this.setState({ current, dragCfg })

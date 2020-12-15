@@ -77,7 +77,7 @@ export default class DataBox extends React.Component {
 				len  = list.length
 			list.forEach(measured => {
 				let { dataCodeEnum, data } = measured
-				let key = dataCodeEnum.replace(/^\S+_/, '')
+				let key = dataCodeEnum.replace(/^MEASURED_DATA_P[\d]_/, '')
 				if (!m[key]) {
 					m[key] = {}
 					console.log(key, '不存在')
@@ -99,6 +99,13 @@ export default class DataBox extends React.Component {
 			return { ydate, date, time }
 		})
 		this.setState({ times }, this.scrollUpdate)
+	}
+	getHref = () => {
+		let { device } = this.props,
+			{ timeUnit }   = this.state,
+			{ macAddress } = device
+		let href = serviceApi.exportMeasuredData(macAddress, timeUnit)
+		return href
 	}
 	changeParams = params => {
 		this.setState(params, this.getData)
@@ -160,6 +167,7 @@ export default class DataBox extends React.Component {
 		let colgroup = this.renderCol()
 		let thead    = this.renderTh()
 		let tbody    = this.renderTd()
+		let href     = this.getHref()
 		let style = times.length? {}: { display: 'none' }
 		return (
 			<div className="data-box" style={style}>
@@ -175,7 +183,7 @@ export default class DataBox extends React.Component {
 								dataSource={options}
 								onChange={timeUnit => this.changeParams({ timeUnit })}
 							/>
-							<div className="btn-export">导出</div>
+							<a className="btn-export" target="_blank" href={href}>导出</a>
 						</Space>
 					</div>
 				</div>

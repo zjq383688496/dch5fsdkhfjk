@@ -6,8 +6,8 @@ var webpack = require('webpack')
 
 var port = 8222
 
-var host = '94.191.50.139:8089'
-// var host = 'monitor.zy91.icu'
+// var host = '94.191.50.139:8089'
+var host = 'monitor.zy91.icu'
 
 baseCfg.plugins && baseCfg.plugins.unshift(
 	new webpack.DefinePlugin({

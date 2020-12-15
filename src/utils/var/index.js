@@ -17,8 +17,12 @@ module.exports = Object.assign(window, {
 				u: 'mbar',
 				n: 'PEEP',
 			},
+			DELTA_P: {
+				u: 'mbar',
+				n: '△P',
+			},
 			'△P': {
-				u: '',
+				u: 'mbar',
 				n: '△P',
 			},
 

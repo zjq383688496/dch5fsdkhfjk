@@ -23,13 +23,15 @@ function WS() {
 	}
 	socket.onclose = function(e) {
 		// console.log('WebSocket is closed now.')
-		message.warning('链接 关闭.')
+		// message.warning('链接 断开.')
+		console.log('链接 断开.')
 		// reconnect(socket)
 	}
 	socket.onerror = function(e) {
 		// console.error('WebSocket error observed: ', e)
 		reconnect(socket)
-		message.error('链接 出错, 2s后重连.')
+		// message.error('链接 出错, 2s后重试.')
+		console.error('链接 出错, 2s后重试.')
 	}
 }
 

@@ -156,8 +156,8 @@ export default class WaveBox extends React.Component {
 						<div className={`wbh-line wbh-line-${i? 'dashed': 'solid'}`}>
 						</div>
 						<div className="wbh-limit">
-							<b>{min || 0}</b>
 							<b>{max || 100}</b>
+							<b>{min || 0}</b>
 						</div>
 					</div>
 				</div>
@@ -243,7 +243,7 @@ export default class WaveBox extends React.Component {
 							{ cursor }
 							{ params }
 						</div>
-						<a className={`icons-search${statusP? ' s-active': ''}`} onClick={this.onEdit}></a>
+						<a className={`icons-trend-edit${statusP? ' s-active': ''}`} onClick={this.onEdit}></a>
 						<Modal
 							visible={statusP}
 							title={'设置'}

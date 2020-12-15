@@ -24,4 +24,9 @@ module.exports = {
 
 	// 记事本导出
 	export: (macAddress, startDate, type) => `http://${window._BaseUrl_}/report/export?macAddress=${macAddress}&startDate=${startDate}&type=${type}`,
+
+	// 趋势数据导出
+	exportMeasuredData: (macAddress, timeUnit) => `http://${window._BaseUrl_}/report/exportMeasuredData?macAddress=${macAddress}&timeUnit=${timeUnit}`,
 }
+
+
