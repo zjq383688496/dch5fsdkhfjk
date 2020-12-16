@@ -21,9 +21,16 @@ export default class Index extends React.Component {
 		}
 		return [ data1, data2, data3, field1, field2, field3, color1, color2, color3, info1, info2, info3 ]
 	}
+	toFixed(value) {
+		if (!value || typeof value != 'number') return value
+		return value.toFixed(1)
+	}
 	render() {
 		let [
-				data1, data2, data3, field1, field2, field3, color1, color2, color3, info1, info2, info3
+				data1,  data2,  data3,
+				field1, field2, field3,
+				color1, color2, color3,
+				info1,  info2,  info3
 			] = this.dataFormat()
 		return (
 			<div className="detail-index row-6 fx">
@@ -34,7 +41,7 @@ export default class Index extends React.Component {
 					</div>
 					<div className="row-17 fx">
 						<div className="col-6 fx-col fs28 lh28 jc-fe c-gray"></div>
-						<div className="col-18 fx-col fs120 lh160">{data1? data1.toFixed(1): data1}</div>
+						<div className="col-18 fx-col fs120 lh160">{this.toFixed(data1)}</div>
 					</div>
 				</div>
 				<div className="col-8 fx-col">
@@ -46,7 +53,7 @@ export default class Index extends React.Component {
 							</div>
 						</div>
 						<div className="row-18 tr fs60 lh70">
-							<div className="col-24 tc">{data2? data2.toFixed(1): data2}</div>
+							<div className="col-24 tc">{this.toFixed(data2)}</div>
 						</div>
 					</div>
 					<div className={`row-12 fx-col p12 c-${color3}`}>
@@ -57,7 +64,7 @@ export default class Index extends React.Component {
 							</div>
 						</div>
 						<div className="row-18 fs60 lh70 fx">
-							<div className="col-24 tc">{data3? data3.toFixed(1): data3}</div>
+							<div className="col-24 tc">{this.toFixed(data3)}</div>
 						</div>
 					</div>
 				</div>

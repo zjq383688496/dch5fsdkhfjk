@@ -71,7 +71,7 @@ export default class DataBox extends React.Component {
 		let { timeUnit } = this.state
 
 		this.setState({ list: [], times: [], height: 0 })
-
+		let dataMap = {}
 		serviceApi.getTrendData(macAddress, timeUnit).then(res => {
 			let list = res || [],
 				len  = list.length
@@ -82,9 +82,12 @@ export default class DataBox extends React.Component {
 					m[key] = {}
 					console.log(key, '不存在')
 				}
+				dataMap[key] = measured.data
 				let { n: name, u: unit }  = m[key]
 				measured.key = key
 			})
+			ieFormat(dataMap)
+			debugger
 			this.setState && this.setState({ list, height: 24 * len }, this.getTimes)
 		})
 	}
@@ -147,8 +150,8 @@ export default class DataBox extends React.Component {
 			let { data } = td
 			let { u: unit, n: name } = __Map__.m[td.key] || {}
 			let tds = [
-				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name}</td>,
-				<td key={1} className="db-td-fixed" style={{ position: 'sticky', left: 60 }}>{unit}</td>,
+				<td key={0} className="db-td-fixed" style={{ position: 'sticky', left: 0 }}>{name || '-'}</td>,
+				<td key={1} className="db-td-fixed" style={{ position: 'sticky', left: 60 }}>{unit || '-'}</td>,
 				...data.map(({ value }, j) => {
 					return <td key={j + 2}>{value}</td>
 				})
@@ -236,4 +239,24 @@ export default class DataBox extends React.Component {
 			</div>
 		)
 	}
+}
+
+// IE格式化
+function ieFormat({ IE, IEIN, IEOUT }) {
+	if (!IE || !IEIN || !IEOUT) return
+	let len = IE.length
+	if (!len || len != IEIN.length || len != IEOUT.length) return
+	IE.forEach((_, i) => {
+		let _in  = (IEIN[i] || {}).value,
+			_out = (IEOUT[i] || {}).value,
+			val  = null
+		if (!_in || !_out) return
+		let min  = Math.min(_in, _out),
+			inN  = _in / min,
+			outN = _out / min,
+			inS  = inN.toFixed(inN === 1? 0: 1),
+			outS = outN.toFixed(outN === 1? 0: 1)
+		val  = `${inS}:${outS}`
+		_.value = val
+	})
 }

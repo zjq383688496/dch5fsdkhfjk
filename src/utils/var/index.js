@@ -75,11 +75,20 @@ module.exports = Object.assign(window, {
 				u: 's',
 				n: 'Ti',
 			},
-			// ?
+			// I:E 开始
 			IE: {
 				u: '',
 				n: 'I:E',
 			},
+			IEIN: {
+				u: '',
+				n: 'IEIN',
+			},
+			IEOUT: {
+				u: '',
+				n: 'IEOUT',
+			},
+			// I:E 结束
 			FIO2: {
 				u: '%',
 				n: 'FiO₂',

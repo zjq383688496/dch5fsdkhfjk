@@ -121,7 +121,7 @@ function getSeries(list, colors) {
 			yAxisIndex: i,
 			type: 'line',
 			showSymbol: false,
-			data: data.map(({ value }) => value),
+			data: (data || []).map(({ value }) => value),
 			lineStyle: {
 				color: colors[i],
 				width: 1,

@@ -122,7 +122,7 @@ export default class WaveTrend extends React.Component {
 				</div>
 				<div className="wt-content">
 					<WaveBox ref="wb1" dom={$dom1} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom1} onDrag={this.onDrag} cursor={current} />
-					<WaveBox ref="wb2" dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom2} onDrag={this.onDrag} colors={colors2} />
+					<WaveBox ref="wb2" dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom2} onDrag={this.onDrag} cursor={current} colors={colors2} />
 					<div className="wt-tick">
 						{
 							$dom
