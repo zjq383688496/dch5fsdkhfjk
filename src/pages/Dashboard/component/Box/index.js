@@ -8,9 +8,9 @@ import Index  from '../Index'
 
 const measureList = [
 	['PEAK', 'PPLAT', 'PMEAN', 'PEEP', '△P', ''],
-	['VTE', 'VTI', 'VT/kg BW', 'MVE', 'MVI', 'ETCO2'],
+	['VTE', 'VTI', 'VTKGBW', 'MVE', 'MVI', 'ETCO2'],
 	['PIF', 'PEF', 'TI', 'IE', 'FIO2', 'R'],
-	['TPLAT', 'RR', 'RRSPON', 'TCE', 'C', 'RSB'],
+	['TPLAT', 'RR', 'RRSPONT', 'TCE', 'C', 'RSB'],
 ]
 
 class Box extends React.Component {
@@ -112,7 +112,7 @@ class Box extends React.Component {
 						<p className="fs20 lh32">{textMessage}</p>
 					</div>
 					<div className={`db-info-item col-12 p8 pl20 fs24 lh24 ${cls}`}>
-						<p className="fs-20 lh-20">{content}</p>
+						<p className="fs-16 lh-20">{content}</p>
 					</div>
 				</div>
 				{

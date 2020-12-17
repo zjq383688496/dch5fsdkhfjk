@@ -34,10 +34,10 @@ module.exports = Object.assign(window, {
 			},
 			// VTi
 			VTI: {
-				u: '',
+				u: 'ml',
 				n: 'VTi',
 			},
-			'VT/kg BW': {
+			VTKGBW: {
 				u: 'mL/kg',
 				n: 'VT/kg BW',
 			},
@@ -109,15 +109,15 @@ module.exports = Object.assign(window, {
 				u: 'bpm',
 				n: 'RR',
 			},
-			// RRspon
-			RRSPON: {
+			// RRspont
+			RRSPONT: {
 				u: '',
-				n: 'RRspon',
+				n: 'RRspont',
 			},
 			// RRspon
 			// TCe
 			TCE: {
-				u: '',
+				u: 's',
 				n: 'TCe',
 			},
 			// TCe

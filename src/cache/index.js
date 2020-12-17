@@ -147,6 +147,8 @@ export async function cache2device(time = 100) {
 				let wait  = cacheWait[key]
 				let val   = queue[0]
 				
+				if (!val) return
+
 				// PEF & PIF 相关
 				if (key === 'FLOW') {
 					let { timestamp } = val

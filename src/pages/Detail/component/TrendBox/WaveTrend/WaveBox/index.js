@@ -63,7 +63,7 @@ export default class WaveBox extends React.Component {
 		}
 	}
 	onClearP = () => {
-		this.setState({ curP: null, checkP: [], childData: [], temporary: [], statusP: false })
+		this.setState({ curP: null, checkP: [], checkC: [], childData: [], temporary: [], statusP: false })
 		this.waveRefresh()
 	}
 	onCancelP = () => {
@@ -172,10 +172,11 @@ export default class WaveBox extends React.Component {
 		let params = checkC.map((_, i) => {
 			let color = colors[i]
 			let style = { color }
+			let { n } = __Map__.m[_] || {}
 			let value = cursor && cursor[_] && cursor[_].value? cursor[_].value: '--'
 			return (
 				<li key={i} style={style}>
-					<div>{_}</div>
+					<div>{n}</div>
 					<span>{value}</span>
 				</li>
 			)
@@ -220,7 +221,6 @@ export default class WaveBox extends React.Component {
 		let helper = this.renderHelper()
 
 		let hasData = list.filter(_ => !!_).length === list.length
-
 		return (
 			<>
 				<div className="wave-box">

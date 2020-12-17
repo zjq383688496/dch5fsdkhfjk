@@ -10,14 +10,14 @@ import Scrollbar from '@comp/Scrollbar'
 import Select    from '@comp/Select'
 
 const options = [
-	{ label: '5min',  value: 'MIN5' },
-	{ label: '10min', value: 'MIN10' },
-	{ label: '30min', value: 'MIN30' },
-	{ label: '1h',    value: 'H1' },
-	{ label: '2h',    value: 'H2' },
-	{ label: '6h',    value: 'H6' },
-	{ label: '12h',   value: 'H12' },
-	{ label: '1D',    value: 'D1' },
+	{ label: '5分钟',  value: 'MIN5' },
+	{ label: '10分钟', value: 'MIN10' },
+	{ label: '30分钟', value: 'MIN30' },
+	{ label: '1小时',  value: 'H1' },
+	{ label: '2小时',  value: 'H2' },
+	{ label: '6小时',  value: 'H6' },
+	{ label: '12小时', value: 'H12' },
+	{ label: '1天',    value: 'D1' },
 ]
 
 const timeUnitMap = {
@@ -87,7 +87,6 @@ export default class DataBox extends React.Component {
 				measured.key = key
 			})
 			ieFormat(dataMap)
-			debugger
 			this.setState && this.setState({ list, height: 24 * len }, this.getTimes)
 		})
 	}
@@ -242,21 +241,15 @@ export default class DataBox extends React.Component {
 }
 
 // IE格式化
-function ieFormat({ IE, IEIN, IEOUT }) {
-	if (!IE || !IEIN || !IEOUT) return
+function ieFormat({ IE }) {
+	if (!IE) return
 	let len = IE.length
-	if (!len || len != IEIN.length || len != IEOUT.length) return
+	if (!len) return
 	IE.forEach((_, i) => {
-		let _in  = (IEIN[i] || {}).value,
-			_out = (IEOUT[i] || {}).value,
-			val  = null
-		if (!_in || !_out) return
-		let min  = Math.min(_in, _out),
-			inN  = _in / min,
-			outN = _out / min,
-			inS  = inN.toFixed(inN === 1? 0: 1),
-			outS = outN.toFixed(outN === 1? 0: 1)
-		val  = `${inS}:${outS}`
+		if (!_ || !_.value) return
+		let __ = _.value.toFixed(_ == 1? 0: 1)
+		let val = `${__}:1`
+		if (__ < 1) return `1:${__}`
 		_.value = val
 	})
 }
