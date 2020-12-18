@@ -48,7 +48,7 @@ module.exports = Object.assign(window, {
 			},
 			// MVi
 			MVI: {
-				u: '',
+				u: 'L/min',
 				n: 'MVi',
 			},
 			// MVi
@@ -111,7 +111,7 @@ module.exports = Object.assign(window, {
 			},
 			// RRspont
 			RRSPONT: {
-				u: '',
+				u: 'bpm',
 				n: 'RRspont',
 			},
 			// RRspon

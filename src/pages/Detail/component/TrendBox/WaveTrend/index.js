@@ -27,12 +27,24 @@ export default class WaveTrend extends React.Component {
 			current:   {},
 			times:     [],
 			loading:   false,
+			resize:    false,
 		}
 	}
 	timeout = null
-	componentDidMount() {}
+	timeout_resize = null
+	componentDidMount() {
+		window.addEventListener('resize', this.onResize.bind(this))
+	}
 	componentWillUnmount() {
 		clearInterval(this.timeout)
+		window.removeEventListener('resize', this.onResize)
+	}
+	onResize = e => {
+		clearTimeout(this.timeout_resize)
+		this.setState({ resize: true })
+		this.timeout_resize = setTimeout(() => {
+			this.setState({ resize: false })
+		}, 90)
 	}
 	changeParams = params => {
 		this.setState(params, this.getData)
@@ -104,7 +116,7 @@ export default class WaveTrend extends React.Component {
 	}
 	render() {
 		let { $dom1, $dom2, $dom3 } = this
-		let { current, data, timeUnit, times, scrollCfg, dragCfg, loading } = this.state
+		let { current, data, timeUnit, times, scrollCfg, dragCfg, loading, resize } = this.state
 		let $dom   = $dom1 || $dom2
 		let length = times.length
 		let width  = $dom? $dom.clientWidth: 0
@@ -121,8 +133,8 @@ export default class WaveTrend extends React.Component {
 					</Space>
 				</div>
 				<div className="wt-content">
-					<WaveBox ref="wb1" dom={$dom1} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom1} onDrag={this.onDrag} cursor={current} />
-					<WaveBox ref="wb2" dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom2} onDrag={this.onDrag} cursor={current} colors={colors2} />
+					<WaveBox ref="wb1" dom={$dom1} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom1} onDrag={this.onDrag} cursor={current} resize={resize} />
+					<WaveBox ref="wb2" dom={$dom2} scrollCfg={scrollCfg} dragCfg={dragCfg} data={data} times={times} width={width} getData={this.getData} onLoaded={this.getDom2} onDrag={this.onDrag} cursor={current} resize={resize} colors={colors2} />
 					<div className="wt-tick">
 						{
 							$dom

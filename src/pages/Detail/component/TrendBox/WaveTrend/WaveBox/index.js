@@ -28,6 +28,7 @@ export default class WaveBox extends React.Component {
 			statusC:   false,
 			temporary: [],		// 子选项临时队列
 			list:      [],
+			height:    0,		// 区域高度
 
 			waveRefresh: false,		// 波形可见
 
@@ -37,13 +38,22 @@ export default class WaveBox extends React.Component {
 		}
 	}
 	componentWillReceiveProps(props) {
-		let { data } = props
+		let { data, resize } = props
 		let { checkC } = this.state
+		if (resize) this.calcHeight()
 		if (objEqual(data, this.state.data)) return
 		let list = checkC.map(_ => data[_])
 		this.setState({ list, data: deepCopy(data) })
 	}
 	componentDidMount() {
+		this.calcHeight()
+	}
+	calcHeight = () => {
+		let { wave } = this.refs
+		let width  = wave.offsetWidth
+		let height = parseInt(width / 3)
+		console.log(height)
+		this.setState({ height })
 	}
 	onEdit = () => {
 		let { statusP } = this.state
@@ -209,12 +219,13 @@ export default class WaveBox extends React.Component {
 		)
 	}
 	render() {
-		let { dragCfg, scrollCfg, onLoaded } = this.props
+		let { dragCfg, scrollCfg, onLoaded, resize } = this.props
 		let {
 			colors, list, waveRefresh,
 			curP, checkP, statusP, checkC, statusC,
 			childData, temporary, times,
 			dragState,
+			height,
 		} = this.state
 		let params = this.renderParams()
 		let cursor = this.renderCursor()
@@ -229,10 +240,10 @@ export default class WaveBox extends React.Component {
 							{ helper }
 						</div>
 						<div className="wb-wave" onMouseDown={this.onMouseDown}>
-							<div ref="wave" className="wb-wave-box" style={{}}>
+							<div ref="wave" className="wb-wave-box" style={{ height }}>
 								{
 									!waveRefresh && list.length && hasData
-									? <WaveStacked parent={this.refs.wave} dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} onLoaded={onLoaded} />
+									? <WaveStacked parent={this.refs.wave} dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} height={height} onLoaded={onLoaded} />
 									: null
 								}
 							</div>

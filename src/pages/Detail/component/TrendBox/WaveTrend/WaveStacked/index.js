@@ -15,7 +15,6 @@ export default class WaveStacked extends React.Component {
 		let { colors = [], list = [], xAxis, parent, times = [] } = props
 
 		let length = list[0].data.length
-		let width  = parent.clientWidth
 
 		let options = {
 			grid: {
@@ -27,7 +26,7 @@ export default class WaveStacked extends React.Component {
 			xAxis: {
 				type: 'category',
 				boundaryGap: false,
-				data: getCategory(times, width, length),
+				data: getCategory(times),
 				show: false,
 			},
 			yAxis: getYAxis(list),
@@ -37,18 +36,23 @@ export default class WaveStacked extends React.Component {
 		this.state = {
 			options,
 			length,
-			width: parent.clientWidth,
-			gridH: 0,
+			gridH:  0,
+			height: 0,
 		}
 	}
 	componentDidMount() {
 		this.init()
 	}
+	componentWillReceiveProps(props) {
+		let { height } = props
+		if (height === this.state.height) return
+		this.setState({ height, gridH: Math.ceil(height / 5) })
+	}
 	init = () => {
-		let { scrollCfg, onLoaded } = this.props
+		let { scrollCfg, onLoaded, height } = this.props
 		let { wave } = this.refs
 		if (!wave) return
-		this.setState({ gridH: Math.ceil(wave.clientHeight / 5) })
+		this.setState({ gridH: Math.ceil(height / 5) })
 		if (scrollCfg && scrollCfg.scrollLeft) {
 			wave.scrollLeft = scrollCfg.scrollLeft
 		}
@@ -70,10 +74,10 @@ export default class WaveStacked extends React.Component {
 		return <div className="ws-line" style={{ left }}></div>
 	}
 	render() {
-		let { name, options, length, width } = this.state
+		let { name, options, length } = this.state
 		let line = this.renderLine()
-		let style = { height: '100%', ...this.getGridStyle() }
-		if (length > width) style.width = length
+		let style = { height: '100%', ...this.getGridStyle(), width: `${length}px`, }
+		console.log(style)
 		return (
 			<div ref="wave" className="wave-stacked">
 				<ReactEchartsCore
@@ -82,7 +86,7 @@ export default class WaveStacked extends React.Component {
 					notMerge={true}
 					lazyUpdate={true}
 					option={options}
-					style={style}
+					style={{style}}
 				/>
 				{ line }
 			</div>
@@ -91,14 +95,8 @@ export default class WaveStacked extends React.Component {
 }
 
 // 创建x轴数据
-function getCategory(times, width, length) {
+function getCategory(times) {
 	return times.map((timestamp, i) => {
-		// let da   = moment(timestamp)
-		// // let time = da.format('HH:mm')
-		// let time = da.format('HH:mm:ss')
-		// let date = da.format('YYYY-MM-DD')
-		// if (!i || i === length - 1) return date
-		// if (time === '00:00:00') return date
 		return ''
 	})
 }
