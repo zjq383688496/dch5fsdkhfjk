@@ -43,20 +43,16 @@ export default class WaveBox extends React.Component {
 			hours: 72,
 		}
 	}
-	timeout = null
 	componentDidMount() {
 		this.getData()
 	}
-	componentWillUnmount() {
-		// clearInterval(this.timeout)
-	}
+	componentWillUnmount() {}
 	// 时间跳跃
 	dateJump = s => {
 		let { date } = this.state
 		let ds = s * 1000
 		let ms = new Date(date._d) * 1 + ds
 		let mx = Date.now() - 3e4
-		console.log(ms, Date.now() - ds)
 		if (ms > mx) return
 		date.add(ds)
 		this.setState({ date }, this.getData)
@@ -92,8 +88,6 @@ export default class WaveBox extends React.Component {
 				data.push(da)
 			})
 			let cfg = { data, lineShow: false }
-			// if (data.length) cfg.limit = data[0].list.length
-			console.log(data.length)
 			this.setState(cfg)
 		})
 	}

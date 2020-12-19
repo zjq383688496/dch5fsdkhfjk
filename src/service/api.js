@@ -14,7 +14,11 @@ module.exports = {
 	getReview: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
 	
 	// 波形趋势
-	getTrendView: (macAddress, timeUnit, dataCodes) => Ajax.get(`/report/getMeasuredDataView?macAddress=${macAddress}&timeUnit=${timeUnit}&dataCodes=${dataCodes}`),
+	getTrendView: (macAddress, timeUnit, dataCodes, startDate) => {
+		let url = `/report/getMeasuredDataView?macAddress=${macAddress}&timeUnit=${timeUnit}&dataCodes=${dataCodes}`
+		if (startDate) url += `&startDate=${startDate}`
+		return Ajax.get(url)
+	},
 
 	// 趋势数据
 	getTrendData: (macAddress, timeUnit) => Ajax.get(`/report/getMeasuredData?macAddress=${macAddress}&timeUnit=${timeUnit}`),

@@ -6,14 +6,15 @@ import echarts from 'echarts/lib/echarts'
 
 import moment from 'moment'
 
+
 export default class WaveTick extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { width, times = [] } = props
+		let { width, times = [], gridH } = props
 
 		let length   = times.length
-		let interval = getChartsTickInterval(times)
+		let interval = getChartsTickInterval(times, gridH * 2)
 
 		let options = {
 			grid: {
@@ -25,7 +26,7 @@ export default class WaveTick extends React.Component {
 			xAxis: {
 				type: 'category',
 				boundaryGap: false,
-				data: getCategory(times),
+				data: getCategory(times, gridH * 2),
 				show: true,
 				axisTick: {
 					interval,
@@ -35,7 +36,7 @@ export default class WaveTick extends React.Component {
 					interval,
 					verticalAlign: 'top',
 					textStyle: {
-						fontSize: 12
+						fontSize: 10
 					}
 				},
 			},
@@ -49,11 +50,19 @@ export default class WaveTick extends React.Component {
 		this.state = {
 			options,
 			length,
+			gridH,
 			width,
+			times: deepCopy(times),
 		}
 	}
 	componentDidMount() {
 		this.init()
+	}
+	componentWillReceiveProps(props) {
+		let { state } = this
+		let { times, gridH } = props
+		if (times.length === state.times.length && gridH === state.gridH) return
+		this.updateData(props)
 	}
 	init = () => {
 		let { onLoaded } = this.props
@@ -61,10 +70,32 @@ export default class WaveTick extends React.Component {
 		if (!wave) return
 		onLoaded && onLoaded(wave)
 	}
+	updateData = ({ width, times = [], gridH }) => {
+		let { echart }  = this
+
+		if (!echart || !echart.getEchartsInstance) return
+		let myChart = echart.getEchartsInstance()
+
+		let length   = times.length
+		let interval = getChartsTickInterval(times, gridH * 2)
+
+		myChart.setOption({
+			xAxis: {
+				data: getCategory(times, gridH * 2),
+				axisTick: {
+					interval,
+				},
+				axisLabel: {
+					interval,
+				},
+			},
+		})
+
+		this.setState({ times: deepCopy(times), length: times.length, gridH })
+	}
 	render() {
 		let { name, options, length, width } = this.state
-		let style = { height: '100%' }
-		if (length > width) style.width = length
+		let style = { height: '100%', width: length }
 		return (
 			<div ref="wave" className="wave-tick">
 				<ReactEchartsCore
@@ -81,50 +112,52 @@ export default class WaveTick extends React.Component {
 }
 
 // 创建x轴数据
-function getCategory(times) {
+function getCategory(times, gridH) {
 	let length = times.length
 	return times.map((timestamp, i) => {
 		let da   = moment(timestamp)
-		// let time = da.format('HH:mm')
-		let time = da.format('HH:mm:ss')
+		let time = da.format('HH:mm')
 		let date = da.format('MM-DD')
+		let val  = time
+
 		if (!i) {
 			return {
-				value: date,
+				value: val,
 				textStyle: {
 					align: 'left',
 				}
 			}
 		}
-		if (i === length - 1) {
+		// if (i === length - 1) {
+		if (i > length - 12) {
 			return {
-				value: date,
+				value: val,
 				textStyle: {
 					align: 'right',
 				}
 			}
 		}
-		return date
-		// if (time === '00:00:00') return date
-		// return ''
+		return val
 	})
 }
 
 // 获取图表分割数据的可见索引
-function getChartsTickInterval(times) {
+function getChartsTickInterval(times, gridH) {
 	let length = times.length
 	let obj = {}
-	// let dates = []
+	// let grid = gridH
+	let grid = +gridH.toFixed(2)
 	times.forEach((timestamp, i) => {
+		let zz = i % grid
 		let da   = moment(timestamp)
 		let time = da.format('HH:mm')
-		// dates.push(da.format('MM-DD HH:mm:ss'))
-		if (!i || i >= length - 1) return obj[i] = true
-		if (time === '00:00') return obj[i] = true
+		if (!i) return obj[i] = true
+		if (zz < 1) {
+			return obj[i - 1] = true
+			// return obj[i] = true
+		}
 		obj[i] = false
 	})
-	// console.log(dates)
-	// console.log(length, obj)
 	return function(index) {
 		return obj[index]
 	}

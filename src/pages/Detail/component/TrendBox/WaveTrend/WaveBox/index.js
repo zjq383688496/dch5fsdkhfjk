@@ -10,7 +10,7 @@ import Modal       from '../Modal'
 
 import { parentData, childMap, parentMap } from './config'
 
-const { floor, max } = Math
+const { floor, max, min } = Math
 
 export default class WaveBox extends React.Component {
 	constructor(props) {
@@ -19,7 +19,6 @@ export default class WaveBox extends React.Component {
 		this.state = {
 			colors:    props.colors || ['#3559d4', '#020c7e', '#22c8ee'],
 			data:      deepCopy(props.data || {}),
-			times:     props.times || [],
 			curP:      null,
 			checkP:    [],
 			statusP:   false,
@@ -28,6 +27,7 @@ export default class WaveBox extends React.Component {
 			statusC:   false,
 			temporary: [],		// 子选项临时队列
 			list:      [],
+			gridH:     0,		// 网格高度
 			height:    0,		// 区域高度
 
 			waveRefresh: false,		// 波形可见
@@ -36,6 +36,8 @@ export default class WaveBox extends React.Component {
 			lineShow: false,
 			dragState: false,
 		}
+
+		this.gridH = 0
 	}
 	componentWillReceiveProps(props) {
 		let { data, resize } = props
@@ -48,12 +50,14 @@ export default class WaveBox extends React.Component {
 	componentDidMount() {
 		this.calcHeight()
 	}
+	componentWillUnmount() {}
 	calcHeight = () => {
 		let { wave } = this.refs
-		let width  = wave.offsetWidth
-		let height = parseInt(width / 3)
-		console.log(height)
-		this.setState({ height })
+		let width  = parseFloat(getComputedStyle(wave).width)
+		let gridH  = width / 15
+		let height = width / 3
+		this.setState({ height, gridH })
+		this.gridH = gridH
 	}
 	onEdit = () => {
 		let { statusP } = this.state
@@ -107,6 +111,16 @@ export default class WaveBox extends React.Component {
 		})
 		return Object.keys(check)
 	}
+	getGridStyle = () => {
+		let { gridH } = this.state
+		if (!gridH) return {}
+		let minH = gridH - 1
+		return {
+			background:     `-webkit-linear-gradient(top, transparent ${minH}px, #999 ${gridH}px),-webkit-linear-gradient(left, transparent ${minH}px, #999 ${gridH}px) 0 0`,
+			// backgroundPosition: `1px 0`,
+			backgroundSize: `${gridH}px ${gridH}px`,
+		}
+	}
 	// 拖拽开启
 	onMouseDown = e => {
 		let { dom } = this.props
@@ -117,32 +131,50 @@ export default class WaveBox extends React.Component {
 	onMouseMove = e => {
 		let { dragState } = this.state
 		if (!dragState) return
-		let { dom, width, times, scrollCfg: { scrollLeft }, onDrag } = this.props
-		let length = times.length
-		let maxWidth = max(length, width)
+		let { width, times, scrollCfg: { scrollLeft }, onDrag } = this.props
+		let length    = times.length
+		let minWidth  = min(scrollLeft + width, length)
 		let { pageX } = e
-		let current = []
 		let startP = pageX - 20
 		startP = startP < 0? 0: startP
 		startP = startP > width? width: startP
-		let startX = scrollLeft + startP
-		let ratio  = startX / maxWidth
-		let left   = ratio * maxWidth
-		left = left >= maxWidth? maxWidth - 1: left
-		let idx    = floor(ratio * (length - 1))
-		// console.log(idx, `${(startX / maxWidth * 100).toFixed(1)}%`)
-		onDrag && onDrag({ idx, ratio, left })
+		let left = scrollLeft + startP
+
+		left = left < scrollLeft? scrollLeft: left
+		left = left >= minWidth? minWidth - 1: left
+		onDrag && onDrag({ idx: left })
 	}
 	// 拖拽关闭
 	onMouseUp = e => {
 		this.setState({ dragState: false })
+	}
+	// 鼠标滚动
+	onWheel = e => {
+		let { nativeEvent } = e
+		// nativeEvent.preventDefault()
+		// e.preventDefault()
+		let { deltaY } = nativeEvent
+		if (!deltaY) return
+		let { width, times, scrollCfg: { scrollLeft }, dragCfg: { idx: left }, onDrag } = this.props
+
+		let add = deltaY > 0? 1: -1
+		left += add
+
+		let length   = times.length
+		let minWidth = min(scrollLeft + width, length)
+		left = left < scrollLeft? scrollLeft: left
+		left = left >= minWidth? minWidth - 1: left
+
+		onDrag && onDrag({ idx: left })
 	}
 	// 渲染辅助
 	renderHelper = () => {
 		let { checkC, colors, list } = this.state
 		if (!checkC.length) return null
 
-		return checkC.map((_, i) => {
+		return [0, 1, 2].map(i => {
+			let _ = checkC[i]
+			if (!_) return <div key={i} className="wbh-block"></div>
 			let { u: unit, n: name } = __Map__.m[_] || {}
 			let color = colors[i]
 			let style = { color }
@@ -219,37 +251,45 @@ export default class WaveBox extends React.Component {
 		)
 	}
 	render() {
-		let { dragCfg, scrollCfg, onLoaded, resize } = this.props
+		let { dragCfg, scrollCfg, onLoaded, resize, times } = this.props
 		let {
 			colors, list, waveRefresh,
 			curP, checkP, statusP, checkC, statusC,
-			childData, temporary, times,
+			childData, temporary,
 			dragState,
+			gridH,
 			height,
 		} = this.state
 		let params = this.renderParams()
 		let cursor = this.renderCursor()
 		let helper = this.renderHelper()
+		let gridStyle = this.getGridStyle()
+		let waveStyle = { height }
+		let conStyle  = { height: height + 24 }
 
 		let hasData = list.filter(_ => !!_).length === list.length
+
+		if (waveRefresh || !list.length || !hasData) {
+			Object.assign(waveStyle, gridStyle)
+		}
 		return (
 			<>
 				<div className="wave-box">
-					<div className="wb-content">
+					<div className="wb-content" style={conStyle}>
 						<div className="wb-helper">
 							{ helper }
 						</div>
-						<div className="wb-wave" onMouseDown={this.onMouseDown}>
-							<div ref="wave" className="wb-wave-box" style={{ height }}>
+						<div className="wb-wave" onMouseDown={this.onMouseDown} onWheel={this.onWheel}>
+							<div ref="wave" className="wb-wave-box" style={waveStyle}>
 								{
 									!waveRefresh && list.length && hasData
-									? <WaveStacked parent={this.refs.wave} dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} height={height} onLoaded={onLoaded} />
+									? <WaveStacked dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} gridH={gridH} gridStyle={gridStyle} onLoaded={onLoaded} />
 									: null
 								}
 							</div>
 						</div>
 					</div>
-					<div className="wb-ctrl">
+					<div className="wb-ctrl" style={conStyle}>
 						<div className="wb-norm">
 							{ cursor }
 							{ params }
@@ -285,7 +325,7 @@ export default class WaveBox extends React.Component {
 				</div>
 				{
 					dragState
-					? 
+					?
 					<div
 						className="wave-box-mask"
 						onMouseMove={this.onMouseMove}

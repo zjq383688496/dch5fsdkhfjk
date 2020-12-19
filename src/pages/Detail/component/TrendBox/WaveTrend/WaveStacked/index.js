@@ -6,13 +6,11 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/chart/bar'
 
-// import moment from 'moment'
-
 export default class WaveStacked extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { colors = [], list = [], xAxis, parent, times = [] } = props
+		let { colors = [], list = [], times = [] } = props
 
 		let length = list[0].data.length
 
@@ -26,7 +24,7 @@ export default class WaveStacked extends React.Component {
 			xAxis: {
 				type: 'category',
 				boundaryGap: false,
-				data: getCategory(times),
+				data: [],
 				show: false,
 			},
 			yAxis: getYAxis(list),
@@ -34,50 +32,57 @@ export default class WaveStacked extends React.Component {
 			animation: false,
 		}
 		this.state = {
+			times: deepCopy(times),
 			options,
 			length,
-			gridH:  0,
 			height: 0,
 		}
+	}
+	componentWillReceiveProps(props) {
+		let { state } = this
+		let { times } = props
+		if (times.length === state.times.length) return
+		this.updateData(props)
 	}
 	componentDidMount() {
 		this.init()
 	}
-	componentWillReceiveProps(props) {
-		let { height } = props
-		if (height === this.state.height) return
-		this.setState({ height, gridH: Math.ceil(height / 5) })
-	}
 	init = () => {
-		let { scrollCfg, onLoaded, height } = this.props
+		let { scrollCfg, onLoaded } = this.props
 		let { wave } = this.refs
 		if (!wave) return
-		this.setState({ gridH: Math.ceil(height / 5) })
 		if (scrollCfg && scrollCfg.scrollLeft) {
 			wave.scrollLeft = scrollCfg.scrollLeft
 		}
 		onLoaded && onLoaded(wave)
 	}
-	getGridStyle = () => {
-		let { gridH } = this.state
-		if (!gridH) return {}
-		let minH = gridH - 1
-		return {
-			background:     `-webkit-linear-gradient(top, transparent ${minH}px, #999 ${gridH}px),-webkit-linear-gradient(left, transparent ${minH}px, #999 ${gridH}px)`,
-			backgroundSize: `${gridH}px ${gridH}px`
-		}
+	updateData = ({ colors = [], list = [], times = [] }) => {
+		let { echart }  = this
+
+		if (!echart || !echart.getEchartsInstance) return
+		let myChart = echart.getEchartsInstance()
+
+		myChart.setOption({
+			series: getSeries(list, colors),
+		})
+
+		this.setState({ times: deepCopy(times), length: times.length })
 	}
 	renderLine = () => {
 		let { dragCfg } = this.props
 		if (!dragCfg) return null
-		let { left = 0 } = dragCfg
-		return <div className="ws-line" style={{ left }}></div>
+		let { idx = 0 } = dragCfg
+		return <div className="ws-line" style={{ left: idx }}></div>
+	}
+	renderHelper = () => {
+		return (
+			<div className="ws-helper" style={{ width: this.state.length }}></div>
+		)
 	}
 	render() {
-		let { name, options, length } = this.state
-		let line = this.renderLine()
-		let style = { height: '100%', ...this.getGridStyle(), width: `${length}px`, }
-		console.log(style)
+		let { gridStyle = {} } = this.props
+		let { options, length } = this.state
+		let style = { ...gridStyle, width: length, height: '100%' }
 		return (
 			<div ref="wave" className="wave-stacked">
 				<ReactEchartsCore
@@ -86,9 +91,10 @@ export default class WaveStacked extends React.Component {
 					notMerge={true}
 					lazyUpdate={true}
 					option={options}
-					style={{style}}
+					style={style}
 				/>
-				{ line }
+				{ this.renderLine() }
+				{ /*this.renderHelper()*/ }
 			</div>
 		)
 	}

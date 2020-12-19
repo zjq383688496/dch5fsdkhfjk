@@ -16,13 +16,22 @@ export default class Scrollbar extends React.Component {
 		}
 	}
 	scrollTo = (num, type) => {
-		let { dom, scrollEnd } = this.props
+		let { dom, scrollEnd, nextCond } = this.props
 		let key = type === 'v'? 'scrollTop': 'scrollLeft'
 		let st  = dom[key]
 		dom[key] = st + num
 		let result = getResult(dom)
 		this.setState({ result })
 		scrollEnd && scrollEnd(result)
+
+		if (nextCond && num > 0) {
+			let { time, wait } = nextCond
+			let diff = Date.now() - time
+			if (diff > wait) {
+				nextCond.callback()
+			}
+		}
+
 	}
 	componentDidMount() {
 		let result = getResult(this.props.dom)
@@ -35,12 +44,12 @@ export default class Scrollbar extends React.Component {
 		this.setState({ result: newResult })
 	}
 	render() {
-		let { type, step = 50 } = this.props
+		let { type, step = 50, nextCond } = this.props
 		let { result } = this.state
 		let typeExt = getType(type)
 		let prevCss = typeExt === 'v'? 'bs-top': 'bs-left'
 		let nextCss = typeExt === 'v'? 'bs-bottom': 'bs-right'
-		let { prev, next } = getDisabled(result, typeExt)
+		let { prev, next } = getDisabled(result, typeExt, nextCond)
 		return (
 			<div className={`scrollbar-box sb-${typeExt}`}>
 				<div className="sb-content">
@@ -71,15 +80,24 @@ function getResult(dom) {
 		scrollWidth:  dom.scrollWidth,
 	}
 }
-function getDisabled(result, type) {
+function getDisabled(result, type, nextCond) {
 	let dkey = type === 'v'? 'scrollTop': 'scrollLeft'
 	let ckey = type === 'v'? 'clientHeight': 'clientWidth'
 	let skey = type === 'v'? 'scrollHeight': 'scrollWidth'
 	let dval = result[dkey]
 	let cval = result[ckey]
 	let sval = result[skey]
+	let prev = dval === 0
+	let next = cval === sval || dval + cval >= sval
+
+	if (nextCond && next) {
+		let { time, wait } = nextCond
+		let diff = Date.now() - time
+		next = diff < wait
+	}
+
 	return {
-		prev: dval === 0,
-		next: cval === sval || dval + cval >= sval,
+		prev,
+		next,
 	}
 }
