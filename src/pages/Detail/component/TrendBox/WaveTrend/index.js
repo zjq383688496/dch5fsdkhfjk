@@ -65,7 +65,9 @@ export default class WaveTrend extends React.Component {
 			{ wb1, wb2 } = this.refs,
 			{ macAddress } = device,
 			startDate,
-			codes = Array.from(new Set([...wb1.state.checkC, ...wb2.state.checkC]))
+			c1 = wb1? wb1.state.checkC: [],
+			c2 = wb2? wb1.state.checkC: [],
+			codes = Array.from(new Set([...c1, ...c2]))
 
 		if (!startTime) this.setState({ data: {}, times: [] })
 		if (!codes.length) return// this.setState({ data: {}, times: [] })

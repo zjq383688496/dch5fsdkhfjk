@@ -251,7 +251,7 @@ export default class WaveBox extends React.Component {
 		)
 	}
 	render() {
-		let { dragCfg, scrollCfg, onLoaded, resize, times } = this.props
+		let { dragCfg, scrollCfg, onLoaded, resize, times, width } = this.props
 		let {
 			colors, list, waveRefresh,
 			curP, checkP, statusP, checkC, statusC,
@@ -272,6 +272,9 @@ export default class WaveBox extends React.Component {
 		if (waveRefresh || !list.length || !hasData) {
 			Object.assign(waveStyle, gridStyle)
 		}
+		if (times && times.length < width) {
+			Object.assign(waveStyle, gridStyle)
+		}
 		return (
 			<>
 				<div className="wave-box">
@@ -283,7 +286,7 @@ export default class WaveBox extends React.Component {
 							<div ref="wave" className="wb-wave-box" style={waveStyle}>
 								{
 									!waveRefresh && list.length && hasData
-									? <WaveStacked dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} gridH={gridH} gridStyle={gridStyle} onLoaded={onLoaded} />
+									? <WaveStacked dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} width={width} gridH={gridH} gridStyle={gridStyle} onLoaded={onLoaded} />
 									: null
 								}
 							</div>

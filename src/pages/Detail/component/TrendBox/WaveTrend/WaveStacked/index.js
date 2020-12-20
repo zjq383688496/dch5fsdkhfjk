@@ -12,7 +12,7 @@ export default class WaveStacked extends React.Component {
 
 		let { colors = [], list = [], times = [] } = props
 
-		let length = list[0].data.length
+		let length = times.length
 
 		let options = {
 			grid: {
@@ -80,9 +80,10 @@ export default class WaveStacked extends React.Component {
 		)
 	}
 	render() {
-		let { gridStyle = {} } = this.props
+		let { gridStyle = {}, width } = this.props
 		let { options, length } = this.state
-		let style = { ...gridStyle, width: length, height: '100%' }
+		let style  = { width: length, height: '100%' }
+		if (length >= width) style = { ...style, ...gridStyle }
 		return (
 			<div ref="wave" className="wave-stacked">
 				<ReactEchartsCore
