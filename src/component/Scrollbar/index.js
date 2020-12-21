@@ -44,7 +44,11 @@ export default class Scrollbar extends React.Component {
 		this.setState({ result: newResult })
 	}
 	render() {
-		let { type, step = 50, nextCond } = this.props
+		let {
+			type, step = 50, nextCond,
+			onPrev,       onPrevAll,       onNext,       onNextAll,
+			disabledPrev, disabledPrevAll, disabledNext, disabledNextAll
+		} = this.props
 		let { result } = this.state
 		let typeExt = getType(type)
 		let prevCss = typeExt === 'v'? 'bs-top': 'bs-left'
@@ -53,11 +57,23 @@ export default class Scrollbar extends React.Component {
 		return (
 			<div className={`scrollbar-box sb-${typeExt}`}>
 				<div className="sb-content">
-					<a className={`btn-scroll ${prevCss}`} disabled={prev} onClick={e => this.scrollTo(-999999, typeExt)}><StepBackwardOutlined/></a>
-					<a className="btn-scroll"              disabled={prev} onClick={e => this.scrollTo(-step, typeExt)}><CaretLeftOutlined/></a>
+					<a className={`btn-scroll ${prevCss}`} disabled={disabledPrevAll != undefined? disabledPrevAll: prev} onClick={e => {
+						if (onPrevAll) onPrevAll()
+						else this.scrollTo(-999999, typeExt)
+					}}><StepBackwardOutlined/></a>
+					<a className="btn-scroll"              disabled={disabledPrev != undefined? disabledPrev: prev} onClick={e => {
+						if (onPrev) onPrev()
+						else this.scrollTo(-step, typeExt)
+					}}><CaretLeftOutlined/></a>
 					<div className="sb-bar"></div>
-					<a className="btn-scroll"              disabled={next} onClick={e => this.scrollTo(step, typeExt)}><CaretRightOutlined/></a>
-					<a className={`btn-scroll ${nextCss}`} disabled={next} onClick={e => this.scrollTo(999999, typeExt)}><StepForwardOutlined/></a>
+					<a className="btn-scroll"              disabled={disabledNext != undefined? disabledNext: next} onClick={e => {
+						if (onNext) onNext()
+						else this.scrollTo(step, typeExt)
+					}}><CaretRightOutlined/></a>
+					<a className={`btn-scroll ${nextCss}`} disabled={disabledNextAll != undefined? disabledNextAll: next} onClick={e => {
+						if (onNextAll) onNextAll()
+						else this.scrollTo(999999, typeExt)
+					}}><StepForwardOutlined/></a>
 				</div>
 			</div>
 		)

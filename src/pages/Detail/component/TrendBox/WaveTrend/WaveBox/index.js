@@ -133,16 +133,13 @@ export default class WaveBox extends React.Component {
 		if (!dragState) return
 		let { width, times, scrollCfg: { scrollLeft }, onDrag } = this.props
 		let length    = times.length
-		let minWidth  = min(scrollLeft + width, length)
 		let { pageX } = e
 		let startP = pageX - 20
 		startP = startP < 0? 0: startP
 		startP = startP > width? width: startP
-		let left = scrollLeft + startP
-
-		left = left < scrollLeft? scrollLeft: left
-		left = left >= minWidth? minWidth - 1: left
-		onDrag && onDrag({ idx: left })
+		let idx = parseInt(startP / width * length)
+		idx = idx > length - 1? length - 1: idx
+		onDrag && onDrag({ idx })
 	}
 	// 拖拽关闭
 	onMouseUp = e => {
@@ -155,17 +152,16 @@ export default class WaveBox extends React.Component {
 		// e.preventDefault()
 		let { deltaY } = nativeEvent
 		if (!deltaY) return
-		let { width, times, scrollCfg: { scrollLeft }, dragCfg: { idx: left }, onDrag } = this.props
+		let { width, times, scrollCfg: { scrollLeft }, dragCfg: { idx }, onDrag } = this.props
 
 		let add = deltaY > 0? 1: -1
-		left += add
+		idx += add
 
-		let length   = times.length
-		let minWidth = min(scrollLeft + width, length)
-		left = left < scrollLeft? scrollLeft: left
-		left = left >= minWidth? minWidth - 1: left
+		let length  = times.length
+		idx = idx < 0? 0: idx
+		idx = idx >= length? length - 1: idx
 
-		onDrag && onDrag({ idx: left })
+		onDrag && onDrag({ idx })
 	}
 	// 渲染辅助
 	renderHelper = () => {
@@ -251,7 +247,7 @@ export default class WaveBox extends React.Component {
 		)
 	}
 	render() {
-		let { dragCfg, scrollCfg, onLoaded, resize, times, width } = this.props
+		let { dragCfg, scrollCfg, onLoaded, resize, times, width, multiple } = this.props
 		let {
 			colors, list, waveRefresh,
 			curP, checkP, statusP, checkC, statusC,
@@ -286,7 +282,7 @@ export default class WaveBox extends React.Component {
 							<div ref="wave" className="wb-wave-box" style={waveStyle}>
 								{
 									!waveRefresh && list.length && hasData
-									? <WaveStacked dragCfg={dragCfg} scrollCfg={scrollCfg} colors={colors} list={list} times={times} width={width} gridH={gridH} gridStyle={gridStyle} onLoaded={onLoaded} />
+									? <WaveStacked dragCfg={dragCfg} multiple={multiple} scrollCfg={scrollCfg} colors={colors} list={list} times={times} width={width} gridH={gridH} gridStyle={gridStyle} onLoaded={onLoaded} />
 									: null
 								}
 							</div>

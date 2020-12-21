@@ -8,6 +8,15 @@ module.exports = {
 		{ label: '1天',    value: 'D1' },
 		{ label: '7天',    value: 'D7' },
 	],
+	// 倍率映射表
+	multipleMap: {
+		H2:  84,
+		H4:  42,
+		H8:  21,
+		H12: 14,
+		D1:  7,
+		D7:  1,
+	},
 	// code名称映射表
 	codeMap: {
 		'PEAK':     'MEASURED_DATA_P1_PEAK',

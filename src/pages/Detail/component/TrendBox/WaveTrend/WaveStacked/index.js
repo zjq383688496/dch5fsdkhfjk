@@ -10,7 +10,7 @@ export default class WaveStacked extends React.Component {
 	constructor(props) {
 		super(props)
 
-		let { colors = [], list = [], times = [] } = props
+		let { colors = [], list = [], times = [], multiple = 1 } = props
 
 		let length = times.length
 
@@ -23,11 +23,11 @@ export default class WaveStacked extends React.Component {
 			},
 			xAxis: {
 				type: 'category',
-				boundaryGap: false,
+				boundaryGap: true,
 				data: [],
 				show: false,
 			},
-			yAxis: getYAxis(list),
+			yAxis:  getYAxis(list),
 			series: getSeries(list, colors),
 			animation: false,
 		}
@@ -41,7 +41,9 @@ export default class WaveStacked extends React.Component {
 	componentWillReceiveProps(props) {
 		let { state } = this
 		let { times } = props
-		if (times.length === state.times.length) return
+		// if (times.length === state.times.length) return
+		if (objEqual(times, state.times)) return
+		console.log('更新图表!')
 		this.updateData(props)
 	}
 	componentDidMount() {
@@ -69,10 +71,11 @@ export default class WaveStacked extends React.Component {
 		this.setState({ times: deepCopy(times), length: times.length })
 	}
 	renderLine = () => {
-		let { dragCfg } = this.props
+		let { dragCfg, times } = this.props
 		if (!dragCfg) return null
 		let { idx = 0 } = dragCfg
-		return <div className="ws-line" style={{ left: idx }}></div>
+		let left  = idx / times.length * 100
+		return <div className="ws-line" style={{ left: `${left}%` }}></div>
 	}
 	renderHelper = () => {
 		return (
@@ -80,10 +83,9 @@ export default class WaveStacked extends React.Component {
 		)
 	}
 	render() {
-		let { gridStyle = {}, width } = this.props
+		let { gridStyle = {}, width, multiple } = this.props
 		let { options, length } = this.state
-		let style  = { width: length, height: '100%' }
-		if (length >= width) style = { ...style, ...gridStyle }
+		let style  = { ...gridStyle, width: '100%', height: '100%' }
 		return (
 			<div ref="wave" className="wave-stacked">
 				<ReactEchartsCore

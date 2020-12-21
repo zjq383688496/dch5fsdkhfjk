@@ -14,8 +14,8 @@ module.exports = {
 	getReview: (macAddress, startDate) => Ajax.get(`/report/get?macAddress=${macAddress}&startDate=${startDate}`),
 	
 	// 波形趋势
-	getTrendView: (macAddress, timeUnit, dataCodes, startDate) => {
-		let url = `/report/getMeasuredDataView?macAddress=${macAddress}&timeUnit=${timeUnit}&dataCodes=${dataCodes}`
+	getTrendView: (macAddress, dataCodes, startDate) => {
+		let url = `/report/getMeasuredDataView?macAddress=${macAddress}&timeUnit=D7&dataCodes=${dataCodes}`
 		if (startDate) url += `&startDate=${startDate}`
 		return Ajax.get(url)
 	},
