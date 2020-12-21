@@ -98,7 +98,7 @@ export default class WaveTick extends React.Component {
 		let { state } = this
 		let { times, gridH } = props
 		if (objEqual(times, state.times) && gridH === state.gridH) return
-		console.log('更新下标!')
+		// console.log('更新下标!')
 		this.updateData(props)
 	}
 	init = () => {

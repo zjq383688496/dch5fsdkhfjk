@@ -55,7 +55,7 @@ export default class WaveTrend extends React.Component {
 			let lastTime = times[times.length - 1]
 			let diffTime = Date.now() - lastTime
 			if (diffTime > 6e4) {
-				console.log('更新数据!')
+				// console.log('更新数据!')
 				this.getData(lastTime + 6e4)
 			}
 		}, 1e4)
@@ -180,7 +180,7 @@ export default class WaveTrend extends React.Component {
 		let curTimes = timeing(times, multiple, page)
 		let current  = this.getCurrent(idx, data, curTimes)
 		this.setState({ data, page, curTimes, current })
-		console.log('当前索引: ', page)
+		// console.log('当前索引: ', page, idx, current)
 	}
 	getCurrent(idx, data, times) {
 		let current = {}

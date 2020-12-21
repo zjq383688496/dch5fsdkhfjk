@@ -43,7 +43,7 @@ export default class WaveStacked extends React.Component {
 		let { times } = props
 		// if (times.length === state.times.length) return
 		if (objEqual(times, state.times)) return
-		console.log('更新图表!')
+		// console.log('更新图表!')
 		this.updateData(props)
 	}
 	componentDidMount() {
