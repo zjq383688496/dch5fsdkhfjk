@@ -58,7 +58,7 @@ export default class WaveTrend extends React.Component {
 				// console.log('更新数据!')
 				this.getData(lastTime + 6e4)
 			}
-		}, 1e4)
+		}, 6e4)
 	}
 	onResize = e => {
 		clearTimeout(this.timeout_resize)
