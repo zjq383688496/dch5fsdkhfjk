@@ -8,7 +8,7 @@
     "qa": "webpack --config ./build/webpack.qa.js",
     "prod": "webpack --config ./build/webpack.prod.js"
   },
-  "author": "",
+  "author": "zhuangjiaqi",
   "license": "ISC",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
