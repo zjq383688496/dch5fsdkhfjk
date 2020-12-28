@@ -10,12 +10,16 @@ module.exports = {
 	],
 	// 倍率映射表
 	multipleMap: {
-		H2:  84,
+		H2:  68,
 		H4:  42,
 		H8:  21,
 		H12: 14,
 		D1:  7,
 		D7:  1,
+	},
+	// 单页数据量映射表
+	sizeMap: {
+		148: 150,
 	},
 	// code名称映射表
 	codeMap: {

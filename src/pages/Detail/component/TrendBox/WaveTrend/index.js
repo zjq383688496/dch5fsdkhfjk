@@ -14,7 +14,7 @@ import Select    from '@comp/Select'
 
 import WaveTick  from './WaveTick'
 
-import { codeMap, keyMap, options, multipleMap } from './config'
+import { codeMap, keyMap, options, multipleMap, sizeMap } from './config'
 
 const colors2 = ['#138988', '#3559d4', '#50d1cb']
 const defTimeUnit = 'H2'
@@ -254,8 +254,20 @@ function paging(list, multiple, page = multiple - 1) {
 	Object.values(list).forEach((_, i) => {
 		let data    = _._data || _.data
 		let newData = deepCopy(data)
-		let size    = data.length / multiple
-		let pages   = _.pages = new Array(multiple).fill().map(_ => {
+		let len     = newData.length
+		let size    = parseInt(len / multiple)
+		let diff    = len % multiple
+		if (diff) {
+			size = sizeMap[size]
+			let total = multiple * size		// 总共需要数据量
+			let share = total - len			// 总共缺少数据量
+			let start = size - share		// 起始数据量
+			let data1 = newData.splice(0, start)
+			let data2 = newData.splice(0, share)
+			let data3 = newData
+			newData = [ ...data1, ...data2, ...data2, ...data3 ]
+		}
+		let pages = _.pages = new Array(multiple).fill().map(_ => {
 			return newData.splice(0, size)
 		})
 		_._data = data
@@ -264,7 +276,20 @@ function paging(list, multiple, page = multiple - 1) {
 }
 
 function timeing(times, multiple, page = multiple - 1) {
-	let size     = times.length / multiple
+	let len  = times.length
+	let size = parseInt(len / multiple)
+	let diff = len % multiple
+	if (diff) {
+		size = sizeMap[size]
+		let newTimes = deepCopy(times)
+		let total = multiple * size		// 总共需要数据量
+		let share = total - len			// 总共缺少数据量
+		let start = size - share		// 起始数据量
+		let data1 = newTimes.splice(0, start)
+		let data2 = newTimes.splice(0, share)
+		let data3 = newTimes
+		times = [ ...data1, ...data2, ...data2, ...data3 ]
+	}
 	let curTimes = times.slice(page * size, page * size + size)
 	return curTimes || []
 }

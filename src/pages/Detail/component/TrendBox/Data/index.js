@@ -40,6 +40,7 @@ export default class DataBox extends React.Component {
 			height:   0,
 			curDate:  '',
 			timeUnit: 'D1',
+			update:   false,
 		}
 	}
 	componentDidMount() {
@@ -62,6 +63,12 @@ export default class DataBox extends React.Component {
 		let { ydate } = da
 		if (ydate === curDate) return
 		this.setState({ curDate: ydate })
+	}
+	scrollRight = () => {
+		this.setState({ update: false }, () => {
+			let { scrollH } = this.refs
+			scrollH.scrollTo(999999)
+		})
 	}
 	getData = async () => {
 		let { m } = __Map__
@@ -87,7 +94,10 @@ export default class DataBox extends React.Component {
 				measured.key = key
 			})
 			ieFormat(dataMap)
-			this.setState && this.setState({ list, height: 24 * len }, this.getTimes)
+			this.setState && this.setState({ list, height: 24 * len }, () => {
+				this.getTimes()
+				this.scrollRight()
+			})
 		})
 	}
 	getTimes = () => {
@@ -216,7 +226,6 @@ export default class DataBox extends React.Component {
 								dom={body}
 								step={48}
 								type={'v'}
-								scrollEnd={this.scrollEnd}
 							/>
 							: null
 						}
@@ -227,10 +236,10 @@ export default class DataBox extends React.Component {
 						body && times.length
 						?
 						<Scrollbar
+							ref="scrollH"
 							dom={body}
 							step={80}
 							type={'h'}
-							scrollEnd={this.scrollEnd}
 						/>
 						: null
 					}
