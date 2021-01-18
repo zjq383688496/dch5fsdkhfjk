@@ -102,7 +102,7 @@ module.exports = Object.assign(window, {
 
 
 			TPLAT: {
-				u: 'mbar',	// mbar/L/s
+				u: 's',
 				n: 'Tplat',
 			},
 			RR: {
@@ -126,7 +126,7 @@ module.exports = Object.assign(window, {
 				n: 'C',
 			},
 			RSB: {
-				u: 'mL',
+				u: '/min/L',
 				n: 'RSB',
 			},
 
